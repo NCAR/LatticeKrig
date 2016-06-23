@@ -28,16 +28,21 @@ This function combines some input arguments with defaults for other to create a 
 describing the LatticeKrig spatial model. 
 }
 \usage{
-LKrigSetup(x = NULL, nlevel = NULL, alpha = NA, nu = NULL, a.wght
+LKrigSetup(
+x = NULL, nlevel = NULL, alpha = NA, nu = NULL, a.wght
                  = NA, normalize = TRUE, lambda = NA, sigma = NA, rho =
-                 NA, rho.object = NULL, latticeInfo = NULL, basisInfo =
-                 NULL, LKGeometry = "LKRectangle", distance.type =
+                 NA, rho.object = NULL,
+                 latticeInfo = NULL, basisInfo =NULL,
+                 LKGeometry = "LKRectangle", distance.type =
                  "Euclidean", BasisFunction = "WendlandFunction",
                  overlap = 2.5, V = NULL, BasisType = "Radial",
                  fixedFunction = "LKrigDefaultFixedFunction",
                  fixedFunctionArgs = list(m = 2), max.points = NULL,
                  mean.neighbor = 50, choleskyMemory = NULL, verbose =
-                 FALSE, noCheck = FALSE, setupArgs = NULL, ...)                 
+                 FALSE, noCheck = FALSE, returnCall = FALSE, ...)
+
+
+                 
 LatticeKrigEasyDefaults(argList, nlevel, x)
 
 LKinfoUpdate(LKinfo, ... )
@@ -159,12 +164,9 @@ do the Cholesky decomposition. See the \code{memory} argument in
   	should return a vector with the values of h at the (arbitrary)
   	spatial locations in x1.  If omitted assumed to be the
   	constant one -- the usual case.  }
- 	
-  \item{setupArgs}{A list containing additional components that will
-  	be 1) included in the LKinfo object in the component
-  	\code{setupArgs} and 2) passed to \code{LKrigSetupLattice} to
-  	use for any specific features of constructing the lattice. }
-  
+ 	\item{returnCall}{If TRUE the call to LKrigSetup is also included as
+ 	      part of the LKinfo object. }
+ 
   \item{sigma}{ The measurement error standard deviation.  Also called
   	the nugget variance in geostatistics.  }
   	
@@ -179,9 +181,10 @@ are required that bound the rest of the data locations. E.g.  x=
 rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
 
  	
-  \item{\dots}{Specific arguments that will be included in
+  \item{\dots}{Specific arguments that will be included in the
   	\code{setupArgs} list and also passed to
-  	\code{LKrigSetupLattice}. }
+  	\code{LKrigSetupLattice}. For LKinfoUpdate these specify the components
+  	       of LKinfo to update.  }
 }
 \details{
 	Many of the functions within LKrigSetup are overloaded to
@@ -235,9 +238,15 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
 
 \examples{
   data(ozone2)
-  x<-ozone2$lon.lat
+  # find the ranges of the  data, this is the same as passing the entire set of observation
+  # locations and is more compact 
+  x<-apply( ozone2$lon.lat, 2,"range")
+  
   LKinfo<- LKrigSetup( x, NC=10, nlevel=2, alpha=c(1,.5), a.wght=c(5,5))
   print( LKinfo)
+  LKinfo2<- LKinfoUpdate( LKinfo,  a.wght=c(4.1,4.1), NC=12)
+  LKinfo3<-  LKrigSetup( x, NC=12, nlevel=2, alpha=c(1,.5), a.wght=c(4.1,4.1))
+ 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

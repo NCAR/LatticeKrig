@@ -38,11 +38,11 @@ setDefaultsLKinfo.LKInterval <- function(object, ...) {
 ## define the centers of the basis functions for the
 ## multiresolution. These one grids are also the "lattices"
 
-LKrigSetupLattice.LKInterval <- function(object, x, verbose,
+LKrigSetupLattice.LKInterval <- function(object, verbose,
                                        NC, NC.buffer=5,  ...){
 #object is usually of class LKinfo
-  range.x<- rangeLocations<-  range(x)
-  if( ncol( x) !=1) {
+  range.x<- rangeLocations<-  range(object$x)
+  if( ncol( object$x) !=1) {
        stop( "x is not 1-d !")
    }
   grid.info<-list( xmin=  rangeLocations[1], xmax= rangeLocations[2],

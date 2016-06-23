@@ -115,14 +115,14 @@ LKrigLatticeCenters.LKRing <- function(object, Level=1, physicalCoordinates=FALS
 }
 
 
-LKrigSetupLattice.LKRing <- function(object, x, verbose, NC,
+LKrigSetupLattice.LKRing <- function(object, verbose, NC,
    NC.buffer = 5, ...) {		
 # some checks		
-	if (ncol(x) != 2) {
-		stop("x is not 2-d !")
+	if (ncol(object$x) != 2) {
+		stop("LKinfo$x is not 2-d !")
 	}
 	#object is usually of class LKinfo
-	rangeLocations <- apply( x, 2, "range")
+	rangeLocations <- apply( object$x, 2, "range")
 	# range in transformed scale
 	  # find range of scaled locations
   	if( is.null(object$basisInfo$V[1])){
@@ -131,7 +131,7 @@ LKrigSetupLattice.LKRing <- function(object, x, verbose, NC,
 	else{
 	    Vinv<- solve(object$basisInfo$V)
 	}
-    range.x <- apply( (x) %*% t(Vinv), 2, "range")
+    range.x <- apply( (object$x) %*% t(Vinv), 2, "range")
 	grid.info <- list(range = range.x)
 	nlevel <- object$nlevel
   #NOTE: delta spacing set by the first coordinate range 

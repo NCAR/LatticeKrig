@@ -42,13 +42,16 @@ LKrigSetup <- function(x = NULL,
                        max.points=NULL, mean.neighbor=50, choleskyMemory=NULL,
 # useful for debugging                       
                        verbose = FALSE, noCheck=FALSE,
+                       returnCall = FALSE,
 # these additional arguments will just be added as a list to the LKinfo object as setupArgs
-                       setupArgs=NULL, ...) { 
+                          ... ) { 
 #
 # create initial shell of LKinfo object with classes and common parameters
-   setupArgs<- c( setupArgs, list( ...))
+   setupArgs<- list( ...)
+   
   	
-   LKinfo<-  list( nlevel = nlevel,
+   LKinfo<-  list(      x = x,
+                   nlevel = nlevel,
                     alpha = alpha,
                    a.wght = a.wght,
                        nu = nu,
@@ -57,23 +60,27 @@ LKrigSetup <- function(x = NULL,
                     sigma = sigma,
                       rho = rho,
                rho.object = rho.object,
-            distance.type = distance.type,   
-              latticeInfo = latticeInfo,
-                setupArgs = setupArgs,
+              LKGeometry  = LKGeometry,
+            distance.type = distance.type, 
+            BasisFunction = BasisFunction,
+                  overlap = overlap,                            
+                        V = V,
+                BasisType = BasisType,
             fixedFunction = fixedFunction,
         fixedFunctionArgs = fixedFunctionArgs,
-           choleskyMemory = choleskyMemory 
+               max.points = max.points,
+            mean.neighbor = mean.neighbor,
+           choleskyMemory = choleskyMemory,
+                setupArgs =  setupArgs
                  ) 
 # 
-    LKinfo$basisInfo<- c( basisInfo,
-                         list(           BasisType = BasisType,
+    LKinfo$basisInfo<- list(             BasisType = BasisType,
                                      BasisFunction = BasisFunction,
                                            overlap = overlap,
                                         max.points = max.points,
                                      mean.neighbor = mean.neighbor,
                                                  V = V
                               )
-                         )  
    if( verbose){
      temp<- LKinfo
      class( temp) <- NULL
@@ -84,8 +91,9 @@ LKrigSetup <- function(x = NULL,
    class(LKinfo) <- c( "LKinfo", LKGeometry)
 # the next function is used to reset obvious defaults for
 # a particular geometry. The default method here is to 
-# do nothing but for most geometires it makes sense to 
-# set some options to default values.     
+# do nothing but for most geometries it makes sense to 
+# set some options to default values.
+# or to add some additional information to the LKinfo object.   
    LKinfo<- setDefaultsLKinfo( LKinfo )
    if( verbose){
     	cat("----- After call to setDefaultsLKinfo -----", fill=TRUE)
@@ -101,13 +109,12 @@ LKrigSetup <- function(x = NULL,
 # this function setting up lattice.
 # there is no default method
 # conceptually the following call is jsut LKrigSetupLattice( LKinfo, x, verbose, ...)
-# but this does not work because the additional arguments in list( ...) are handled
-   latticeInfo<- do.call( "LKrigSetupLattice",
-                 c(list( object = LKinfo,
-                              x = x,
-                        verbose = verbose),
-                                  setupArgs) ) 
-   LKinfo$latticeInfo<-  c(LKinfo$latticeInfo, latticeInfo)
+# but this does not work because the additional arguments in list( ...) are 
+# not handled correctly
+   LKinfo$latticeInfo<- do.call( "LKrigSetupLattice",
+                 c( list( object = LKinfo, verbose = verbose ),
+                    setupArgs)
+                  ) 
 #
 # reformat, modify, and check the parameters for the Markox random field/ GP model
 #  fix up the alpha parameters
@@ -123,8 +130,14 @@ LKrigSetup <- function(x = NULL,
         lambda <- sigma^2/rho
         LKinfo$lambda<- lambda
     }  
-# Note saving call argument in return allows the function to be re evaluated
-   LKinfo$call<- match.call()
+# Note saving call argument in return allows the function 
+#      to be re evaluated
+    if ( returnCall){
+        LKinfo$call<- match.call()
+          }
+    else{ 
+        LKinfo$call<- NULL
+        }
 # Finally make some generic checks that all basic components of
 # LKinfo class are included
    if( !noCheck){

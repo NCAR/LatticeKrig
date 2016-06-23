@@ -37,14 +37,14 @@ setDefaultsLKinfo.LKRectangle <- function(object, ...) {
 return(object)
 }
 
-LKrigSetupLattice.LKRectangle <- function(object, x, verbose, NC = NULL, 
+LKrigSetupLattice.LKRectangle <- function(object,  verbose, NC = NULL, 
 	NC.buffer = 5, ...) {
 	###### some common setup operations to all geometries
 	LKinfo <- object
 	if (class(LKinfo)[1] != "LKinfo") {
 		stop("object needs to an LKinfo object")
 	}
-	rangeLocations <- apply(x, 2, "range")
+	rangeLocations <- apply(object$x, 2, "range")
 	nlevel <- LKinfo$nlevel
 	###### end common operations  
 	
@@ -60,7 +60,7 @@ if (is.null(LKinfo$basisInfo$V)) {
 	} else {
 		Vinv <- solve(LKinfo$basisInfo$V)
 	}
-	range.x <- apply(x %*% t(Vinv), 2, "range")
+	range.x <- apply(object$x %*% t(Vinv), 2, "range")
 	if (verbose) {
 		cat("ranges of transformed variables", range.x, fill = TRUE)
 	}

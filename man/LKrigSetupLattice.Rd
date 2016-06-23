@@ -1,3 +1,4 @@
+
 % # LatticeKrig  is a package for analysis of spatial data written for
 % # the R software environment .
 % # Copyright (C) 2016
@@ -35,15 +36,15 @@
 \usage{
 LKrigSetupLattice(object, ...)
 \method{LKrigSetupLattice}{default}(object, ...)
-\method{LKrigSetupLattice}{LKBox}(object,x, verbose, NC,
+\method{LKrigSetupLattice}{LKBox}(object, verbose, NC,
  NC.buffer = 5, ...) 
-\method{LKrigSetupLattice}{LKRectangle}(object,x, verbose, NC,
+\method{LKrigSetupLattice}{LKRectangle}(object, verbose, NC,
  NC.buffer = 5, ...)
-\method{LKrigSetupLattice}{LKInterval}(object,x, verbose, NC,
+\method{LKrigSetupLattice}{LKInterval}(object, verbose, NC,
  NC.buffer = 5, ...)
- \method{LKrigSetupLattice}{LKRing}(object,x, verbose, NC,
+ \method{LKrigSetupLattice}{LKRing}(object, verbose, NC,
  NC.buffer = 5, ...)
-\method{LKrigSetupLattice}{LKCylinder}(object,x, verbose, NC,
+\method{LKrigSetupLattice}{LKCylinder}(object, verbose, NC,
  NC.buffer = 5, ...)
 
 }
@@ -68,8 +69,8 @@ LKrigSetupLattice(object, ...)
 } 
 \item{verbose}{If TRUE print out intermediate information for debugging.
 }
-\item{x}{Locations of the observations that define spatial domain.
-}
+%\item{x}{Locations of the observations that define spatial domain.
+%}
   \item{\dots}{Any additional arguments. 
 %%     ~~Describe \code{\dots} here~~
 }

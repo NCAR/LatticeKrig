@@ -20,6 +20,7 @@
 \name{LKrig.MLE}
 \alias{LKrig.MLE}
 \alias{LKrigFindLambda}
+\alias{LKrigFindLambdaAwght}
 \alias{LKrig.make.par.grid}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -39,6 +40,16 @@ LKrigFindLambda(x, y, ..., LKinfo,
                             lambda.profile=TRUE,
                             lowerBoundLogLambda=-16,tol = 0.005,
                             verbose=FALSE)
+LKrigFindLambdaAwght(
+(x, y, ...,  LKinfo,
+                                 use.cholesky=NULL, 
+                                 lowerBoundLogLambda=-16,
+                                 upperBoundLogLambda=4,
+                                 lowerBoundAwght= 4 + exp(-5),
+                                 upperBoundAwght= 4 + exp(2),
+                                 verbose=FALSE)
+                                 
+LambdaAwghtObjectiveFunction(PARS, LKrigArgs, capture.env, verbose=FALSE )
 
 LKrig.MLE( x,y,..., LKinfo, use.cholesky = NULL,
                     par.grid=NULL,
@@ -51,22 +62,9 @@ LKrig.make.par.grid(par.grid=NULL, LKinfo = NULL)
 }
 
 \arguments{
+\item{capture.env}{The enviornment to save to the likelihood evaluation to the 
+object \code{capture.evaluations}. }
 
-\item{x}{ The spatial locations.  }
-
-\item{y}{ The observations.  }
-
- \item{par.grid}{ A list with components llambda, alpha, a.wght giving
-the different sets of parameters to evaluate. If M is the number of
-parameter setting to evaluate llambda is a vector length M and alpha
-and a.wght are matrices with M rows and nlevel columns.  Thus, the kth
-trial has parameters par.grid\$llambda[k], par.grid\$alpha[k,] and
-par.grid\$a.wght[k,]. Currently this function does not support passing
-a non-stationary spatial parameterization for alpha. The LKinfo object
-details the other parts of the covariance specification (e.g. number
-of levels, grid sizes) that do not change.  Note that par.grid assumes
-\emph{ln} lambda not lambda. See details below for some other features
-of the par.grid arguments.  }
 
 \item{lambda.profile}{ A logical value controlling whether the
  likelihood is maximized over lambda.  For LKrigFindLambda if TRUE the
@@ -93,22 +91,40 @@ par.grid is not passed the parameter values in LKinfo are used to
 evaluate the likelihood. This option is most useful if one has fixed
 values of alpha and a.wght and the goal is to maximize the likelihood
 over lambda.  }
+\item{LKrigArgs}{Argument list to call LKrig.}
 
 \item{lowerBoundLogLambda}{Lower limit for lambda in searching for
 MLE.}
-
+\item{lowerBoundAwght}{Lower limit for a.wght in searching for
+MLE.}
 \item{nTasks}{If using Rmpi the number of slaves available.}
+
+\item{PARS}{ PAR[1]= log(lambda) and PAR[2]= .5*log(a.wght-4)  For the LKRectangle
+geometry.}
+ \item{par.grid}{ A list with components llambda, alpha, a.wght giving
+the different sets of parameters to evaluate. If M is the number of
+parameter setting to evaluate llambda is a vector length M and alpha
+and a.wght are matrices with M rows and nlevel columns.  Thus, the kth
+trial has parameters par.grid\$llambda[k], par.grid\$alpha[k,] and
+par.grid\$a.wght[k,]. Currently this function does not support passing
+a non-stationary spatial parameterization for alpha. The LKinfo object
+details the other parts of the covariance specification (e.g. number
+of levels, grid sizes) that do not change.  Note that par.grid assumes
+\emph{ln} lambda not lambda. See details below for some other features
+of the par.grid arguments.  }
 
 \item{tol}{Tolerance on log likelihood use to determine convergence.}
 
 \item{taskID}{If using Rmpi the slave id.}
 
 \item{verbose}{If TRUE prints out intermediate results.}
-
+\item{upperBoundAwght}{Upper limit for a.wght in searching for
+MLE.}
 \item{use.cholesky}{If not NULL then this object is used as the
 symbolic cholesky decomposition of the covariance matrix for computing
 the likelihood.}
-
+\item{x}{ The spatial locations.  }
+\item{y}{ The observations.  }
 \item{\dots}{Any arguments to be passed to LKrig. E.g. \code{x},
        \code{y}, \code{Z} a covariate or \code{weights}.}  }
 \details{
@@ -116,7 +132,11 @@ the likelihood.}
 \strong{LKrigFindLambda:} Uses a simple one dimensional optimizer 
 \code{optimize}. To maximize the log likelihood for log lambda over the
 range: llambda.start + [-8,5]. This function is used to determine lambda in 
-\code{LatticeKrig}. 
+\code{LatticeKrig}.
+
+\strong{LKrigFindLambdaAwght:} Uses a simple optimizer 
+\code{optim}. To maximize the log likelihood for  lambda  and  a.wght over the
+range. 
 
 \strong{LKrig.MLE:} This is a simple wrapper function to accomplish
 repeated calls to the LKrig function to evaluate the profile
@@ -256,13 +276,24 @@ matrices.
   y<- y[ind]
 
 # This is a single level smoother
-  LKinfo<- LKrigSetup(x,NC=12,nlevel=1, a.wght=4.05, alpha=1.0)
+ 
+  LKinfo<- LKrigSetup(x,NC=8,nlevel=1, a.wght=4.2, alpha=1.0)
   lambdaFit<- LKrigFindLambda( x,y,LKinfo=LKinfo)
   lambdaFit$summary
+\dontrun{  
+# MLEs for a.wght and lambda:
+aWghtFit<- LKrigFindLambdaAwght( x,y,LKinfo=LKinfo)
+aWghtFit$summary
+# cross check
+LKinfo1<- LKinfoUpdate( LKinfo, a.wght= aWghtFit$a.wght.MLE)
+lambdaFit1<- LKrigFindLambda( x,y,LKinfo=LKinfo1, tol=1e-6)
+lambdaFit1$summary
+}
 
-  NG<-3
- #NOTE: make this larger ( e.g. 15) for a better (real!) grid search on log lambda
- # values
+# grid search over parameters 
+NG<-3
+#NOTE: make this larger ( e.g. 15) for a better (real!) grid search on log lambda
+# values
   par.grid<- list( a.wght= rep( 4.05,NG),alpha= rep(1, NG),
                       llambda=  seq(-8,-2,,NG))
   LKinfo<- LKrigSetup(x,NC=12,nlevel=1, a.wght=5, alpha=1.0)
@@ -277,6 +308,7 @@ matrices.
 # fit at largest likelihood value:
     lambda.MLE.fit<- LKrig( x,y,
                     LKinfo=lambda.search.results$LKinfo.MLE)
+                    
 \dontrun{                    
 # optimizing  Profile likelihood over lambda using optim
 # consider 3 values for a.wght (range parameter)

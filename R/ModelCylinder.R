@@ -106,15 +106,15 @@ attr(gridl, "periodic") <- c(TRUE, FALSE, FALSE)
 }
 
 
-LKrigSetupLattice.LKCylinder <- function(object, x, verbose, 
+LKrigSetupLattice.LKCylinder <- function(object,  verbose, 
 	NC, NC.buffer = 5, ...) {
 
 	# some checks		
-	if (ncol(x) != 3) {
+	if (ncol(object$x) != 3) {
 		stop("x is not 3-d !")
 	}
 	#object is usually of class LKinfo
-	rangeLocations <- apply(x, 2, "range")
+	rangeLocations <- apply(object$x, 2, "range")
 	# range in transformed scale
 	# find range of scaled locations
 if (is.null(object$basisInfo$V[1])) {
@@ -122,7 +122,7 @@ if (is.null(object$basisInfo$V[1])) {
 	} else {
 		Vinv <- solve(object$basisInfo$V)
 	}
-	range.x <- apply((x) %*% t(Vinv), 2, "range")
+	range.x <- apply((object$x) %*% t(Vinv), 2, "range")
 
 	grid.info <- list(range = range.x)
 	nlevel <- object$nlevel

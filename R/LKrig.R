@@ -47,6 +47,7 @@ LKrig <- function(x, y,
 	else{
 #		cat("LKrig: lambda passed",  list(...)$lambda, fill=TRUE)
 #		cat("LKrig: lambda in LKinfo",  LKinfo$lambda, fill=TRUE)
+#	  print( names( c(list(LKinfo=LKinfo), list(...)) ) )
 		LKinfo<- do.call("LKinfoUpdate", c(list(LKinfo=LKinfo), list(...)) )	
 	}
 #	cat("LKrig: LKinfo after update",  LKinfo$lambda, fill=TRUE)	

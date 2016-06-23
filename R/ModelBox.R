@@ -69,18 +69,18 @@ LKrigLatticeCenters.LKBox <- function(object, Level, ...) {
 }
 
 
-LKrigSetupLattice.LKBox <- function(object, x, verbose, NC, NC.buffer = 5, 
+LKrigSetupLattice.LKBox <- function(object, verbose, NC, NC.buffer = 5, 
 	...) {
 	#object is usually of class LKinfo
 	
-	rangeLocations <- apply(x, 2, "range")
+	rangeLocations <- apply( object$x, 2, "range")
 	# find range of scaled locations
 	if (is.null(object$basisInfo$V[1])) {
 		Vinv <- diag(1, 3)
 	} else {
 		Vinv <- solve(object$basisInfo$V)
 	}
-	range.x <- apply(as.matrix(x) %*% t(Vinv), 2, "range")
+	range.x <- apply(as.matrix(object$x) %*% t(Vinv), 2, "range")
 	if (ncol(x) != 3) {
 		stop("x is not 3-d !")
 	}

@@ -58,8 +58,8 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
                                         verbose = verbose)))
                                    
     capture.evaluations[1,] <-  c( LKrigObject$LKinfo$lambda,
-                                   LKrigObject$rho.MLE,
-                                   LKrigObject$sigma.MLE,
+                                   LKrigObject$rho.MLE.FULL,
+                                   LKrigObject$sigma.MLE.FULL,
                                    LKrigObject$lnProfileLike.FULL)                                                   
     llambda.opt<- llambda.start
     Mc.save<- LKrigObject$Mc
@@ -84,13 +84,13 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
                                   lambda = lambdaTemp 
                                   )
                        )
-                       )[c("lambda.fixed", "rho.MLE", "sigma.MLE", 
+                       )[c( "rho.MLE.FULL", "sigma.MLE.FULL", 
                                    "lnProfileLike.FULL") ]               
             lnProfileLike.FULL<- hold$lnProfileLike.FULL 
-            rowForCapture<- c(unlist(hold))
-#            print(unlist(hold))
-            names(rowForCapture)<- c("rho.MLE",
-                                  "sigma.MLE", "lnProfileLike.FULL")                        
+            rowForCapture<- c(lambdaTemp,
+                              hold$rho.MLE.FULL,
+                              hold$sigma.MLE.FULL,
+                              hold$lnProfileLike.FULL)
             temp.eval <- get("capture.evaluations")
             assign("capture.evaluations",rbind(temp.eval, rowForCapture),
              envir = capture.env)

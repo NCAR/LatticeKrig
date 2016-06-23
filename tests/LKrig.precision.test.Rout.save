@@ -1,0 +1,79 @@
+
+R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> # LatticeKrig
+> # Copyright 2004-2011, Institute for Mathematics Applied Geosciences
+> # University Corporation for Atmospheric Research
+> # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+> 
+> library( LatticeKrig)
+Loading required package: spam
+Loading required package: grid
+Spam version 1.3-0 (2015-10-24) is loaded.
+Type 'help( Spam)' or 'demo( spam)' for a short introduction 
+and overview of this package.
+Help for individual functions is also obtained by adding the
+suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
+
+Attaching package: 'spam'
+
+The following objects are masked from 'package:base':
+
+    backsolve, forwardsolve
+
+Loading required package: fields
+Loading required package: maps
+
+ # maps v3.1: updated 'world': all lakes moved to separate new #
+ # 'lakes' database. Type '?world' or 'news(package="maps")'.  #
+
+
+> options( echo=FALSE)
+Testing:  MRF index
+PASSED test at tolerance  1e-08
+Testing:  MRF value
+PASSED test at tolerance  1e-08
+Testing:  MRF weight placement
+PASSED test at tolerance  1e-08
+Testing:  normalization to unit variance at each level
+PASSED test at tolerance  5e-07
+Testing:  normalization based on logic in LKrig.cov
+PASSED test at tolerance  5e-07
+Testing:  full covariance from matrix expressions
+PASSED test at tolerance  1e-08
+Testing:  full covariance from matrix expressions w/o normalization
+PASSED test at tolerance  1e-08
+Testing:  comp normalized cov and LKrig.cov
+PASSED test at tolerance  1e-08
+Now check spatial a.wght and alpha
+Testing:  spatial a.wght 1 level
+PASSED test at tolerance  1e-08
+Testing:  spatial a.wght 3 levels
+PASSED test at tolerance  1e-08
+Testing:   3 levels spatial alpha buffer=0
+PASSED test at tolerance  1e-08
+Testing:  3 levels spatial alpha Q buffer=3
+PASSED test at tolerance  1e-08
+Testing:  adding  7 buffer points
+PASSED test at tolerance  1e-08
+Testing:  correct nesting of buffer=0  grid
+PASSED test at tolerance  1e-08
+Done testing LKrig.precision
+> proc.time()
+   user  system elapsed 
+  6.419   0.159   6.685 

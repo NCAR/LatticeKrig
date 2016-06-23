@@ -1,0 +1,23 @@
+
+NOTE<- paste( "R package version", meta$Version )
+bibentry(bibtype="Misc",
+     mheader = "Please cite LatticeKrig including its version number  as ",
+       title = "LatticeKrig: Multiresolution Kriging Based on Markov Random Fields",
+      author =
+           c( 
+            person("Douglas", "Nychka", role = c("aut", "cre"),
+               email = "nychka@ucar.edu"),
+            person("Dorit", "Hammerling", role = c("aut"),
+               email = "hammerling@samsi.info"),
+            person("Stephan", "Sain", role = "aut",
+               email = "ssain@ucar.edu"),
+            person("Nathan", "Lenssen", role = "aut",
+               email = "lenssen@ucar.edu")
+	       ),
+	       note = NOTE,
+ organization = "University Corporation for Atmospheric Research",
+      address = "Boulder, CO, USA",
+         year = 2016,
+          url = "www.image.ucar.edu/LatticeKrig"
+    )
+

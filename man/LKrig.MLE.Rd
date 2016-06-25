@@ -21,6 +21,7 @@
 \alias{LKrig.MLE}
 \alias{LKrigFindLambda}
 \alias{LKrigFindLambdaAwght}
+\alias{LambdaAwghtObjectiveFunction}
 \alias{LKrig.make.par.grid}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -40,8 +41,7 @@ LKrigFindLambda(x, y, ..., LKinfo,
                             lambda.profile=TRUE,
                             lowerBoundLogLambda=-16,tol = 0.005,
                             verbose=FALSE)
-LKrigFindLambdaAwght(
-(x, y, ...,  LKinfo,
+LKrigFindLambdaAwght(x, y, ...,  LKinfo,
                                  use.cholesky=NULL, 
                                  lowerBoundLogLambda=-16,
                                  upperBoundLogLambda=4,

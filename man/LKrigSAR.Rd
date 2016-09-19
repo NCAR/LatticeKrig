@@ -22,6 +22,7 @@
 \alias{LKrigSAR.LKRing}
 \alias{LKrigSAR.LKCylinder}
 \alias{LKrigSAR.default}
+\alias{LKrigSAR.LKSphere}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Method that creates the spatial autoregressive (SAR) matrix. 
 	%%  ~~function to do ... ~~
@@ -38,6 +39,7 @@ LKrigSAR(object, ...)
   \method{LKrigSAR}{LKBox}(object, Level, ...)
   \method{LKrigSAR}{LKRing}(object, Level, ...) 
   \method{LKrigSAR}{LKCylinder}(object, Level, ...)
+   \method{LKrigSAR}{LKSphere}(object, Level, ...)
 }
 \arguments{
   \item{object}{
@@ -69,9 +71,9 @@ LKrigSAR(object, ...)
   
 }
 \value{
-	A matrix in the sparse matrix format, spind, with dimensions given by the 
+	A matrix in the sparse matrix format, \code{spind}, with dimensions given by the 
 	number of lattice points at \code{Level}.
-		Because this construct is geometry dependent the default version of
+		Because this construction is geometry dependent the default version of
 	this method just returns an error message.
 }
 

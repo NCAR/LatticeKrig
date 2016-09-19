@@ -38,6 +38,37 @@ toSphere=function(Grid){
   
 }
 
+projectionSphere<- function(x1, x2){
+  x1<- rbind(x1)
+  x2<- rbind(x2)
+  # if on the north or south pole this is easy
+  #
+  if( abs(x1[1,3]) == 1.0 ){
+    return( x2[,1:2] )
+  }
+  else{
+    norm<- sqrt( x1[,1]^2 + x1[,2]^2)
+    c1<- x1[,1]/norm
+    s1<- x1[,2]/norm
+    s2<- x1[,3]
+    c2<- sqrt(1- s2^2)
+    
+    U<-  rbind( c( c1, s1, 0),
+                c(-s1, c1, 0),
+                c(  0,  0, 1))
+    V<- rbind(  c( c2, 0, s2),
+                c(  0, 1, 0),
+                c(-s2,  0, c2))
+    # the rotation matrix V%*%U rotates x1  around z to the prime meridan
+    # 0 lon and then rotates in the x-z plane to the equator. 
+    out<- V%*%(U%*%t(x2))
+    
+    return( t(out[2:3,]) )
+  }
+  
+}
+
+
 # generates multiresolution  grid to level K
 IcosohedronGrid = function(K) {
   #require(abind)
@@ -60,7 +91,7 @@ IcosohedronGrid = function(K) {
       -phi,   0,  -1
     ),12,3,byrow = TRUE
   )
-  V<- V/ sqrt( colSums(V^2))
+  V<- V/ sqrt( rowSums(V^2))
   MultiGrid = list(V)
 #  
   if( K >1){  
@@ -209,14 +240,7 @@ IcosohedronFaces = function(K) {
       N = 20 * 4 ^ (i - 2) ##Number of triangles in new grid
       ##Make a list of all triangles for next increase in resolution. Four new trianges are formed within each
       ## of the old ones. Tri still has the old vertices...AB, AC, and BC have the midpoint vertices.
-      # Original code used abind, can avoid this because it is the last dimension being combined
-      #    Tri.n = array(rbind(Tri[1,,],AB,AC),dim = c(3,3,N))
-      #    Tri.n = abind(Tri.n, array(rbind(Tri[2,,], AB, BC),
-      #                               dim = c(3,3,N)), along = 3)
-      #    Tri.n = abind(Tri.n,  array(rbind(Tri[3,,],AC,BC),
-      #                               dim = c(3,3,N)),along = 3)
-      #    Tri.n = abind(Tri.n,  array(rbind(AB,BC,AC),
-      #                               dim = c(3,3,N)),along = 3)
+      
       T1<- array(rbind(Tri[1,,],  AB,AC),
                  dim = c(3,3,N))
       T2<- array(rbind(Tri[2,,], AB, BC),
@@ -227,13 +251,17 @@ IcosohedronFaces = function(K) {
                  dim = c(3,3,N))
       Tri.n<- array( c( T1,T2,T3,T4), c( 3,3, 4*N) ) 
       #    test.for.zero( Tri.n, Tri.nTest)
-      # project triangles onto unit sphere
-      #for ( k in 1: dim( Tri.n)[3]){
-       # Tri.n[,,k]<-Tri.n[,,k]/ sqrt(rowSums(Tri.n[,,k]^2 ) )
-      #}
+      # project triangles onto unit sphere note here columns index the vertices
+      for ( k in 1: dim( Tri.n)[3]){
+        for( l in 1:3){
+        Tri.n[,l,k]<-Tri.n[,l,k]/ sqrt( sum( Tri.n[,l,k]^2 ) )
+        }
+      }
       
       Tri = Tri.n
     }
   }    
+  # normlist points defining faces
+  
   return(list(nodes=MultiGrid, Faces=TriList))
 }

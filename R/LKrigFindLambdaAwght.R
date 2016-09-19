@@ -2,16 +2,15 @@
 # ####################################################################################
 LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                                  use.cholesky=NULL, 
-                                 lowerBoundLogLambda=-16,
-                                 upperBoundLogLambda=4,
-                                 lowerBoundAwght= 4 + exp(-5),
-                                 upperBoundAwght= 4 + exp(2),
+                                 lowerBoundLogLambda =-16,
+                                 upperBoundLogLambda = 4,
+                                 lowerBoundOmega = -5,
+                                 upperBoundOmega =  2,
                                  verbose=FALSE) {
-  # Calculate bounds in terms of omega for use in "optim"
-  # with omega = log(kappa) = log(sqrt(Awght-4))
-  lowerBoundOmega <- 0.5 * log( lowerBoundAwght - 4 )
-  upperBoundOmega <- 0.5 * log( upperBoundAwght - 4 )
+  require(stats)
   
+  # For rectangle omega = log(kappa) = log(sqrt(Awght-4))
+  # but will change with other models. 
   # Parts of the LKrig call that will be fixed.  (except updates to LKinfo)                             
   LKrigArgs <- c(list(x = x, y = y), list( ...),
                  list( LKinfo=LKinfo, NtrA= 0  ))
@@ -20,12 +19,8 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   }
   # Set up initial values of Awght and omega
   Awght.init <- as.numeric(LKrigArgs$LKinfo$a.wght[1])
-  if (is.na(Awght.init)){
-    Awght.init <- 4.5 #? default starting? 
-  } else if ( (Awght.init < lowerBoundAwght) || (Awght.init > upperBoundAwght) ){
-    stop("Given a.wght value is out of bounds.")
-  }
-  omega.start <- 0.5 * log( Awght.init - 4 )
+  omega.start <- Awght2Omega( Awght.init, LKinfo)
+  
   # Set up initial values of lambda and log lambda
   lambda.start <- LKrigArgs$LKinfo$lambda 
  
@@ -46,8 +41,10 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   if(verbose){
     cat("LKrigFindLambdaAwght: llambda.start:",  llambda.start, "a.wght.start:", Awght.init, fill=TRUE)
   }
-  a.wghtTemp<- 4+exp(2*omega.start)
+  a.wghtTemp<- Omega2Awght(omega.start, LKinfo)
   lambdaTemp<- exp( llambda.start)
+  # initial call to likelihood and also to get symbolic decomposition of 
+  # the "M" matrix k-- sparsity pattern does not change as lambda, awght are varied.
   LKrigObject <- do.call("LKrig", c(
     LKrigArgs,
     list( 
@@ -123,7 +120,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   out[ 8] <- LKrigObject$lnLike.FULL
   out[ 9] <- result$counts[1]
   out[10] <- result$counts[2]
-  out[11]<- nrow(capture.evaluations )
+  out[11] <- nrow(capture.evaluations )
   
   # Name columns  of likelihood eval. 
   dimnames(capture.evaluations)<- list( NULL,
@@ -144,7 +141,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
 # Define the objective function 
 LambdaAwghtObjectiveFunction<- function(PARS, LKrigArgs, capture.env, verbose=FALSE ) {
   lambdaTemp <- exp( PARS[1] )
-  a.wghtTemp <-  4 + exp( 2 * PARS[2] )
+  a.wghtTemp <-  omega2Awght( PARS[2], LKrigArgs$LKinfo)
   hold <- do.call("LKrig",          
                   c(LKrigArgs, list(
                     lambda = lambdaTemp,

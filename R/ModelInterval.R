@@ -32,6 +32,7 @@
 
 setDefaultsLKinfo.LKInterval <- function(object, ...) {
   object$distance.type <- "Euclidean"
+  object$floorAwght<- 2
   return(object)
 }
 

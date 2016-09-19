@@ -14,29 +14,67 @@
 % # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % # GNU General Public License for more details.
 
-\name{Periodic geometries for  spherical data. } 
+\name{Spatial models for data on spherical regions. } 
 \alias{LKRing}
 \alias{LKCylinder}
-\title{Geometries to approximate a cross section of 
+\alias{LKSphere}
+\title{Geometries to represent 
 	2-d and 3-d spherical data. 
-	
 }
-\description{This model is a simple geometry that assumes the first coordinate is 
-	periodic in the interval [0,360]. The remaining coordinates are regular (Euclidean).   
+\description{These models include  a completely sphericial geometry based on a nearly regular node layout on the sphere. Also a simpler and perhaps more efficient 
+  versions are implemented where the first coordinate is 
+	periodic in the interval [0,360] and the remaining coordinates are regular (Euclidean).   
 	This might be used to approximate a section of spherical data that excludes the 
 	polar caps. These approximations are useful because one can take advantage of
 	faster methods based on rectangular grids rather the more complex grids on a
 	sphere. The disadvantage is that the mapping from these coordinates to the
 	sphere is distorted as one gets close to the poles. 
   }
-	\section{Details}{
+\section{Details}{
 		These geometries are specified with the \code{LKGeometry} argument either in 
-		LKrigSetup or LatticeKrig.
+		LKrigSetup or LatticeKrig. The first coordinate is longitude either from [0,360]
+		or [-180,180] and the second is lattiude [-90, 90].
 		
-		They have the four specific methods: \code{LKrigLatticeCenters},
+		They each have the four specific methods: \code{LKrigLatticeCenters},
 		\code{LKrigSAR}, \code{LKrigSetupLattice}, \code{setDefaultsLKinfo}
 		and the source code is consolidated in the source files ModelRing.R and 
 		ModelCylinder.R in the R subdirectory of this package source.
+		
+		\bold{\code{LKSphere}} Recall that the core of the LatticeKrig model is the placement of
+		the basis function centers and how the spatial autoregression is constructed from these
+		node
+		locations. Here the centers are generated according to a multiresolution based on the
+		triangles from an Icsohedron. \code{link{IcosohedronGrid}} creates a grid by taking the
+		first
+		level as the 12 points from a regular icsohedron. The subsequent levels generate a finer
+		set
+		of points by subdividing each triangular face into 4 new triangles. The three new mid
+		points
+		from the subdivision are added to the previous nodes to give the new level of resolution.
+		The
+		triangles tend to roughly  equilateral and so the nodes will tend to be roughly equally
+		spaced
+		. See the help file on 
+		\code{link{IcosohedronFaces}} for code on visualzing these. The first 12 centers will
+		have 5
+		close neighbors and remaining centers will have 6. Currently the SAR weights are equal
+		among
+		all the neighbors and the \code{a.wght} parameter is adjusted by 
+		\code{a.wght <- (a.wght - 6) + 5} for these locations. The basis functions have their 
+		default as using great circle distance to determine the values between the center and
+		other
+		points. Because the distances between centers are not equal some adjustment is made to the
+		\code{delta} parameter for the basis function support. The \code{NC} parameter in this
+		geometry is the beginning resolution level. Currently the number of basis functions in
+		each level are  
+		\tabular{lrrrrrrrr}{
+	  Level \tab   1 \tab     2   \tab   3  \tab    4  \tab    5  \tab
+	  6   \tab   7   \tab   8 \cr
+    Number Basis functions \tab  12 \tab    42 \tab   162 \tab   642 \tab 
+    2562 \tab 10242  \tab 40962 \tab 163842 \cr
+      }
+So if \code{NC=2} and \code{nlevel=3} there will be a total of \code{42 + 162 + 642 = 846}
+basis functions in the model. 
 		
 		\bold{\code{LKRing}}
 		This model follows the Mercator projection for a sphere where 
@@ -44,14 +82,21 @@
 		longitude is periodic. So the actual coordinates represent the surface of 
 		 cylinder which is one way of visualizing the Mercator projection. 
 		To keep things simple the first coordinate is 
-		essentially hardwired to be in the scale of degrees (sorry for all you fans of radians) and wrapping 
-		0 to 360. It is important to scale the second coordinate in this
+		essentially hardwired to be in the scale of degrees (sorry for all you fans of radians)
+		and wrapping 
+		0 to 360 ( or periodic in [-180,180]). It is important to scale the second coordinate in
+		this
 		geometry to be comparable in spatial scale to degrees (use the \code{V}
-		argument in LKrigSetup). However, if the second coordinate can be interpreted as a latitude it is often reasonable to assume the spatial scales are the same in these two coordinates. 
+		argument in LKrigSetup). However, if the second coordinate can be interpreted as a
+		latitude it
+		is often reasonable to assume the spatial scales are the same in these two coordinates. 
 		
-		Note this geometry can also be used to represent an equatorial section of a spherical volume. Here the first coordinate is longitude but the second can be 
+		Note this geometry can also be used to represent an equatorial section of a spherical
+		volume.
+		Here the first coordinate is longitude but the second can be 
 		interpreted as a radius from the sphere's center. 
-		This is a case where care needs to taken to scale the radial component to make sense with the degrees in the first.  
+		This is a case where care needs to taken to scale the radial component to make sense with
+		the degrees in the first.  
 		
 		\bold{\code{LKCylinder}}
 		This is just the three dimensional extension of LKRing
@@ -62,11 +107,16 @@
 	First in setting up the spatial autoregression (SAR) weights, the weights
 	reflect the wrapping. Second in finding distances between coordinates the
 	nodes in the lattice has the first coordinate tagged as being periodic. 
-	Specifically in LKrigSetupLattice the gridList for each lattice has an attribute vector that indicates which coordinates are periodic. This information is used in the distance function LKrigDistance when called with arguments of a matrix and a gridList. 
+	Specifically in LKrigSetupLattice the gridList for each lattice has an attribute vector that
+	indicates which coordinates are periodic. This information is used in the distance function
+	LKrigDistance when called with arguments of a matrix and a gridList. 
 	
 	Why is this so complicated? This structure is designed around the fact that one 
-	can find the pairwise distance matrix quickly between an arbitrary set of locations and a rectangular grid (a gridList object in this package).
-	The grid points within a delta radius of an arbitrary point can be found by simple arithmetic and indexing.  Because these two geometries have regular 
+	can find the pairwise distance matrix quickly between an arbitrary set of locations and a
+	rectangular grid (a gridList object in this package).
+	The grid points within a delta radius of an arbitrary point can be found by simple
+	arithmetic
+	and indexing.  Because these two geometries have regular 
 	lattice spacings is it useful to exploit this. See \code{ \link{LKrigDistance}}
 	for more details about the distance function. 
 	
@@ -75,9 +125,10 @@
 	great circle distance. This gives a different approach to dealing with the
 	inherent curvature but will be awkward as the domain is close to the poles. 
 			
-		}
-		\author{
-	Doug  Nychka
+	}
+	
+\author{
+	Doug  Nychka and Zachary Thomas 
 }
 \examples{
 # 	
@@ -85,6 +136,14 @@
 # (use a very small number of basis functions so example
 #  runs quickly)
  data(CO2)
+  LKinfo0<- LKrigSetup( CO2$lon.lat, NC=2 ,nlevel=3,
+                       a.wght=6.1, alpha=c(1, .25, (.25)^2),
+                       LKGeometry="LKSphere" )                                         
+  # Use MLE for lambda found below 
+  obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.00057)
+  surface(obj0)
+  world( add=TRUE)
+
   LKinfo1<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1, lambda=.2,
                        a.wght=5, alpha=1, 
                        LKGeometry="LKRing" )                                         
@@ -99,11 +158,20 @@ world( add=TRUE)
 # not periodic in longitude:
 # surface(obj2)  
 
+# estimating lambda by maximum likelihood
+\dontrun{
+obj00<- LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 }
+
+}
+
 \seealso{
-    \code{\link{LKrigSetup}},
+	\code{\link{LatticeKrig}},
+  \code{\link{LKrigSetup}},
 	\code{\link{LKrigSAR}},
 	\code{\link{LKrigLatticeCenters}}
+	}
+	
 }
 
 

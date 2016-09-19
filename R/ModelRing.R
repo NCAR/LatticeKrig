@@ -25,6 +25,9 @@
 #
 setDefaultsLKinfo.LKRing <- function(object, ...) {
 	# object == LKinfo
+  
+  object$floorAwght<- 4
+  
 	if (is.null(object$setupArgs$NC)) {
 		object$setupArgs$NC <- 5
 		object$setupArgs$NC.buffer <- 5

@@ -33,6 +33,7 @@
 # creating the lattice
 
 setDefaultsLKinfo.LKSphere <- function(object, ...) {
+  object$floorAwght<- 6 # adjusted to 5 internally for the pentagon vertices
 # Definitely do not want Euclidean by default!
 #  
   if( object$distance.type == "Euclidean"){
@@ -70,7 +71,7 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
 # lon/lat in degrees with lon being [-180,180] to 
 # be consistent with R maps package
  LKrigSetupLattice.LKSphere<- function(object, x=NULL, verbose,                                         
-                                      NC=1, grid.info=NULL,
+                                      NC=1, 
                                       ... ){
   if( is.null(x)){
     x<- object$x
@@ -114,10 +115,12 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
 # 3-d coordinates (a.k.a. direction cosines)
   MultiGrid<- IcosohedronGrid(Rmax) ##Get full list of geodesic grids stopping at level Rmax
   grid.all.levels<- list()
+  grid3d.all.levels<- list()
   mLevel<- rep(NA,nlevel)
   for(l in (1:nlevel) ){
     # to Sphere converts to lon/lat coordinates
-    gridTemp<- toSphere( MultiGrid[[ l + (NC -1) ]] )
+    grid3d<- MultiGrid[[ l + (NC -1) ]]
+    gridTemp<- toSphere( grid3d )
       # trim to range of locations (in lon/lat coordinates)
     ind<-  gridTemp[,1] >= rangeLocations[1,1] &
            gridTemp[,1] <= rangeLocations[2,1] &
@@ -125,7 +128,8 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
            gridTemp[,2] <= rangeLocations[2,2] 
     ind2<-  (1:length( ind)) <= 12
 # first 12 coordinates are always the initial isocosohedron points    
-    grid.all.levels[[l]]<- gridTemp[ ind,] 
+      grid.all.levels[[l]]<-  gridTemp[ ind, ] 
+    grid3d.all.levels[[l]]<-    grid3d[ ind, ]
 # logical attribute indicates which are initial vertices  
 # within the subset determined by ranges     
     attr(grid.all.levels[[l]],"pentagon")<- ind2[ind]
@@ -140,7 +144,8 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
               rangeLocations=rangeLocations,
 # specific arguments for LKSphere              
               NC=NC,
-              grid=grid.all.levels)
+              grid=grid.all.levels,
+            grid3d= grid3d.all.levels)
   return(out)
 }
 
@@ -170,21 +175,40 @@ LKrigSAR.LKSphere = function(object, Level, ...) {
 #  set their diagonal entries differently.
 # The B matrix is already in spind format and the entries  (ra) are 
 # converted to be the SAR matrix.
-# The actual distances returned might be used to fine the weighting 
+# The actual distances returned might be used to fine tune the weighting 
 # as the distances vary some due the points not being on geodesics.
   B = LKDist(  grid[,1:2], grid[,1:2], delta = delta,
                   distance.type= dType)
 # find the diagonal elements of the sparse matrix
-  ind<- B$ind[,1] == B$ind[,2]
-  if( sum( ind)!= nrow( grid)) {
+# compute weights for slightly unequal distributions
+  
+  ind1<- B$ind[,1]
+  ind2<- B$ind[,2]
+  Diagonal<- ind1==ind2
+    for (I in 1:n ){
+    J<- ind2[ (ind1==I)&!Diagonal]
+    nJ<- length(J) # this better be either 5 or 6 nearest neighbors!
+    x1<- grid[J,]
+    x0<- grid[I,]
+    u<- projectionSphere( x0,x1) 
+    # u are local 2 d coordinates on tangent plane to sphere at x0
+    # x0 projects to (0,0)
+    X<- cbind( rep( 1,nJ), u )
+    c2<- (X)%*%(solve( t(X)%*%X, c( 1,0,0) )  )
+    # c2 sum to 1 by properties of unbiasedness for constant function.
+    B$ra[J]<- -1*c2*nJ
+  }
+  
+  if( sum( Diagonal)!= nrow( grid)) {
     stop( "Number of diagonal elements in B different from grid")}
-# take care of the 12 initial veritices with 5 NNs  
+# take care of the 12 initial vertices with 5 NNs  
   a.wghtAdjusted<- ifelse( indP, a.wght, (a.wght - 6) + 5 )
-  B$ra[ind ] <- a.wghtAdjusted
-  B$ra[!ind] <- -1
+  B$ra[Diagonal ] <- a.wghtAdjusted
   return(B)
-# B is converted to spam format in LKrig.precision   
+# NOTE: B is converted to spam format in LKrig.precision   
 }
+
+
 
 # return the lattice centers at a given Level
 LKrigLatticeCenters.LKSphere<- function(object, Level, ... ){

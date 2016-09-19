@@ -11,7 +11,7 @@ Authors@R: c(
             person("Stephan", "Sain", role = "aut",
                email = "ssain@ucar.edu"),
             person("Nathan", "Lenssen", role = "aut",
-               email = "lenssen@ucar.edu")
+               email = "lenssen@ucar.edu"),
 	    person("Colette", "Smirniotis", role = "aut",
                email = "cmsmirni@gmail.com")
 	       ) 

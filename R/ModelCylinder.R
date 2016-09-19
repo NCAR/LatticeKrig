@@ -23,7 +23,7 @@
 #
 setDefaultsLKinfo.LKCylinder <- function(object, ...) {
 	# object == LKinfo
-	
+  object$floorAwght<- 6
 	# hard wire the fixed part to just fit a constant function
 	# to the first dimension 
     object$fixedFunction <- "LKrigPeriodicFixedFunction"

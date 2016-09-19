@@ -23,6 +23,8 @@
 #
 setDefaultsLKinfo.LKBox <- function(object, ...) {
 	# object == LKinfo
+  object$floorAwght<- 6
+  
 	if (is.null(object$setArgs$NC)) {
 		object$setupArgs$NC <- 5
 		object$setupArgs$NC.buffer <- 2
@@ -81,7 +83,7 @@ LKrigSetupLattice.LKBox <- function(object, verbose, NC, NC.buffer = 5,
 		Vinv <- solve(object$basisInfo$V)
 	}
 	range.x <- apply(as.matrix(object$x) %*% t(Vinv), 2, "range")
-	if (ncol(x) != 3) {
+	if (ncol(object$x) != 3) {
 		stop("x is not 3-d !")
 	}
 	grid.info <- list(range = range.x)

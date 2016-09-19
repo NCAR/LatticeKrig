@@ -23,7 +23,13 @@
 }
 \description{To implement a spatial model for specific geometry, e.g. 
 	a rectangular spatial domain, one needs to specify a few functions
-	that set reasonable default choices, create the lattice, define the Markov random field and define the basis functions. One coudl also include some specific functions that are particularly efficient for some of the computations for that geometry. This help section gives an overview of what is needed to introduce a new geometry. }
+	that set reasonable default choices, create the lattice, define the Markov
+	random field and
+	define the basis functions. One coudl also include some specific functions
+	that are particularly
+	efficient for some of the computations for that geometry. This help section
+	gives an overview of
+	what is needed to introduce a new geometry. }
 	
 	\section{ A quick start}{
 		At the outset if you are an example person (and an impatient one) take a look at the functions

@@ -22,6 +22,7 @@
 \alias{setDefaultsLKinfo.LKRing}
 \alias{setDefaultsLKinfo.LKCylinder}
 \alias{setDefaultsLKinfo.LKInterval}
+\alias{setDefaultsLKinfo.LKSphere}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Method for including default information in the LKinfo object.
 %%  ~~function to do ... ~~
@@ -42,6 +43,7 @@ setDefaultsLKinfo(object, ...)
 \method{setDefaultsLKinfo}{LKRing}(object, ...)
 \method{setDefaultsLKinfo}{LKCylinder}(object, ...)
 \method{setDefaultsLKinfo}{LKInterval}(object, ...)
+\method{setDefaultsLKinfo}{LKSphere}(object,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -65,7 +67,7 @@ setDefaultsLKinfo(object, ...)
 	Often there are several arguments for a geometry that make sense to set to simplify the use or
 	to avoid bad things .... 
 	
-	For example with the LKRing geometry the defaults values follow the logic:
+	For the LKRing geometry the defaults values follow the logic:
 \itemize{	
 	\item alpha set to  1.0 if not specified and nlevel is 1 
 	
@@ -75,6 +77,16 @@ setDefaultsLKinfo(object, ...)
 
      \item the transformation matrix, V has the default  diag( c(1,1)). Also in this
 	function if V[1,1] is not 1 then an error is given.
+	}
+	 	For the LKSphere geometry the defaults values follow the logic:
+\itemize{	
+	\item alpha set to  1.0 if not specified and nlevel is 1 
+	
+	\item a.wght set to 6.01 if not specified. 
+	
+     \item the fixed part of the model (fixedFunction) just includes a constant ( m=1)
+
+    \item Default distance function is great circle distance, with sphere radius of 1.0. 
 	}
 	 
 

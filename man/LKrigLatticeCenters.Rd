@@ -24,6 +24,7 @@
 \alias{LKrigLatticeCenters.LKRectangle}
 \alias{LKrigLatticeCenters.LKRing}
 \alias{LKrigLatticeCenters.LKCylinder}
+\alias{LKrigLatticeCenters.LKSphere}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Methods to report the locations  or scales associated with the lattice points.
 %%  ~~function to do ... ~~
@@ -42,9 +43,11 @@ LKrigLatticeCenters(object, ...)
 \method{LKrigLatticeCenters}{LKRectangle}(object, Level, ...)
 \method{LKrigLatticeCenters}{LKBox}(object, Level, ...)
 \method{LKrigLatticeCenters}{LKCylinder}(object, Level = 1, physicalCoordinates = FALSE, ...)
-\method{LKrigLatticeCenters}{LKRing}(object, Level = 1, physicalCoordinates = FALSE, ...)
-LKrigLatticeScales(object, ...)
+\method{LKrigLatticeCenters}{LKRing}(object, Level = 1, 
+                    physicalCoordinates = FALSE, ...)
+\method{LKrigLatticeCenters}{LKSphere}(object, Level, ...)
 \method{LKrigLatticeScales}{default}(object, ...)
+LKrigLatticeScales(object, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -89,7 +92,8 @@ sight integral through the domain. This integral is obvious found with respect t
 \value{
 \strong{Centers} A matrix where the rows index the points and columns index dimension. 
 In the case of the LKRectangle geometry attribute is added to indicate the
-grid points used to generate the lattice. 
+grid points used to generate the lattice.  For LKSphere the centers are in lon/lat degrees.
+( Use \code{directionCosines} to convert to 3-d coordinates from lon/lat.)
 
 \strong{Scales} The default method returns the vector  \code{delta*offset} with length being the
 number of multiresolution levels. 

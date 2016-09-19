@@ -23,6 +23,7 @@
 \alias{LKrigSetupLattice.LKRectangle}
 \alias{LKrigSetupLattice.LKRing}
 \alias{LKrigSetupLattice.LKCylinder}
+\alias{LKrigSetupLattice.LKSphere}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Creates the lattice information for a specific geometry.
@@ -46,10 +47,13 @@ LKrigSetupLattice(object, ...)
  NC.buffer = 5, ...)
 \method{LKrigSetupLattice}{LKCylinder}(object, verbose, NC,
  NC.buffer = 5, ...)
+ \method{LKrigSetupLattice}{LKSphere}(object, x = NULL, verbose, NC = 1, 
+    ...)
 
 }
 
 \arguments{
+\item{grid.info}{}
   \item{object}{ A list that is an LKinfo object.
 
 }
@@ -69,8 +73,7 @@ LKrigSetupLattice(object, ...)
 } 
 \item{verbose}{If TRUE print out intermediate information for debugging.
 }
-%\item{x}{Locations of the observations that define spatial domain.
-%}
+\item{x}{Locations of the observations that define spatial domain. For LKSphere locations are in lon/lat degrees.}
   \item{\dots}{Any additional arguments. 
 %%     ~~Describe \code{\dots} here~~
 }
@@ -107,7 +110,7 @@ LKrigSetupLattice(object, ...)
 	}
 	
 	In addition, the methods for cartesian and cartesian-like  spatial domains (
-	LKInterval, LKRectangle, LKBox, LKRing, LKCylinder) include the additional components:
+	LKInterval, LKRectangle, LKBox, LKRing, LKCylinder, LKSphere) include the additional components:
 	\describe{	
 		\item{mx}{A matrix giving number of grid points at each level and for each dimension.}
 		\item{mLevelDomain}{Same as mLevel but restricted to lattice points
@@ -118,7 +121,11 @@ LKrigSetupLattice(object, ...)
 		\item{NC}{Passed value.}
 		\item{NC.buffer}{Passed value.}
 		\item{grid}{A list where each component is also list giving the grid points of the lattice in each coordinate. }
-    }  
+    }
+    
+  LKSphere also returns the additional component \code{grid3d} -- the direction Cosines
+  of the grid points. 
+    
     
       
 

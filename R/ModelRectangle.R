@@ -22,6 +22,7 @@
 
 setDefaultsLKinfo.LKRectangle <- function(object, ...) {
 # object ==  LKinfo intital list passed to the LKrigSetup function 
+  object$floorAwght<- 4
 # logic for V happens in lattice setup  	
         if( is.null(object$lonlatModel) ){
           object$lonlatModel<- object$distance.type=="Chordal" |

@@ -41,7 +41,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   if(verbose){
     cat("LKrigFindLambdaAwght: llambda.start:",  llambda.start, "a.wght.start:", Awght.init, fill=TRUE)
   }
-  a.wghtTemp<- Omega2Awght(omega.start, LKinfo)
+  a.wghtTemp<- omega2Awght(omega.start, LKinfo)
   lambdaTemp<- exp( llambda.start)
   # initial call to likelihood and also to get symbolic decomposition of 
   # the "M" matrix k-- sparsity pattern does not change as lambda, awght are varied.

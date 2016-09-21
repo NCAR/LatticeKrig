@@ -33,7 +33,7 @@
 # creating the lattice
 
 setDefaultsLKinfo.LKSphere <- function(object, ...) {
-  object$floorAwght<- 6 # adjusted to 5 internally for the pentagon vertices
+  object$floorAwght<- 1.0 
 # Definitely do not want Euclidean by default!
 #  
   if( object$distance.type == "Euclidean"){
@@ -59,7 +59,7 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
 # model 
 # (For the 12 points with 5 neighbors an adjustment is made
   if (is.na(object$a.wght)) {
-    object$a.wght <- 6.01
+    object$a.wght <- 1.1
   }
   return(object)
   }
@@ -156,54 +156,43 @@ LKrigSAR.LKSphere = function(object, Level, ...) {
 # delta is the cutoff to find nearest neighbors -- tuned to this
 # particular lattice.
   grid <- object$latticeInfo$grid[[Level]]
+  grid3d <- object$latticeInfo$grid3d[[Level]]
   delta <- object$latticeInfo$delta[[Level]]
   a.wght <- object$a.wght[[Level]]
 ## Find nearest 5 or 6 neighbors
   dType<- object$distance.type
   n <-  nrow(grid)
 #  logical for pentagon points
-# assume that the nodes are in same order as generated from
-# IcosohedronGrid
-  indP<- attr( grid,"pentagon")
-  if( length( indP) != n) {
-    print( c( n, length( indP) ))
-    stop("Number of  elements in grid attribute different from grid")
-  }
 # sparse distance matrix in spind format.
 # $ind are the indices that are nonzero
 # Since original 12 iocosahedral vertices are stored as the first 12 points in each grid, we can easily
-#  set their diagonal entries differently.
+#  set their diagonal entries differently if this is needed..
 # The B matrix is already in spind format and the entries  (ra) are 
 # converted to be the SAR matrix.
-# The actual distances returned might be used to fine tune the weighting 
-# as the distances vary some due the points not being on geodesics.
   B = LKDist(  grid[,1:2], grid[,1:2], delta = delta,
                   distance.type= dType)
 # find the diagonal elements of the sparse matrix
 # compute weights for slightly unequal distributions
-  
   ind1<- B$ind[,1]
   ind2<- B$ind[,2]
   Diagonal<- ind1==ind2
+  if( sum( Diagonal)!= nrow( grid)) {
+    stop( "Number of diagonal elements in B different from grid")}
     for (I in 1:n ){
     J<- ind2[ (ind1==I)&!Diagonal]
     nJ<- length(J) # this better be either 5 or 6 nearest neighbors!
-    x1<- grid[J,]
-    x0<- grid[I,]
+    x1<- grid3d[J,]
+    x0<- grid3d[I,]
     u<- projectionSphere( x0,x1) 
     # u are local 2 d coordinates on tangent plane to sphere at x0
     # x0 projects to (0,0)
     X<- cbind( rep( 1,nJ), u )
     c2<- (X)%*%(solve( t(X)%*%X, c( 1,0,0) )  )
     # c2 sum to 1 by properties of unbiasedness for constant function.
-    B$ra[J]<- -1*c2*nJ
+    print( c(c2))
+    B$ra[J]<- -1*c2
   }
-  
-  if( sum( Diagonal)!= nrow( grid)) {
-    stop( "Number of diagonal elements in B different from grid")}
-# take care of the 12 initial vertices with 5 NNs  
-  a.wghtAdjusted<- ifelse( indP, a.wght, (a.wght - 6) + 5 )
-  B$ra[Diagonal ] <- a.wghtAdjusted
+  B$ra[Diagonal ] <- a.wght
   return(B)
 # NOTE: B is converted to spam format in LKrig.precision   
 }

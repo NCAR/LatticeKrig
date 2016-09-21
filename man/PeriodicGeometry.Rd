@@ -38,7 +38,8 @@
 		They each have the four specific methods: \code{LKrigLatticeCenters},
 		\code{LKrigSAR}, \code{LKrigSetupLattice}, \code{setDefaultsLKinfo}
 		and the source code is consolidated in the source files ModelRing.R and 
-		ModelCylinder.R in the R subdirectory of this package source.
+		ModelCylinder.R in the R subdirectory of this package source. For the spherical grid the
+		a.wght is handled a but differently please read the note below.
 		
 		\bold{\code{LKSphere}} Recall that the core of the LatticeKrig model is the placement of
 		the basis function centers and how the spatial autoregression is constructed from these
@@ -54,7 +55,13 @@
 		The
 		triangles tend to roughly  equilateral and so the nodes will tend to be roughly equally
 		spaced
-		. See the help file on 
+		. 
+		\strong{NOTE:} Because the distances between nodes are not perfectly equally spaced  and nearest neighbors
+		can be either 5 or 6 some adjustment is made to the
+		weights when forming the SAR matrix. The net result is that it makes more sense to have the off
+		diagonal rows sum to 1 and so the a.wght must be greater than 1.0 for a stationary model. 
+		
+		See the help file on 
 		\code{link{IcosohedronFaces}} for code on visualzing these. The first 12 centers will
 		have 5
 		close neighbors and remaining centers will have 6. Currently the SAR weights are equal
@@ -162,7 +169,35 @@ world( add=TRUE)
 \dontrun{
 obj00<- LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 }
-
+# a synthetic example
+\dontrun{
+ set.seed(124)
+ N<- 1e4
+ NC<- 3
+  x0<- matrix( rnorm(3*N), ncol=3)
+  x0<- x0/ sqrt( rowSums( x0^2))
+  
+  x<-  toSphere( x0 )
+  
+  # the true function for testing -- a bump at the direction alpha
+  fun<- function(X){
+    alpha<-  c( .4,.2,1)
+    alpha<- alpha/ sqrt( sum( alpha^2))
+    4*( 1 + c(( X)%*%alpha) )^2 
+  }
+  
+  ytrue <- fun(x0)
+  y<- ytrue + .05*rnorm( length(ytrue))
+  xr=cbind( c(-180, 180), c(-90,90))
+  # this defines about 3300 basis functions
+  LKinfo1<- LKrigSetup( xr,
+                        NC=NC, LKGeometry="LKSphere", a.wght=1.01,
+                        nlevel=3, alpha = c(1.0,.5,.25)^2,
+                        choleskyMemory=list(nnzR= 20E6),
+                        normalize=FALSE)
+  out<- LatticeKrig( x,y, LKinfo=LKinfo1)                      
+surface( out)                        
+}
 }
 
 \seealso{
@@ -172,7 +207,6 @@ obj00<- LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 	\code{\link{LKrigLatticeCenters}}
 	}
 	
-}
 
 
 \keyword{ spatial }

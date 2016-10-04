@@ -189,7 +189,6 @@ LKrigSAR.LKSphere = function(object, Level, ...) {
     X<- cbind( rep( 1,nJ), u )
     c2<- (X)%*%(solve( t(X)%*%X, c( 1,0,0) )  )
     # c2 sum to 1 by properties of unbiasedness for constant function.
-    print( c(c2))
     B$ra[J]<- -1*c2
   }
   B$ra[Diagonal ] <- a.wght

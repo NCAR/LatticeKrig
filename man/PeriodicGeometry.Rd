@@ -140,37 +140,36 @@ basis functions in the model.
 \examples{
 # 	
 # fit the CO2 satellite data with a fixed lambda
-# (use a very small number of basis functions so example
+# (use a very small and unrealistic number of basis functions and levels so example
 #  runs quickly)
  data(CO2)
-  LKinfo0<- LKrigSetup( CO2$lon.lat, NC=2 ,nlevel=3,
-                       a.wght=6.1, alpha=c(1, .25, (.25)^2),
+  LKinfo0<- LKrigSetup( CO2$lon.lat, NC=1 ,nlevel=2,
+                       a.wght=6.1, alpha=c(1, .25),
                        LKGeometry="LKSphere" )                                         
   # Use MLE for lambda found below 
-  obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.00057)
+  obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.01068)
   surface(obj0)
   world( add=TRUE)
-
+\dontrun{
+obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
+}  
+\dontrun{
   LKinfo1<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1, lambda=.2,
                        a.wght=5, alpha=1, 
                        LKGeometry="LKRing" )                                         
-  obj1<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo1)	
+  obj1<- LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo1)	
 # take a look: 
 surface( obj1)
-world( add=TRUE)  
+world( add=TRUE) 
+}
 # compare to fitting without wrapping
 #  LKinfo2<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1,
 #                   lambda=.2, a.wght=5, alpha=1 )                                         
 #  obj2<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo2)	
 # not periodic in longitude:
 # surface(obj2)  
-#
-# estimating lambda  and a.wght by maximum likelihood using single level of basis functions
-#
-\dontrun{
-obj00<- LatticeKrig( CO2$lon.lat,CO2$y,nlevel=1, NC=5=6, findAwght=TRUE)
-}
-# a synthetic example
+
+# a synthetic example and larger example
 \dontrun{
  set.seed(124)
  N<- 1e4
@@ -199,6 +198,7 @@ obj00<- LatticeKrig( CO2$lon.lat,CO2$y,nlevel=1, NC=5=6, findAwght=TRUE)
   out<- LatticeKrig( x,y, LKinfo=LKinfo1)                      
 surface( out)                        
 }
+
 }
 
 \seealso{

@@ -45,6 +45,8 @@ LKrigFindLambda(x, y, ..., LKinfo,
 LKrigFindLambdaAwght(x, y, ..., LKinfo, use.cholesky = NULL,
     lowerBoundLogLambda = -16, 
     upperBoundLogLambda = 4, lowerBoundOmega = -5, upperBoundOmega = 2, 
+    factr= 1e6,
+                                 maxit=50,
     verbose = FALSE) 
 
                                  
@@ -98,6 +100,7 @@ over lambda.  }
 MLE.}
 \item{lowerBoundOmega}{Lower limit for omega in searching for
 MLE.}
+\item{maxit}{Maximum number of iterations (passed to optim function)}
 \item{nTasks}{If using Rmpi the number of slaves available.}
 \item{omega}{Value of the omega parameter to convert to  the a.wght format.  }
 \item{PARS}{ PAR[1]= log(lambda) and PAR[2]= .5*log(a.wght-4) (also referred to as \code{omega}).
@@ -114,7 +117,7 @@ details the other parts of the covariance specification (e.g. number
 of levels, grid sizes) that do not change.  Note that par.grid assumes
 \emph{ln} lambda not lambda. See details below for some other features
 of the par.grid arguments.  }
-
+\item{factr}{Controls convergence for the BFGS-L method. ( passed to optim).}
 \item{tol}{Tolerance on log likelihood use to determine convergence.}
 
 \item{taskID}{If using Rmpi the slave id.}

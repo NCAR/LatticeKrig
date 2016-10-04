@@ -6,6 +6,8 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                                  upperBoundLogLambda = 4,
                                  lowerBoundOmega = -5,
                                  upperBoundOmega =  2,
+                                 factr=1e6,
+                                 maxit=50,
                                  verbose=FALSE) {
   #require(stats)
   
@@ -77,7 +79,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                       lower=c(lowerBoundLogLambda,lowerBoundOmega), 
                       upper=c(upperBoundLogLambda,upperBoundOmega), 
                       method="L-BFGS-B",
-                      control=list(fnscale = -1,
+                      control=list(fnscale = -1,factr=factr, maxit=maxit,
                                      ndeps = c(.05,.05),
                                     factr =  1e10),
                       LKrigArgs=LKrigArgs,

@@ -15,10 +15,7 @@ S3method(predict, LKrig)
 S3method(predictSE, LKrig)
 S3method(predictSurface, LKrig)
 
-
-
 S3method( surface,LKrig)
-
 
 S3method(LKinfoCheck, default)
 S3method(LKrigSAR,LKBox)
@@ -26,6 +23,7 @@ S3method(LKrigSAR,LKCylinder)
 S3method(LKrigSAR,LKInterval)
 S3method(LKrigSAR,LKRectangle)
 S3method(LKrigSAR,LKRing)
+S3method(LKrigSAR,LKSphere)
 S3method(LKrigSAR,default)
 
 S3method(LKrigLatticeCenters,LKBox)
@@ -33,6 +31,7 @@ S3method(LKrigLatticeCenters,LKCylinder)
 S3method(LKrigLatticeCenters,LKInterval)
 S3method(LKrigLatticeCenters,LKRectangle)
 S3method(LKrigLatticeCenters,LKRing)
+S3method(LKrigLatticeCenters,LKSphere)
 S3method(LKrigLatticeCenters,default)
 
 S3method(LKrigLatticeScales,default)
@@ -42,6 +41,7 @@ S3method(LKrigSetupLattice,LKCylinder)
 S3method(LKrigSetupLattice,LKInterval)
 S3method(LKrigSetupLattice,LKRectangle)
 S3method(LKrigSetupLattice,LKRing)
+S3method(LKrigSetupLattice,LKSphere)
 S3method(LKrigSetupLattice,default)
 
 S3method(setDefaultsLKinfo,LKInterval)
@@ -49,9 +49,7 @@ S3method(setDefaultsLKinfo,LKBox)
 S3method(setDefaultsLKinfo,LKCylinder)
 S3method(setDefaultsLKinfo,LKRectangle)
 S3method(setDefaultsLKinfo,LKRing)
-S3method(setDefaultsLKinfo,default)
-
-
+S3method(setDefaultsLKinfo,LKSphere)
 S3method(setDefaultsLKinfo,default)
 
 S3method(LKrigNormalizeBasisFast,LKRectangle)

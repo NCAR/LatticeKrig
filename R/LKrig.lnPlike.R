@@ -37,7 +37,7 @@ LKrig.lnPlike<- function(GCholesky, Q, quad.form, nObs, nReps,
   lnDetReg <- 2 * sum(log(diag(GCholesky)))
   # log determinant of precision matrix.
   lnDetQ <- 2 * sum(log(diag(chol(Q, memory = LKinfo$choleskyMemory))))
-  # now apply a miraculous determinant identity (Sylvester''s theorem)
+  # now apply a miraculous determinant identity (Sylvester's theorem)
   #  det( I + UV) = det( I + VU)    providing UV is square
   # or more generally
   #  det( A + UV) = det(A) det( I + V A^{-1}U)

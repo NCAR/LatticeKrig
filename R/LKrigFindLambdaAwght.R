@@ -7,7 +7,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                                  lowerBoundOmega = -5,
                                  upperBoundOmega =  2,
                                  verbose=FALSE) {
-  require(stats)
+  #require(stats)
   
   # For rectangle omega = log(kappa) = log(sqrt(Awght-4))
   # but will change with other models. 
@@ -92,7 +92,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
     llambda.MLE <- result$par[1]
     lambda.MLE<- exp( llambda.MLE)
     omega.MLE<- result$par[2]
-    a.wght.MLE<- 4 + exp( 2 * omega.MLE) 
+    a.wght.MLE<- omega2Awght(omega.MLE,  LKrigArgs$LKinfo )
     LKrigArgs$NtrA <- 20
     
     LKrigObject <- do.call("LKrig", c(LKrigArgs,
@@ -128,7 +128,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   return(list(summary = out,
               LKinfo = LKrigObject$LKinfo,
               llambda.start = llambda.start,
-              Awght.start=4 + exp( 2 * omega.start),
+              Awght.start=omega2Awght( omega.start,LKrigArgs$LKinfo),
               lambda.MLE = lambda.MLE,
               a.wght.MLE = a.wght.MLE,
               omega.MLE =omega.MLE,

@@ -23,7 +23,8 @@
 \alias{LKrigFindLambdaAwght}
 \alias{LambdaAwghtObjectiveFunction}
 \alias{LKrig.make.par.grid}
-
+\alias{omega2Awght}
+\alias{Awght2Omega}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Simple function to search over covariance parameters for Lattice Krig.}
 \description{
@@ -41,13 +42,11 @@ LKrigFindLambda(x, y, ..., LKinfo,
                             lambda.profile=TRUE,
                             lowerBoundLogLambda=-16,tol = 0.005,
                             verbose=FALSE)
-LKrigFindLambdaAwght(x, y, ...,  LKinfo,
-                                 use.cholesky=NULL, 
-                                 lowerBoundLogLambda=-16,
-                                 upperBoundLogLambda=4,
-                                 lowerBoundAwght= 4 + exp(-5),
-                                 upperBoundAwght= 4 + exp(2),
-                                 verbose=FALSE)
+LKrigFindLambdaAwght(x, y, ..., LKinfo, use.cholesky = NULL,
+    lowerBoundLogLambda = -16, 
+    upperBoundLogLambda = 4, lowerBoundOmega = -5, upperBoundOmega = 2, 
+    verbose = FALSE) 
+
                                  
 LambdaAwghtObjectiveFunction(PARS, LKrigArgs, capture.env, verbose=FALSE )
 
@@ -59,9 +58,11 @@ LKrig.MLE( x,y,..., LKinfo, use.cholesky = NULL,
                     nTasks = 1, taskID = 1,
                     tol = 0.005)
 LKrig.make.par.grid(par.grid=NULL, LKinfo = NULL) 
+omega2Awght (omega, LKinfo)
+Awght2Omega (Awght, LKinfo)
 }
-
 \arguments{
+\item{Awght}{Value of Awght parameter to convert to omega form}
 \item{capture.env}{The enviornment to save to the likelihood evaluation to the 
 object \code{capture.evaluations}. }
 
@@ -95,11 +96,12 @@ over lambda.  }
 
 \item{lowerBoundLogLambda}{Lower limit for lambda in searching for
 MLE.}
-\item{lowerBoundAwght}{Lower limit for a.wght in searching for
+\item{lowerBoundOmega}{Lower limit for omega in searching for
 MLE.}
 \item{nTasks}{If using Rmpi the number of slaves available.}
-
-\item{PARS}{ PAR[1]= log(lambda) and PAR[2]= .5*log(a.wght-4)  For the LKRectangle
+\item{omega}{Value of the omega parameter to convert to  the a.wght format.  }
+\item{PARS}{ PAR[1]= log(lambda) and PAR[2]= .5*log(a.wght-4) (also referred to as \code{omega}).
+For the LKRectangle
 geometry.}
  \item{par.grid}{ A list with components llambda, alpha, a.wght giving
 the different sets of parameters to evaluate. If M is the number of
@@ -118,7 +120,9 @@ of the par.grid arguments.  }
 \item{taskID}{If using Rmpi the slave id.}
 
 \item{verbose}{If TRUE prints out intermediate results.}
-\item{upperBoundAwght}{Upper limit for a.wght in searching for
+\item{upperBoundOmega}{Upper limit for omega in searching for
+MLE.}
+\item{upperBoundLogLambda}{Upper limit for log lambda in searching for
 MLE.}
 \item{use.cholesky}{If not NULL then this object is used as the
 symbolic cholesky decomposition of the covariance matrix for computing
@@ -192,7 +196,13 @@ returns the index and the corresponding grid values.
 function that converts the list of parameters in par.grid and the
 LKinfo object into an more complex data structure used by
 LKrig.MLE. Its returned value is a "list of lists" to make the search
-over different parameters combinations simple.  
+over different parameters combinations simple. 
+
+\strong{omega2Awght, Awght2omega } Converts between the Awght parameter (the diagonal elements
+of the SAR matrix) and the omega parameter that provides an unconstrained range for optimization. 
+The link is \code{Awght <- LKinfo$floorAwght + exp(omega) * (xDimension)}. Note that LKinfo
+supplied the lower bound on the Awght becasue this is geometry/problem specific. For the 2-d rectangle
+this is 4. 
 
 }
 \value{

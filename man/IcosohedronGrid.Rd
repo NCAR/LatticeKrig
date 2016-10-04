@@ -1,9 +1,9 @@
 \name{IcosohedronGrid}
 \alias{IcosohedronGrid}
 \alias{IcosohedronFaces}
-\alias{toSphere}
+
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Icosoherdal multiresolution grid.
+\title{Icosoherdal multiresolution grids
 %%  ~~function to do ... ~~
 }
 \description{
@@ -15,12 +15,12 @@ icosohedron.
 IcosohedronGrid(K)
 
 IcosohedronFaces(K)
-toSphere(Grid)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{K}{ Number of levels.}
-  \item{Grid}{ An NX3 matrix of 3d points.}
+ 
 %%     ~~Describe \code{K} here~~
 }
 \details{

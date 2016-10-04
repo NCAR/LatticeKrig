@@ -14,7 +14,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-LatticeKrig<- function(x, y, Z=NULL,  nlevel=3,  
+LatticeKrig<- function(x, y, Z=NULL,  nlevel=3, findAwght=FALSE, 
                         LKinfo=NULL, X=NULL, U=NULL, na.rm=TRUE,
                         tol=.005, verbose=FALSE, ...){
   # a crisp wrapper where many default values are exercised.
@@ -50,14 +50,19 @@ LatticeKrig<- function(x, y, Z=NULL,  nlevel=3,
             if( verbose){
             	print(LKinfo)
             } 
- # find lambda   
+ # find lambda and/ or Awght   
+              if( !findAwght){
               obj<- LKrigFindLambda( x=x,y=y, X=X, U=U, Z=Z, LKinfo=LKinfo, tol=tol,
               verbose=verbose)
-              if( verbose){
-                print( obj$summary)
+                            LKinfo <- LKinfoUpdate( LKinfo, lambda= obj$lambda.MLE)
               }
-              LKinfo <- LKinfoUpdate( LKinfo, lambda= obj$lambda.MLE)
-              obj2<- c(  LKrig( x, y, Z=Z, X=X, U=U, LKinfo=LKinfo), list(MLE= obj) )             
+              else{
+                obj<- LKrigFindLambdaAwght( x=x,y=y, X=X, U=U, Z=Z, LKinfo=LKinfo,
+                                       verbose=verbose)
+                LKinfo <- LKinfoUpdate( LKinfo, lambda= obj$lambda.MLE, a.wght=obj$a.wght.MLE)
+              }                
+              
+                            obj2<- c(  LKrig( x, y, Z=Z, X=X, U=U, LKinfo=LKinfo), list(MLE= obj) )             
               class( obj2)<- c(  "LatticeKrig", "LKrig")
               obj2$call<- match.call()
               return( obj2)

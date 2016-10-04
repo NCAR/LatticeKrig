@@ -51,7 +51,7 @@ conditional simulation, and other parts of the spatial analysis. See
 
 
 \usage{
-LatticeKrig(x, y, Z = NULL, nlevel = 3, LKinfo = NULL,
+LatticeKrig(x, y, Z = NULL, nlevel = 3, findAwght = FALSE, LKinfo = NULL,
  X=NULL, U=NULL, na.rm =
                  TRUE, tol = 0.005, verbose = FALSE, ...)
 \method{print}{LatticeKrig}( x, digits=4, ...)
@@ -82,7 +82,9 @@ Or for the function \code{print.LatticeKrig} \code{x} is the returned object fro
    \item{nlevel}{Number of levels for the multi-resolution basis. Each
    level increases the number of basis functions by roughly a factor of
     4.}
-    
+    \item{findAwght}{If FALSE the default a.wght parameter (related to correlation range) is
+    set to mimic a thin plate spline. If TRUE this parameter and hence the range is
+    estimated my maximum likelihood. }
   \item{LKinfo}{An optional list giving the full specification of the
    covariance. If this is missing  it will be created internally and
    returned. If passed this parametrization will be used
@@ -249,16 +251,23 @@ LKrig, LKrig.setup, LKrigFindLambda, LKinfo, LKrig.sim.conditional
   Vlonlat <- diag(  c( 1/cos(meanLat), 1) )
   obj1<- LatticeKrig( x, y, V = Vlonlat )
 }
-#
-# The example below for North American Rainfall
-# has some more strategies for adjusting to an approximate spherical geometry.
 
+\dontrun{
+# Refit using with just one level of  basis functions
+# on a 20X20 grid witin the spatial domain ( so about 400) 
+# actually number is 720 ( see obj1b$LKinfo) due adding edge nodes and also 
+# aspect ratio of spatial domain 
+# and find the a.wght parameter along with nugget and process variances. 
+# this takes a while partly because LatticeKrig model is no optimized for small data sets!
+  obj1b<- LatticeKrig( x, y, nlevel=1, NC=20, findAwght=TRUE)
+}
 \dontrun{
 # Refit using the tensor product type of basis functions
 # (default is "Radial"). An example how an additional argument that is 
 # passed to the LKrigsetup function to create the LKinfo object.
   obj2<- LatticeKrig( x, y, BasisType="Tensor")
 }
+
 #
 # A 1-d example with 3 levels of basis functions
 # See LKrig for an explanation if nlevel, NC,  alpha and a.wght 
@@ -321,7 +330,7 @@ image.plot( as.surface( glist, yhat))
 \dontrun{
  data(COmonthlyMet)
 # Examining a few different "range" parameters
-a.wghtGrid<-  4  +  c( .1, .5, .8, 1, 2)^2
+a.wghtGrid<-  4  +  c(.05, .1, .5, 1, 2, 4)^2
 
 #NOTE smallest is "spline like" the largest is essentially independent
 # coefficients at each level.  In this case the "independent" end is
@@ -335,6 +344,11 @@ obj  <- LatticeKrig(CO.loc,  CO.tmin.MAM.climate, Z=CO.elev,
 cat( "a.wght:", a.wghtGrid[k], "ln Profile Like:",
             obj$lnProfileLike, "Eff df:", obj$trA.est, fill=TRUE)
 }
+
+# MLE
+obj0  <- LatticeKrig(CO.loc,  CO.tmin.MAM.climate, Z=CO.elev, 
+                     findAwght=TRUE)
+print(obj0$MLE$summary)
 }
 
 #########################################################################
@@ -370,8 +384,6 @@ colorTable<- designer.colors( 256, c("red4", "orange", "yellow","green1", "green
 image.plot( fitSurface, col=colorTable)
 map( "world", add=TRUE, col="grey30", lwd=3, proj="") 
 
-
-		
 }
 
 }

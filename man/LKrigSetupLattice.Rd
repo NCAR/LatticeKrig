@@ -53,10 +53,9 @@ LKrigSetupLattice(object, ...)
 }
 
 \arguments{
-\item{grid.info}{}
-  \item{object}{ A list that is an LKinfo object.
-
-}
+%\item{grid.info}{}
+  \item{object}{ A list that is an LKinfo object.}
+  
   \item{NC}{For cartesian geometries a parameter to specify to number of the
   	 grid points in the largest dimension of the spatial domain and for the 
   	 coarsest lattice.
@@ -66,17 +65,21 @@ LKrigSetupLattice(object, ...)
 	  NC^2 and NC^3 respectively. Note that the total number of lattice points
 	   at a given level is also effected the size of NC.buffer (see below). 
 }
+
   \item{NC.buffer}{The number of lattice points to add to the margins beyond the
   	 spatial domain. Thus in the largest spatial dimension there are a total of 
 		NC + NC.buffer*2 grid points. This is the number of lattice points for 
 		LKInterval.
-} 
+}
+
 \item{verbose}{If TRUE print out intermediate information for debugging.
 }
-\item{x}{Locations of the observations that define spatial domain. For LKSphere locations are in lon/lat degrees.}
-  \item{\dots}{Any additional arguments. 
-%%     ~~Describe \code{\dots} here~~
-}
+
+\item{x}{Locations of the observations that define spatial domain. For LKSphere locations
+are in lon/lat degrees.}
+
+\item{\dots}{Any additional arguments. }
+  
 }
 \details{
 	This method takes the LKInfo object and the other arguments and computes the 

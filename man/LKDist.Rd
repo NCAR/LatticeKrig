@@ -21,7 +21,6 @@
 \alias{LKDistGridComponents}
 \alias{LKGridCheck}
 \alias{LKGridFindNmax}
-\alias{directionCosines}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -51,8 +50,6 @@ x1, gridList, delta,
   max.points = NULL, mean.neighbor = NULL,
   distance.type = "Euclidean") 
 
-directionCosines(x)
-
 LKGridCheck(distance.type, x1, gridList )
 
 LKGridFindNmax(n1, max.points, mean.neighbor, delta, gridList)
@@ -63,8 +60,8 @@ LKGridFindNmax(n1, max.points, mean.neighbor, delta, gridList)
   	grid points for an equally spaced grid. Can have class
   	gridList. (See also help on gridlist).}	
   \item{n1}{Number of rows of x1.}
-  \item{x}{A two column matrix giving longitude/ latitude locations on a
-  	 sphere.}
+ % \item{x}{A two column matrix giving longitude/ latitude locations on a
+ %	 sphere.}
   \item{x1}{
   	A matrix with rows indexing locations and columns indexing coordinates.
 

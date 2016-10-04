@@ -164,10 +164,11 @@ world( add=TRUE)
 #  obj2<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo2)	
 # not periodic in longitude:
 # surface(obj2)  
-
-# estimating lambda by maximum likelihood
+#
+# estimating lambda  and a.wght by maximum likelihood using single level of basis functions
+#
 \dontrun{
-obj00<- LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
+obj00<- LatticeKrig( CO2$lon.lat,CO2$y,nlevel=1, NC=5=6, findAwght=TRUE)
 }
 # a synthetic example
 \dontrun{
@@ -183,7 +184,7 @@ obj00<- LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
   fun<- function(X){
     alpha<-  c( .4,.2,1)
     alpha<- alpha/ sqrt( sum( alpha^2))
-    4*( 1 + c(( X)%*%alpha) )^2 
+    4*( 1 + c(( X)\%*\%alpha) )^2 
   }
   
   ytrue <- fun(x0)

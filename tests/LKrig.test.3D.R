@@ -21,7 +21,7 @@ yTest<- predict( out1, xgrid)
 # accuracy within a few percent relative error.
 test.for.zero( mean( abs(yTest- yTrue)/yTrue), 0, relative=FALSE, tol=3e-2 )
 
-# Larger model
+# multi level  model
 
 LKinfo<- LKrigSetup( x,  nlevel=3,  a.wght= 8, alpha=c( 1,.5, .2),
                     NC=3, NC.buffer=1,

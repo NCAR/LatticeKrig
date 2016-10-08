@@ -45,7 +45,7 @@ Loading required package: maps
 
 
 > options(echo = FALSE)
-Time difference of 37.1377 secs
+Time difference of 30.70007 secs
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
 3.460776e+01 2.780944e+04 1.459371e+01 9.961891e-02 9.999295e-01 9.924628e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
@@ -57,6 +57,12 @@ Time difference of 37.1377 secs
 [1] 0.009927148
 Testing:   lambda MLE
 PASSED test at tolerance  1e-06
+       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
+4.737554e+01 6.873128e+04 4.797799e+00 5.018724e-02 9.980281e-01 2.523736e-03 
+  a.wght.MLE       lnLike functionEval gradientEval    totalEval 
+4.207021e+00           NA 1.300000e+01 1.300000e+01 6.600000e+01 
+PASSED test at tolerance  0.01
+PASSED test at tolerance  0.02
 > proc.time()
    user  system elapsed 
- 41.051   0.398  41.515 
+ 63.728   0.914  65.330 

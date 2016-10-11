@@ -52,14 +52,14 @@ c
       subroutine LKdistgrid( x1, n1, nGrid, nDim, delta,
      *     irow, jcol, ra, Nmax, iflag)
       integer n1, nDim, Nmax
-      real*8 x1(n1,nDim)
+      double precision x1(n1,nDim)
       integer nGrid(nDim)
-      real*8 delta
+      double precision delta
       integer irow(Nmax), jcol(Nmax)
-      real*8 ra(Nmax)
+      double precision ra(Nmax)
       integer iflag
-      real*8 delta2, deltaX(10)
-      real*8 dist2Temp, x1ijTemp
+      double precision delta2, deltaX(10)
+      double precision dist2Temp, x1ijTemp
       integer gridStep(10), cM(10), M(10)
       integer L
       integer indTemp, k, kk, kI, offset, prodM
@@ -76,7 +76,7 @@ c than 4
 c gridStep is the stride used to index each dimension
       gridStep(1) = 1
       do  j =  2, nDim
-    	  gridStep(j) =  gridStep(j-1)* nGrid(j-1)
+        gridStep(j) =  gridStep(j-1)* nGrid(j-1)
       enddo
 c begin loop over coordinate points (x1) 
 c kk is the counter for grid points that are within delta of the x1's   
@@ -156,14 +156,14 @@ c all is well ...
       subroutine LKdistgridcomp( x1, n1, nGrid, nDim, delta,
      *     irow, jcol, ra, Nmax, iflag)
       integer n1, nDim, Nmax
-      real*8 x1(n1,nDim)
+      double precision x1(n1,nDim)
       integer nGrid(nDim)
-      real*8 delta
+      double precision delta
       integer irow(Nmax), jcol(Nmax)
-      real*8 ra(Nmax,nDim)
+      double precision ra(Nmax,nDim)
       integer iflag
-      real*8 delta2, deltaX(10), x1ijTemp
-      real*8 distComp(10), distTemp
+      double precision delta2, deltaX(10), x1ijTemp
+      double precision distComp(10), distTemp
       integer gridStep(10), cM(10), M(10)
       integer L
       integer indTemp, k, kk, kI, offset, prodM
@@ -180,7 +180,7 @@ c than 4
 c gridStep is the stride used to index each dimension
       gridStep(1) = 1
       do  j =  2, nDim
-    	  gridStep(j) =  gridStep(j-1)* nGrid(j-1)
+        gridStep(j) =  gridStep(j-1)* nGrid(j-1)
       enddo
 c begin loop over coordinate points (x1) 
 c kk is the counter for grid points that are within delta of the x1's   
@@ -263,18 +263,18 @@ c all is well ...
 c234567
       subroutine LKdistgrid2( x1, nx1, mx, my, delta2, ind,
      + rd, Nmax, iflag)
-      real*8 x1(nx1,2)
+      double precision x1(nx1,2)
       integer nx1
       integer mx,my 
-      real*8 delta2
+      double precision delta2
       integer ind(Nmax,2)
-      real*8  rd(Nmax)
+      double precision  rd(Nmax)
       integer Nmax
       integer iflag
-      real*8 kstar, lstar
-	  integer m1,n1,m2,n2
+      double precision kstar, lstar
+      integer m1,n1,m2,n2
       integer kk, i
-      real*8  delta, dtemp
+      double precision  delta, dtemp
 c****   counter   do  accumulating close points
 c234567
       delta = sqrt( delta2)
@@ -282,19 +282,19 @@ c234567
       do i = 1, nx1
         kStar = x1(i,1)      
         lStar = x1(i,2)            
-	    m1 = max( ceiling(-delta+kStar),1)
-	    n1 = max( ceiling(-delta+lStar),1)
-	    m2 = min( floor(   delta+kStar),mx)
-	    n2 = min( floor(   delta+lStar),my)
+        m1 = max( ceiling(-delta+kStar), 1)
+        n1 = max( ceiling(-delta+lStar), 1)
+        m2 = min( floor(   delta+kStar),mx)
+        n2 = min( floor(   delta+lStar),my)
 c**** loop over all grid points that are in +- delta square about (kstar, lstar)
 c**** excluding edges 	  	   
-	    do k=m1, m2
-	       do l=n1, n2
-	          dtemp =  ((k-kStar)**2 + (l-lStar)**2)
-	          if( dtemp .le. delta2)	 then
-	             kk=kk+1
+        do k=m1, m2
+           do l=n1, n2
+             dtemp =  ((k-kStar)**2 + (l-lStar)**2)
+             if( dtemp .le. delta2) then
+               kk=kk+1
 c****         check if there is still array space 
-                 if( kk .gt. Nmax) then 
+               if( kk .gt. Nmax) then 
                     iflag= -1
                     return
                  else
@@ -302,14 +302,13 @@ c****         check if there is still array space
                     ind(kk,2)= k + (l-1)*my
                     rd(kk)= sqrt(dtemp)
                  endif 
-              endif     
-	      enddo
-	    enddo
- 
-c23456        
-	  enddo 
-	  Nmax=kk 
-	  iflag=1 
+              endif
+           enddo
+        enddo
+c23456
+      enddo 
+      Nmax=kk 
+      iflag=1 
       end
 
  

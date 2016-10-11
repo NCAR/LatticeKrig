@@ -18,9 +18,9 @@ c****  # GNU General Public License for more details.
      *   ind, rd, Nmax, iflag)
        integer n1,n2, dim, Nmax, iflag
        integer ind(Nmax,dim)
-       real*8 x1(n1,dim), x2(n2,dim), delta2, rd(Nmax)
-       integer kk, i,j, l, ic
-       real*8 dtemp
+       double precision x1(n1,dim), x2(n2,dim), delta2, rd(Nmax)
+       integer kk, i,j, l
+       double precision dtemp
 c****   counter  for accumulating close points
         kk=0 
           do  15 i= 1, n1
@@ -53,9 +53,9 @@ c**** check if there is still array space
      *  ind, rd, Nmax, iflag)
        integer n1,n2, dim, Nmax, iflag
        integer ind(Nmax,2)
-       real*8 x1(n1,dim), x2(n2,dim), delta, rd(Nmax,dim)
-       integer kk, i,j, l, ic
-       real*8 dtemp(dim), dtest
+       double precision x1(n1,dim), x2(n2,dim), delta, rd(Nmax,dim)
+       integer kk, i,j, l
+       double precision dtemp(dim), dtest
 c****   counter  for accumulating close points
         kk=0 
           do  15 i= 1, n1

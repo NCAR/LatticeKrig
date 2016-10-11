@@ -16,8 +16,8 @@ c****  # GNU General Public License for more details.
 
        subroutine dfind1d( x1, n1, x2, n2, delta2, ind, rd, Nmax, iflag)
        integer n1,n2,ind(Nmax,2)
-       integer kk, i,j, ic
-       real*8 x1(n1), x2(n2), delta2(n2), rd(Nmax), dtemp
+       integer kk, i,j
+       double precision x1(n1), x2(n2), delta2(n2), rd(Nmax), dtemp
 c****   counter  for accumulating close points
         kk=0 
           do  15 i= 1, n1
@@ -41,7 +41,6 @@ c**** check if there is still array space
  15      continue
          iflag=1
          Nmax=kk  
- 20      continue
       end
 
   

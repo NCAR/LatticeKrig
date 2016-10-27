@@ -45,7 +45,7 @@
 		the basis function centers and how the spatial autoregression is constructed from these
 		node
 		locations. Here the centers are generated according to a multiresolution based on the
-		triangles from an Icsohedron. \code{link{IcosohedronGrid}} creates a grid by taking the
+		triangles from an Icsohedron. \code{\link{IcosohedronGrid}} creates a grid by taking the
 		first
 		level as the 12 points from a regular icsohedron. The subsequent levels generate a finer
 		set
@@ -143,17 +143,30 @@ basis functions in the model.
 # (use a very small and unrealistic number of basis functions and levels so example
 #  runs quickly)
  data(CO2)
+# to look at raw data: quilt.plot(CO2$lon.lat, CO2$y, nx=288, ny=165)
   LKinfo0<- LKrigSetup( CO2$lon.lat, NC=1 ,nlevel=2,
                        a.wght=6.1, alpha=c(1, .25),
                        LKGeometry="LKSphere" )                                         
   # Use MLE for lambda found below 
   obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.01068)
-  surface(obj0)
+  surface(obj0, nx=288, ny=165)
   world( add=TRUE)
 \dontrun{
+# estimate lambda ( should be 0.01068)
 obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
-}  
+# a more serious model this uses about 3300 basis functions
+LKinfo0<- LKrigSetup( CO2$lon.lat, NC=3 ,nlevel=3,
+                       a.wght=6.1, alpha=c(1, .5, .25),
+                       LKGeometry="LKSphere" )
+                       
+obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
+# takes about 1 minute on a macbook air
+# setting findAwght = TRUE  takes about 8 minutes with 
+# lambda = 1.737 and a.wght = 15.8 (independence among basis coefficents)
+} 
+# a more serious model 
 \dontrun{
+    
   LKinfo1<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1, lambda=.2,
                        a.wght=5, alpha=1, 
                        LKGeometry="LKRing" )                                         

@@ -36,7 +36,7 @@ Description: Methods for the interpolation of large spatial
   representation makes the implementation of different geometries
   simple where only a few specific functions need to be added with
   most of the computation and evaluation done by generic routines that
-  have been tuned to be efficient.  One benefit of the LatticeKrig
+  have been tuned to be efficient.  One benefit of this package's
   model/approach is the facility to do unconditional and conditional
   simulation of the field for large numbers of arbitrary points. There
   is also the flexibility for estimating non-stationary covariances

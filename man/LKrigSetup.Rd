@@ -55,12 +55,17 @@ LKinfoUpdate(LKinfo, ... )
 \item{alpha}{A vector of length \code{nlevel} with the relative
 variances for the different multiresolution levels.  }
 
- \item{a.wght}{ A vector of length \code{nlevel} that are the weights
-  	for the central point in the Markov random field
-  	specification. To be precise at level k the center point has
-  	weight a.wght[k] with the 4 nearest neighbors given weight
-  	-1. The a.wght must be greater than 4 for the fields to be
-  	stationary.  }
+ \item{a.wght}{ In most cases, a vector of length \code{nlevel} that are the 
+    neighboring weights in the spatial autoregession. The setup function will
+    check that the value is in a valid range for a geometry.
+    
+  	The details of how this is connected to the covariance function varies
+  	based on the geometry. However, qualitatively this is related to a range parameter.
+  	For the LKRectangle geometry and a stationary model,  at level k the center point has
+  	weight 1 with the 4 nearest neighbors given weight
+  	-1/a.wght[k]. In this case a.wght must be greater than 4 for the fields to be
+  	stationary and following Lindgren and Rue the range parameter is approximately
+  	 \code{1/sqrt(a.wght-4)}  }
 
  \item{basisInfo}{ A list with extra components the object used to
   	describe the multiresolution basis.  Usually this will not be
@@ -110,7 +115,7 @@ do the Cholesky decomposition. See the \code{memory} argument in
   	supplied by \code{LKrigSetupLattice}.}
   	 
   \item{LKGeometry}{ A text string that gives the names of the model
-  	geometry.  The default is "LKrectangle" assuming the the
+  	geometry.  The default is "LKrectangle" assuming the 
   	spatial domain is a rectangle.  Other common choices are
   	"LKInterval" (1 d problem ) and "LKBox" (3 d problem) }
 
@@ -141,16 +146,20 @@ do the Cholesky decomposition. See the \code{memory} argument in
   \item{normalize}{ If TRUE the basis functions will be normalized to
   	give a marginal variance of one for each level of
   	multiresolution.  (Normalizing by levels makes it easier to
-  	interpret the \code{alpha} weights.)  } \item{nu}{ A
+  	interpret the \code{alpha} weights.)  } 
+  
+  \item{nu}{ A
   	smoothness parameter that controls relative sizes of
   	\code{alpha}.  Currently this parameter only makes sense for
-  	the 2D rectangular domain (LKRectangle) } \item{overlap}{
+  	the 2D rectangular domain (LKRectangle) } 
+  	
+  \item{overlap}{
   	Controls the overlap among the radial basis functions and
   	should be in units of the lattice spacing. For the rectangular
   	case the default of 2.5 means that the support of the Wenland
   	basis function will overlap 2.5 lattice units in each
-  	direction.  See \code{LKrig.basis} for how overlap enters
-  	scaling in the formula. }
+  	direction.  See \code{LKrig.basis} for how overlap adjusts
+  	scaling in the basis function formula. }
   	
   \item{rho}{ A scalar, the sill or marginal variance of the process.
   	} 

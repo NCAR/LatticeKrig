@@ -2,7 +2,7 @@ omega2Awght<- function( omega, LKinfo){
   # for a rectangle this should be:
   #  Awght <- 4 +  exp( omega)^2
   xDimension<- dim(LKinfo$x)[2]
-  Awght<- LKinfo$floorAwght + exp( omega)*(xDimension)
+  Awght<- LKinfo$floorAwght + exp( omega * xDimension )
   return( Awght )
 }
 

@@ -7,13 +7,17 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                                  lowerBoundOmega = -5,
                                  upperBoundOmega =  2,
                                  factr=1e6,
-                                 maxit=50,
+                                 maxit=15,
                                  verbose=FALSE) {
   #require(stats)
   
   # For rectangle omega = log(kappa) = log(sqrt(Awght-4))
   # but will change with other models. 
   # Parts of the LKrig call that will be fixed.  (except updates to LKinfo)                             
+  if( attr(LKinfo$a.wght,"aWghtType")!= "isotropic"){
+    stop("findAwght only setup to estimate a single a.wght parameter 
+         in the model.")
+  }
   LKrigArgs <- c(list(x = x, y = y), list( ...),
                  list( LKinfo=LKinfo, NtrA= 0  ))
   if( verbose){
@@ -80,8 +84,8 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                       upper=c(upperBoundLogLambda,upperBoundOmega), 
                       method="L-BFGS-B",
                       control=list(fnscale = -1,factr=factr, maxit=maxit,
-                                     ndeps = c(.05,.05),
-                                    factr =  1e10),
+                                     ndeps = c(.5,.5)),
+                                    
                       LKrigArgs=LKrigArgs,
                       capture.env= capture.env,
                       verbose=verbose
@@ -144,6 +148,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
 LambdaAwghtObjectiveFunction<- function(PARS, LKrigArgs, capture.env, verbose=FALSE ) {
   lambdaTemp <- exp( PARS[1] )
   a.wghtTemp <-  omega2Awght( PARS[2], LKrigArgs$LKinfo)
+  
   hold <- do.call("LKrig",          
                   c(LKrigArgs, list(
                     lambda = lambdaTemp,

@@ -175,7 +175,7 @@ stationary <- is.null(dim(a.wght[[1]]))
 	if (stationary) {
 		for (k in 1:length(a.wght)) {
 			N.a.wght <- length(a.wght[[1]])
-			# allowed lengths for a.wght are just the center 1 values
+			# allowed lengths for a.wght are just the center: 1 value
 			# or 9 values for center,  first, and second order neighbors
 if (is.na(match(N.a.wght, c(1, 9)))) {
 				stop("a.wght needs to be of length 1 or 9")
@@ -353,17 +353,17 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     if (first.order) {
         ra <- array(NA, c(mx1, mx2, 5))
         ra[, , 1] <- a.wght
-        ra[, , 2:5] <- -1
+        ra[, , 2:5] <- -1/a.wght
     }
     else {
         ra <- array(NA, c(mx1, mx2, 9))
         for (kk in 1:9) {
    # Note that correct filling happens both as a scalar or as an mx1 X mx2 matrix
             if (stationary) {
-                ra[, , kk] <- a.wght[index[kk]]
+                ra[, , kk] <- a.wght[index[kk]]/a.wght[index[5]]
             }
             else {
-                ra[, , kk] <- a.wght[, , index[kk]]
+                ra[, , kk] <- a.wght[, , index[kk]]/a.wght[, , index[5]]
             }
         }
     }

@@ -134,7 +134,10 @@ LKrig.basis <- function(x1, LKinfo, verbose = FALSE)
         }    
         }   
         # accumulate this new level of basis functions.
-        PHI <- cbind(PHI, PHItemp)
+        # explicit designation of spam prevents this being used 
+        # without the spam library 
+        # NOTE: when spam is loaded this is equivalent to just cbind( PHI, PHItemp)
+        PHI <- spam::cbind.spam(PHI, PHItemp)
     }
     # include a spatially varying multiplication of process.
     if (!is.null( LKinfo$rho.object) ) {

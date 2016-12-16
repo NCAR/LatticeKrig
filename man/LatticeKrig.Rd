@@ -238,6 +238,11 @@ LKrig, LKrig.setup, LKrigFindLambda, LKinfo, LKrig.sim.conditional
   points(x)
 # prediction standard errors
   out.se<- predictSE( obj, xnew= x)
+# predict at observations:
+  out.fhat<- predict( obj, xnew= x)
+# coveniently predict on a 100X100 grid for plotting
+ out.surf<- predictSurface( obj, nx=100, ny=100)
+# image.plot( out.surf) 
 }
 #
 # In this example lon/lat are treated as just Euclidean coordinates 
@@ -260,6 +265,14 @@ LKrig, LKrig.setup, LKrigFindLambda, LKinfo, LKrig.sim.conditional
 # and find the a.wght parameter along with nugget and process variances. 
 # this takes a while partly because LatticeKrig model is no optimized for small data sets!
   obj1b<- LatticeKrig( x, y, nlevel=1, NC=20, findAwght=TRUE)
+# rudimentary look at how likelihood was optimized
+#log lambda and omega =  log(a.wght-4)/2 are useful parametrizations ...
+  quilt.plot( obj1b$MLE$lnLike.eval[,c("logLambda","omega")],
+       obj1b$MLE$lnLike.eval[,"lnProfileLike.FULL"], 
+       xlab="loglamda", ylab="omega",
+       zlim =c(-640,-612))
+  points( obj1b$MLE$lnLike.eval[,c("logLambda","omega")],cex=.25)
+      
 }
 \dontrun{
 # Refit using the tensor product type of basis functions

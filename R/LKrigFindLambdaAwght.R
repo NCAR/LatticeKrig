@@ -4,9 +4,9 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                                  use.cholesky=NULL, 
                                  lowerBoundLogLambda =-16,
                                  upperBoundLogLambda = 4,
-                                 lowerBoundOmega = -5,
-                                 upperBoundOmega =  2,
-                                 factr=1e6,
+                                 lowerBoundOmega = -3,
+                                 upperBoundOmega =  .75,
+                                 factr=1e7,
                                  maxit=15,
                                  verbose=FALSE) {
   #require(stats)
@@ -14,7 +14,7 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   # For rectangle omega = log(kappa) = log(sqrt(Awght-4))
   # but will change with other models. 
   # Parts of the LKrig call that will be fixed.  (except updates to LKinfo)                             
-  if( attr(LKinfo$a.wght,"aWghtType")!= "isotropic"){
+  if( !attr(LKinfo$a.wght,"isotropic") ){
     stop("findAwght only setup to estimate a single a.wght parameter 
          in the model.")
   }
@@ -62,10 +62,10 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
       verbose = FALSE)))
 # Update the LKrigArgs with cholesky decomp and wU  
  LKrigArgs$use.cholesky<- LKrigObject$Mc
- LKrigArgs$wU<- LKrigObject$wU
+ LKrigArgs$wU<- LKrigObject$wUb
 #
-  capture.evaluations <-  rbind( c(lambdaTemp,
-                                 a.wghtTemp,
+  capture.evaluations <-  rbind( c(lambdaTemp,llambda.start,
+                                 a.wghtTemp, omega.start,
                                  LKrigObject$rho.MLE.FULL,
                                  LKrigObject$sigma.MLE.FULL,
                                  LKrigObject$lnProfileLike.FULL) 
@@ -83,8 +83,9 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                       lower=c(lowerBoundLogLambda,lowerBoundOmega), 
                       upper=c(upperBoundLogLambda,upperBoundOmega), 
                       method="L-BFGS-B",
-                      control=list(fnscale = -1,factr=factr, maxit=maxit,
-                                     ndeps = c(.5,.5)),
+                      control=list(fnscale = -1,factr=factr,
+                                    pgtol=1e-1, maxit=maxit,
+                                     ndeps = c(.05,.05)),
                                     
                       LKrigArgs=LKrigArgs,
                       capture.env= capture.env,
@@ -130,7 +131,8 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   
   # Name columns  of likelihood eval. 
   dimnames(capture.evaluations)<- list( NULL,
-                c("lambda","a.wght", "rho.MLE", "sigma.MLE","lnProfileLike.FULL"))
+                c("lambda","logLambda","a.wght","omega",
+                  "rho.MLE", "sigma.MLE","lnProfileLike.FULL"))
   return(list(summary = out,
               LKinfo = LKrigObject$LKinfo,
               llambda.start = llambda.start,
@@ -155,8 +157,8 @@ LambdaAwghtObjectiveFunction<- function(PARS, LKrigArgs, capture.env, verbose=FA
                     a.wght = a.wghtTemp)
                   )
   )[c("rho.MLE.FULL","sigma.MLE.FULL","lnProfileLike.FULL")] 
-  rowForCapture <-c( lambdaTemp,
-                     a.wghtTemp,
+  rowForCapture <-c( lambdaTemp,PARS[1],
+                     a.wghtTemp,PARS[2],
                      hold$rho.MLE.FULL,
                      hold$sigma.MLE.FULL,
                      hold$lnProfileLike.FULL 

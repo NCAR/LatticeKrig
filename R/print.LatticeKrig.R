@@ -46,24 +46,48 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 		c1 <- c(c1, "   Standard Error of EDF estimate: ")
 		c2 <- c(c2, signif(x$trA.SE, digits))
 	}
-	c1 <- c(c1, "MLE lambda = sigma^2/rho ")
-	c2 <- c(c2, signif(x$lambda, digits))
+	
 	if (NData == 1) {
 		c1 <- c(c1, "MLE sigma ")
-		c2 <- c(c2, signif(x$shat.MLE, digits))
+		c2 <- c(c2, signif(x$sigma.MLE, digits))
 		c1 <- c(c1, "MLE rho")
 		c2 <- c(c2, signif(x$rho.MLE, digits))
 	}
-
+	else {
+	  c1 <- c(c1, "Combined MLE sigma  ")
+	  c2 <- c(c2, signif(x$sigma.MLE.FULL, digits))
+	  c1 <- c(c1, "Combined MLE rho")
+	  c2 <- c(c2, signif(x$rho.MLE.FULL, digits))
+	}
+	if( x$findAwght){
+	  c1 <- c(c1, "MLE a.wght")
+	  c2 <- c(c2, signif(x$MLE$a.wght.MLE, digits))
+	}
+	
+	c1 <- c(c1, "MLE lambda = sigma^2/rho ")
+	c2 <- c(c2, signif(x$lambda, digits))
+	
 	sum <- cbind(c1, c2)
 	dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
 	cat("Call:\n")
 	dput(x$call)
 	print(sum, quote = FALSE)
 	cat(" ", fill = TRUE)
-	cat("sigma and rho found by maximum likelihood for ", fill = TRUE)
+	
+	if( !x$findAwght){
+	cat("sigma and rho found by maximum likelihood for ", fill = TRUE)  
 	cat("fixed values of alpha and a.wght", fill = TRUE)
+	cat(" Summary of MLE computation:, fill=TRUE")
+	print( x$MLE$summary)
 	cat(" ", fill = TRUE)
+	}
+	else{
+	  cat(" parameters sigma, rho, and the a.wght found  ", fill = TRUE)  
+	  cat("by maximum likelihood for fixed values of alpha", fill = TRUE)
+	  cat(" Summary of MLE computation:", fill=TRUE)
+	  print( x$MLE$summary)
+	  cat(" ", fill = TRUE)
+	}
 	#    
 	if (is.null(x$LKinfo$fixedFunction)) {
 		cat("No fixed part of model", fill = TRUE)

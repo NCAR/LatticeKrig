@@ -26,7 +26,7 @@ LKrigSetupAlpha <- function(object, ...){
 LKrigSetupAlpha.default<- function( object, ...){
    alpha <- object$alpha
    nlevel <- object$nlevel
-# some obvious defaults for alpha to simplify calls from LatticeKrig or LKrig.   
+# some obvious defaults for alpha to simplify calls from LatticeKrig or LKrig. 
    if( is.na(alpha[1]) ) {
        if( nlevel==1){
           alpha<- 1.0
@@ -44,7 +44,7 @@ LKrigSetupAlpha.default<- function( object, ...){
           alpha<- rep( NA, nlevel)
           }
        }
-    }
+   }
     scalar.alpha <- !is.list(alpha) 
     if (scalar.alpha & (nlevel != 1) & (length(alpha) == 1)){
                 stop( "Only one alpha specifed for multiple levels")}     

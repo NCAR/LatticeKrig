@@ -43,6 +43,7 @@ LKrigSetup <- function(x = NULL,
 # useful for debugging                       
                        verbose = FALSE, noCheck=FALSE,
                        returnCall = FALSE,
+                       dense=FALSE,
 # these additional arguments will just be added as a list to the LKinfo object as setupArgs
                           ... ) { 
 #
@@ -71,7 +72,8 @@ LKrigSetup <- function(x = NULL,
                max.points = max.points,
             mean.neighbor = mean.neighbor,
            choleskyMemory = choleskyMemory,
-                setupArgs =  setupArgs
+                setupArgs =  setupArgs,
+                    dense = dense
                  ) 
 # 
     LKinfo$basisInfo<- list(             BasisType = BasisType,
@@ -123,7 +125,7 @@ LKrigSetup <- function(x = NULL,
       if( verbose){
         print(alpha)}
 # fix up the a.wght parameters specfic geometries might need 
-# a specific function here. 
+# a specific function here.
       LKinfo$a.wght<-LKrigSetupAwght(LKinfo)
 # set lambda if sigma and rho are passed.
     if (is.na(lambda[1])) {

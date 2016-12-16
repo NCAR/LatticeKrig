@@ -140,6 +140,7 @@ LKrigSetupAwght.LKRectangle <- function(object, ...) {
 	a.wght <- object$a.wght
 	nlevel <- object$nlevel
 	mx <- object$latticeInfo$mx
+	isotropic<- ifelse( length( a.wght)==1, TRUE, FALSE)
        
 	if (!is.list(a.wght)) {
 		# some checks on a.wght
@@ -209,6 +210,7 @@ if (fastNormalization) {
 	attr(a.wght, which = "fastNormalize") <- fastNormalization
 	attr(a.wght, which = "first.order") <- first.order
 	attr(a.wght, which = "stationary") <- stationary
+	attr(a.wght, which = "isotropic") <- isotropic
 	#
 	return(a.wght)
 }
@@ -334,8 +336,9 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     if( any(unlist(a.wght)<4) ){
         stop("a.wght less than 4")
       }
-    stationary<-     attr( object$a.wght, "stationary")
+    stationary <-     attr( object$a.wght, "stationary")
     first.order<-    attr( object$a.wght, "first.order")
+    isotropic  <- attr(object$LKinfo$a.wght, "isotropic")
     distance.type <-  object$distance.type
     
     #  pass a.wght as an (mx1 by mx2)  matrix
@@ -353,17 +356,17 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     if (first.order) {
         ra <- array(NA, c(mx1, mx2, 5))
         ra[, , 1] <- a.wght
-        ra[, , 2:5] <- -1/a.wght
+        ra[, , 2:5] <- -1
     }
     else {
         ra <- array(NA, c(mx1, mx2, 9))
         for (kk in 1:9) {
    # Note that correct filling happens both as a scalar or as an mx1 X mx2 matrix
             if (stationary) {
-                ra[, , kk] <- a.wght[index[kk]]/a.wght[index[5]]
+                ra[, , kk] <- a.wght[index[kk]]
             }
             else {
-                ra[, , kk] <- a.wght[, , index[kk]]/a.wght[, , index[5]]
+                ra[, , kk] <- a.wght[, , index[kk]]
             }
         }
     }

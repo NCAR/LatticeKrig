@@ -42,12 +42,11 @@ LKrigFindLambda(x, y, ..., LKinfo,
                             lambda.profile=TRUE,
                             lowerBoundLogLambda=-16,tol = 0.005,
                             verbose=FALSE)
+			    
 LKrigFindLambdaAwght(x, y, ..., LKinfo, use.cholesky = NULL,
-    lowerBoundLogLambda = -16, 
-    upperBoundLogLambda = 4, lowerBoundOmega = -5, upperBoundOmega = 2, 
-    factr= 1e6,
-                                 maxit=50,
-    verbose = FALSE) 
+                 lowerBoundLogLambda = -16, upperBoundLogLambda = 4,
+                 lowerBoundOmega = -3, upperBoundOmega = 0.75, factr =
+                 1e+07, maxit = 15, verbose = FALSE)
 
                                  
 LambdaAwghtObjectiveFunction(PARS, LKrigArgs, capture.env, verbose=FALSE )
@@ -276,31 +275,32 @@ matrices.
 \examples{
 # 
 # fitting summer precip for  sub region of North America
+# total precip in 1/10 mm for JJA 
   data(NorthAmericanRainfall)
 # rename for less typing
   x<- cbind( NorthAmericanRainfall$longitude, NorthAmericanRainfall$latitude)
-# total precip in 1/10 mm for JJA 
- y<- log10(NorthAmericanRainfall$precip)
+  y<- log10(NorthAmericanRainfall$precip)
 # cut down the size of this data set so examples run quickly
-# examples also work with  the full data set. Also try NC= 100 for a
-# nontrivial model.
   ind<- x[,1] > -90 & x[,2] < 35 #
   x<- x[ind,]
   y<- y[ind]
 
 # This is a single level smoother
  
-  LKinfo<- LKrigSetup(x,NC=8,nlevel=1, a.wght=4.2, alpha=1.0)
+  LKinfo<- LKrigSetup(x,NC=25,nlevel=1, a.wght=5, alpha=1.0)
   lambdaFit<- LKrigFindLambda( x,y,LKinfo=LKinfo)
   lambdaFit$summary
 \dontrun{  
-# MLEs for a.wght and lambda:
+# MLEs for a.wght and lambda using unconstarined and constrained MLE
 aWghtFit<- LKrigFindLambdaAwght( x,y,LKinfo=LKinfo)
+aWghtFit0<- LKrigFindLambdaAwght0( x,y,LKinfo=LKinfo)
 aWghtFit$summary
+aWghtFit0$summary
 # cross check
 LKinfo1<- LKinfoUpdate( LKinfo, a.wght= aWghtFit$a.wght.MLE)
-lambdaFit1<- LKrigFindLambda( x,y,LKinfo=LKinfo1, tol=1e-6)
+lambdaFit1<- LKrigFindLambda( x,y,LKinfo=LKinfo1)
 lambdaFit1$summary
+test.for.zero(lambdaFit1$summary[2],aWghtFit$summary[2], tol=5e-7  )
 }
 
 # grid search over parameters 
@@ -334,7 +334,7 @@ NG<-3
   LKinfo<- LKrigSetup(x,NC=12,nlevel=1, a.wght=5, alpha=1.0) 
   lambda.search.results<-LKrig.MLE(
                               x,y,LKinfo=LKinfo, par.grid=par.grid,
-                              lambda.profile=TRUE, verbose=TRUE)
+                              lambda.profile=TRUE)
   print(lambda.search.results$summary)
 # note first result a.wght = 4.05 is the optimized result for the grid
 # search given above.
@@ -358,7 +358,8 @@ NG<-3
   x<- x[ind,]
   y<- y[ind]
   
-  Ndes<- 10  # NOTE: this is set very small just to make example run fast
+  Ndes<- 10  
+# NOTE: this is set is  very small just to make example run fast
   set.seed(124)
   par.grid<- list()
 # create grid of alphas to sum to 1 use a mixture model parametrization
@@ -412,7 +413,7 @@ NG<-3
 ## the search over the parameter list in par.grid  maximizing over lambda 
   search.results<- LKrig.MLE( x,y,LKinfo=LKinfo1, par.grid=par.grid,
                                  lambda.profile=TRUE)
-# plotting results
+# plotting results of likelihood search
 set.panel(1,2)
  plot( search.results$summary[,1:2], 
          xlab="effective degrees freedom",
@@ -439,22 +440,46 @@ x<- x[good,]
 par.grid<- expand.grid( nu=seq(.5,1.5,,4), a.wght=c(4.01,4.1, 4.2,4.5,5))
 par.grid$llambda<- rep( NA, length(par.grid$nu))
 LKinfo<- LKrigSetup(x,  nlevel=3,NC=5)
-out<- LKrig.MLE( x,y, LKinfo=LKinfo, par.grid=par.grid, verbose=TRUE)
+out<- LKrig.MLE( x,y, LKinfo=LKinfo, par.grid=par.grid)
 }
 \dontrun{
 # an MLE fit taking advantage of replicated fields
-set.seed(222)
-N<- 500
-M<-100
-sigma<- .1
+
+N<- 200
+M<-10
+sigma<- sqrt(.01)
+set.seed(123)
 x<- matrix( runif(N*2), N,2)
-LKinfo<- LKrigSetup( x, NC=5, nlevel=4,nu=1.0, a.wght=4.2 )
+                
+LKinfo<- LKrigSetup( x, NC=16, nlevel=1,
+                 a.wght=4.5, lambda=.01, 
+                fixed.Function=NULL,
+                normalize=TRUE)  
+                
 # the replicate fields
-y<- LKrig.sim(x,LKinfo=LKinfo, M=M ) + sigma*matrix( rnorm(N*M), N,M)
+truef<-  LKrig.sim(x,LKinfo=LKinfo, M=M )
+set.seed(222)
+error<- sigma*matrix( rnorm(N*M), N,M)
+y<- truef + error 
 # with correct lambda
-obj<- LKrig( x,y, LKinfo=LKinfo, lambda=.1)
-print( obj$sigma.MLE)
-print( obj$rho.MLE)
+obj<- LKrig( x,y, LKinfo=LKinfo, lambda=.01, )
+print( obj$sigma.MLE.FULL)
+print( obj$rho.MLE.FULL)
+
+fitMLE1<- LKrigFindLambda( x,y, LKinfo=LKinfo)
+fitMLE1$summary
+aWghtGrid<-  c( 4.01, 4.05, 4.1, 4.2, 4.5, 4.7, 5, 8, 16)
+par.grid<- list( a.wght = aWghtGrid)
+
+fitMLE2<- LKrig.MLE( x,y, LKinfo=LKinfo,
+                      par.grid= par.grid )
+fitMLE2$summary    
+plot(  log( aWghtGrid -4)/2, fitMLE2$summary[,2])
+
+LKinfo1<- LKinfoUpdate( LKinfo, lambda=.1, a.wght= 4.2)                   
+fitMLE4<- LKrigFindLambdaAwght( x,y, LKinfo=LKinfo1)
+fitMLE4$summary[2]
+
 }
 
 }

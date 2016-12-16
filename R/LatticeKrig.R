@@ -65,6 +65,7 @@ LatticeKrig<- function(x, y, Z=NULL,  nlevel=3, findAwght=FALSE,
                             obj2<- c(  LKrig( x, y, Z=Z, X=X, U=U, LKinfo=LKinfo), list(MLE= obj) )             
               class( obj2)<- c(  "LatticeKrig", "LKrig")
               obj2$call<- match.call()
+              obj2$findAwght<- findAwght
               return( obj2)
             }
 

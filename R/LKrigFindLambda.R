@@ -31,9 +31,7 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
     if( verbose){
     	cat( "LKrigFindLambda: Complete set of LKrigArgs:", names(LKrigArgs ), fill=TRUE)
     }               
-    out <- rep(NA, 9)
-    names( out) <-  c("EffDf", "lnProfLike", "GCV", 
-        "sigma.MLE", "rho.MLE", "llambda.opt", "lnLike", "counts value", "grad")
+   
     capture.evaluations <- matrix(NA, ncol = 4, nrow = 1, 
                 dimnames = list(NULL, c("lambda", "rho.MLE",
                                          "sigma.MLE", "lnProfileLike.FULL")))
@@ -94,7 +92,8 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
             temp.eval <- get("capture.evaluations")
             assign("capture.evaluations",rbind(temp.eval, rowForCapture),
              envir = capture.env)
-                             return(lnProfileLike.FULL)}
+                             return(lnProfileLike.FULL)
+            }
 #    
 # the try wrapper captures case when optim fails.   
             capture.env <- environment()
@@ -105,40 +104,71 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
             	print( look)
             }
             evalSummary <- !(class( look)== "try-error")
-            llambda.opt <- look$maximum   
+            llambda.MLE <- look$maximum  
+            lambda.MLE =  exp(llambda.MLE)
             optim.counts <- nrow( capture.evaluations) + 2
             LKrigArgs$NtrA <- 20
- 
+# surgery on the args list to update lambda with the MLE.
+#            LKrigArgs$LKinfo<- LKinfoUpdate(LKrigArgs$LKinfo,lambda = lambda.MLE  )
             LKrigObject <- do.call("LKrig", c(LKrigArgs,
                                     list(use.cholesky = Mc.save,
                                                    wX = wX.save,
                                                    wU = wU.save,
-                                               lambda = exp(llambda.opt)))
-                                   )                                                   
-  }
+                                               lambda = lambda.MLE)
+                                              )
+                                   )
+   }
+  
 ###### end optimze block    
 # save summary results from this set of parameters.
-   out[ 1] <- LKrigObject$trA.est
-   out[ 2] <- LKrigObject$lnProfileLike.FULL
-   out[ 3] <- LKrigObject$GCV
-   out[ 4] <- LKrigObject$sigma.MLE.FULL
-   out[ 5] <- LKrigObject$rho.MLE.FULL
-   out[ 6] <- llambda.opt
-   out[ 7] <- LKrigObject$lnLike.FULL
-   out[ 8] <- optim.counts
-   out[ 9] <- NA
+  if( lambda.profile ){  
+   out <-  c( LKrigObject$trA.est,
+              LKrigObject$lnProfileLike.FULL,
+              LKrigObject$GCV,
+              LKrigObject$sigma.MLE.FULL,
+              LKrigObject$rho.MLE.FULL,
+              lambda.MLE,
+              llambda.MLE,
+              LKrigObject$lnLike.FULL,
+              optim.counts,
+              NA)
+   
+   names( out) <-  c("EffDf", "lnProfLike", "GCV", 
+                     "sigma.MLE", "rho.MLE", "lambda.MLE",
+                     "llambda.MLE", "lnLike",
+                     "counts value", "grad")
+   }
+   else{
+# simple clean up when optimization is not done    
+     out <-  c( LKrigObject$trA.est,
+                LKrigObject$lnProfileLike.FULL,
+                LKrigObject$GCV,
+                LKrigObject$sigma.MLE.FULL,
+                LKrigObject$rho.MLE.FULL,
+                exp( llambda.start),
+                llambda.start,
+                LKrigObject$lnLike.FULL,
+                NA,
+                NA)
+     
+      lambda.MLE<- exp( llambda.start)
+      names( out) <-  c("EffDf", "lnProfLike", "GCV", 
+                       "sigma.MLE", "rho.MLE", "lambda",
+                       "llambda", "lnLike",
+                       "counts value", "grad")
+   }
+   
    return(list(summary = out,
                 LKinfo = LKinfo,
          llambda.start = llambda.start,
-            lambda.MLE =  exp(llambda.opt),
-           lnLike.eval = capture.evaluations,
-                  call = match.call()
-                  )
+            lambda.MLE = lambda.MLE,
+               lnLike.eval = capture.evaluations
+               )
+# call omitted because it can substitute actual
+# values and get large
+#                  call = match.call()
+#                  )
           )        
-#omitted these                  ,
-#                    Mc = Mc.save,
-#                    wX = wX.save,
-#                    wU = wU.save )
-#          )
+
 }
 

@@ -619,10 +619,10 @@ mKrig, Krig, fastTps, Wendland, LKrig.coef, Lkrig.lnPlike,
  LKrig.precision
 }
 \examples{
-# NOTE: CRAN requires that the "run" examples to execute within  5 seconds. 
+# NOTE: CRAN requires that the "run" examples  execute within  5 seconds. 
 # so to meet this constraint many of these have been 
 # severely limited to be quick, typically making NC and nlevel
-# unreasonably small.
+# very small.
 	
 # Load ozone data set
   data(ozone2)  
@@ -640,7 +640,7 @@ mKrig, Krig, fastTps, Wendland, LKrig.coef, Lkrig.lnPlike,
   print(obj1)
 #  
 # this is the same as:
-#  LKinfoEX<- LKrigSetup( x,y, a.wght5, nlevel=3, nu=1.0, NC=4)
+#  LKinfoEX<- LKrigSetup( x, a.wght=5, nlevel=3, nu=1.0, NC=4)
 #  obj1<- LKrig( x,y, LKinfo= LKinfoEX, lambda=.1)  
 
 # thin plate spline-like model with the lambda parameter estimated by
@@ -928,7 +928,7 @@ out1<- LatticeKrig(x,yIndirect, U=U, X=X, LKinfo=LKinfo)
 #
 plot( predict(out0,x), predict( out1,x))
 
-out<- LKrig.sim.conditional( out1,M=5, nx=10, ny=10,verbose=TRUE )
+out<- LKrig.sim.conditional( out1,M=5, nx=10, ny=10 )
 }	
 
 }

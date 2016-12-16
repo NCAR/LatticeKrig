@@ -32,9 +32,19 @@ LKrig.MLE <- function(x, y, ..., LKinfo, use.cholesky=NULL, par.grid = NULL,
     NG1<- indexTemp[taskID] + 1
     NG2<- indexTemp[taskID+1]
     #
-    out <- matrix(NA, nrow = NG, ncol = 9,
-                  dimnames = list(NULL, c("EffDf", "lnProfLike", "GCV", 
-                  "sigma.MLE", "rho.MLE", "llambda.MLE", "lnLike", "counts value", "grad")))
+    # kludge to fix labels!
+    out <- matrix(NA, nrow = NG, ncol = 10)
+    if( lambda.profile){
+    dimnames(out)<-  list(NULL, c("EffDf", "lnProfLike", "GCV", 
+                  "sigma.MLE", "rho.MLE","lambda.MLE", "llambda.MLE", 
+                  "lnLike", "counts value", "grad") )
+    }
+    else{
+    dimnames(out)<-  list(NULL, c("EffDf", "lnProfLike", "GCV", 
+                                    "sigma.MLE", "rho.MLE","lambda", "llambda", 
+                                    "lnLike", "counts value", "grad") )
+    }
+    
     optim.counts <- rep(NA, 2)
     # evaluate parameters but do an optimzation over lambda
     lnProfileLike.max <- -1e+20
@@ -47,7 +57,7 @@ LKrig.MLE <- function(x, y, ..., LKinfo, use.cholesky=NULL, par.grid = NULL,
      # first fit to get cholesky symbolic decomposition
         LKinfo.temp<- do.call("LKinfoUpdate",c( list(LKinfo=LKinfo),list(
                                    a.wght = (par.grid$a.wght[[k]]),
-                                    alpha =  (par.grid$alpha[[k]]),
+                                    alpha = (par.grid$alpha[[k]]),
                                        nu = par.grid$nu[k],
                                    lambda = exp(llambda.start)
                                     ) )

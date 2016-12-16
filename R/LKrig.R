@@ -104,14 +104,24 @@ timeQ<-system.time(
         )
         if( verbose){
 		cat("LKrig: Nonzero entries in Q:", length(Q@entries), fill=TRUE)		
-	}
+        }
+if( LKinfo$dense){
+  Q<- spam2full(Q)
+  wX<- spam2full(wX)
+}
+
 # G is the regularized (ridge) regression matrix that is 
 # the key to the entire algorithm:
 timeM<- system.time(	
 	G <- t(wX) %*% wX + LKinfo$lambda * (Q)
 	)
 	if( verbose){
-		cat("LKrig: Nonzero entries in M:", length(G@entries), fill=TRUE)		
+	  if( !LKinfo$dense){
+	    cat("LKrig: Nonzero entries in M:", length(G@entries), fill=TRUE)	
+	  }
+	  else{
+	    cat( "Dense matrix methods used", fill=TRUE)
+	  }
 	}	
 #  Find Cholesky square root of M
 #  This is where the heavy lifting happens!  M is in sparse, spam format so
@@ -134,9 +144,16 @@ if (is.null(use.cholesky)) {
 		GCholesky <- update.spam.chol.NgPeyton(use.cholesky, G)
 		)
 	}
-     if( verbose){
-     	cat("LKrig: nonzero entries of GCholesky:",length(GCholesky@entries), fill=TRUE)
-     }
+
+if( !LKinfo$dense){
+   nonzero.entries<- GCholesky@entries
+}
+   else{
+     nonzero.entries<-NA
+   }
+  if( verbose){
+     	cat("LKrig: nonzero entries of GCholesky:",nonzero.entries, fill=TRUE)
+  }
 # use GCholesky to find coefficients of estimate
 # Note that this functions also finds an important piece of the likelihood (quad.form)
 	timeCoef<- system.time(
@@ -196,13 +213,13 @@ timingTable <- rbind( timingTable, colSums(timingTable))
 object <- c(object,
  list( 
         lambda.fixed = LKinfo$lambda, 
-     nonzero.entries = length(G@entries),                   
+     nonzero.entries = nonzero.entries,
                 call = match.call(), 
          timingLKrig = timingTable )
     )
 # finally add in some large matrices that can be reused if only 
 # lambda is varied  
-# NOTE to keep the code with smae components the name Mc is kept although
+# NOTE to keep the code with the same components the name Mc is kept although
 # this is actually the cholesky decomposition of the G matrix as in the LKrig
 # article. 
 if (return.cholesky) {

@@ -25,11 +25,11 @@ LKrigSetupAwght <- function(object,...){
 
 LKrigSetupAwght.default<- function( object,...){
 # object == LKinfo  
-   a.wght<- object$a.wght
+  cat("here")
+  a.wght<- object$a.wght
   nlevel<- object$nlevel
-  if( length( a.wght)==1){
-    aWghtType<- "isotropic"
-  }
+  isotropic<- ifelse( length( a.wght)==1, TRUE, FALSE)
+  print( a.wght)
   if (!is.list(a.wght)) {
         # some checks on a.wght
         # coerce a.wght to list if it is passed as something
@@ -54,6 +54,6 @@ LKrigSetupAwght.default<- function( object,...){
      attr( a.wght, "fastNormalize") <- FALSE
 # tag helps to figure out if there is a single a.wght parameter or
 # more. 
-     attr( a.wght, "aWghtType")     <- aWghtType
+     attr( a.wght, "isotropic") <- isotropic
      return(a.wght)
  }

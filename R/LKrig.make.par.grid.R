@@ -15,17 +15,7 @@
 # GNU General Public License for more details.
 
 LKrig.make.par.grid <- function(par.grid = NULL, LKinfo = NULL) {    
-    # if par.grid is missing find all the information for the LKinfo list
-    if (is.null(par.grid)) {
-        par.grid <- list()
-        par.grid$a.wght <- list(LKinfo$a.wght)
-        par.grid$alpha <- list(LKinfo$alpha)
-        par.grid$llambda <- ifelse(is.na(LKinfo$lambda), 0, log(LKinfo$lambda))
-        return(par.grid)
-    }
-    if (is.null(par.grid$llambda)) {
-        par.grid$llambda <- NA
-    }
+  
    # if needed create alpha from nu
     if( !is.null(par.grid$nu)){
         nlevel<- LKinfo$nlevel
@@ -48,7 +38,12 @@ LKrig.make.par.grid <- function(par.grid = NULL, LKinfo = NULL) {
                 ])
         }
     }
-    #convert alpha to a list format 
+  
+    if( is.null(par.grid$alpha)){
+      par.grid$alpha<-list(LKinfo$alpha)
+    }
+  
+    #convert alpha from matrix to a list format 
     if (is.matrix(par.grid$alpha)) {
         M <- nrow(par.grid$alpha)
         temp.list <- list()
@@ -59,6 +54,9 @@ LKrig.make.par.grid <- function(par.grid = NULL, LKinfo = NULL) {
         par.grid$alpha <- temp.list
     }
     #convert a.wght to list format
+    if( is.null( par.grid$a.wght)){
+      par.grid$a.wght<- list(LKinfo$a.wght)
+    }
     if (is.matrix(par.grid$a.wght)) {
         M <- nrow(par.grid$a.wght)
         temp.list <- list()
@@ -69,12 +67,39 @@ LKrig.make.par.grid <- function(par.grid = NULL, LKinfo = NULL) {
         par.grid$a.wght <- temp.list
     }
     # some checks
-    NG <- length(par.grid$alpha)
-    if (length(par.grid$llambda) != NG) {
-        stop("llambda values not same length as alpha")
+    if (is.null(par.grid$llambda)) {
+      llambdaTemp <- ifelse(is.na(LKinfo$lambda), 0, log(LKinfo$lambda))
+      par.grid$llambda<-llambdaTemp
     }
-    if (length(par.grid$a.wght) != NG) {
-        stop("a.wght values not same length as alpha")
+# figure out the lengths of a.wght, alpha and llambda
+    N<- c( length( par.grid$llambda),
+           length( par.grid$a.wght),
+           length( par.grid$alpha))
+    NG<- max( N)
+# an item either has appear NG times or just once
+# NG are the number of grid search cases.
+    if( any(  !(N==1 | N==NG) ) ){
+      cat(N)
+      stop("values for par.grid wrong length")
+     }
+ # rep any items that were only included once
+    if (N[1] != NG) {
+        # note: log lambda values are not a list!  
+        par.grid$llambda<- rep(par.grid$llambda, NG )
+    }
+    if (N[2] != NG) {
+      par.grid$a.wght<- rep(par.grid$a.wght, NG )
+    }
+    if (N[3] != NG) {
+      # NOTE: each case of alpha is a list of nlevel components
+      par.grid$alpha<- rep(par.grid$alpha, NG )
+      
+      if (!is.null(par.grid$gamma)) {
+        par.grid$gamma<- rep( list(par.grid$gamma), NG )
+      }
+      if (!is.null(par.grid$nu)) {
+        par.grid$nu<- rep(par.grid$nu, NG )
+      }
     }
     return(par.grid)
 }

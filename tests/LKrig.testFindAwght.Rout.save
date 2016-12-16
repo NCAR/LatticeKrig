@@ -1,5 +1,5 @@
 
-R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -45,24 +45,23 @@ Loading required package: maps
 
 
 > options(echo = FALSE)
-Time difference of 30.70007 secs
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-3.460776e+01 2.780944e+04 1.459371e+01 9.961891e-02 9.999295e-01 9.924628e-03 
+   3.460e+01    2.781e+04    1.459e+01    9.963e-02    9.985e-01    9.940e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
-4.194224e+00           NA 1.300000e+01 1.300000e+01 6.600000e+01 
-        EffDf    lnProfLike           GCV     sigma.MLE       rho.MLE 
- 3.616157e+01  2.780944e+04  1.531372e+01  9.962361e-02  9.997699e-01 
-  llambda.opt        lnLike  counts value          grad 
--4.612482e+00            NA  1.100000e+01            NA 
-[1] 0.009927148
+   4.193e+00           NA    1.700e+01    1.700e+01    8.600e+01 
+       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
+   3.616e+01    2.781e+04    1.531e+01    9.963e-02    9.984e-01    9.941e-03 
+ llambda.MLE       lnLike counts value         grad 
+  -4.611e+00           NA    1.100e+01           NA 
+[1] 0.009941
 Testing:   lambda MLE
 PASSED test at tolerance  1e-06
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-4.737554e+01 6.873128e+04 4.797799e+00 5.018724e-02 9.980281e-01 2.523736e-03 
+   4.737e+01    6.873e+04    4.798e+00    5.019e-02    9.975e-01    2.525e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
-4.207021e+00           NA 1.300000e+01 1.300000e+01 6.600000e+01 
+   4.206e+00           NA    2.800e+01    2.800e+01    1.410e+02 
 PASSED test at tolerance  0.01
 PASSED test at tolerance  0.02
 > proc.time()
    user  system elapsed 
- 63.728   0.914  65.330 
+103.394   1.145 104.846 

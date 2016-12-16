@@ -24,8 +24,6 @@ LKrigSetupAwght <- function(object,...){
 }
 
 LKrigSetupAwght.default<- function( object,...){
-# object == LKinfo  
-  cat("here")
   a.wght<- object$a.wght
   nlevel<- object$nlevel
   isotropic<- ifelse( length( a.wght)==1, TRUE, FALSE)

@@ -110,7 +110,8 @@ print.LKrig <- function(x, digits = 4, ...) {
         cat("alpha values passed as a vector for each level", 
             fill = TRUE)
     }
-#    
+#  
+# only print out alpha and a.wght if they are not too big
     cat(" ", fill = TRUE)
     if (length(LKinfo$a.wght[[1]]) == 1) {
         a.wght <- unlist(LKinfo$a.wght)

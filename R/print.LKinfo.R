@@ -23,9 +23,15 @@ print.LKinfo <- function(x, ...) {
     LKinfo <- x
     L <- LKinfo$nlevel
     cat("Classes for this object are: " , class( LKinfo), fill=TRUE)
+    
     cat("The second class usually will indicate the geometry
      e.g.  2-d rectangle is  LKRectangle", fill=TRUE)
     cat(" ", fill = TRUE) 
+    
+    if(LKinfo$dense){
+      cat("Hey, the dense flag is TRUE so computations will
+          not be done using sparse matrices.", fill=TRUE)
+    }
     cat("Ranges of locations in raw scale:", fill=TRUE)
     print(  LKinfo$latticeInfo$rangeLocations)
     if( !is.null(LKinfo$basisInfo$V)){

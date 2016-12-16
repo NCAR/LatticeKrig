@@ -42,7 +42,7 @@ function can be used to solve a linear inverse type problem (see X and U below).
 	LKrig( x, y, weights = NULL, Z = NULL, LKinfo = NULL, iseed =
                  NA, NtrA = 20, use.cholesky = NULL, return.cholesky =
                  TRUE, X = NULL, U = NULL, wX = NULL, wU = NULL,
-                 return.wXandwU = TRUE, ..., verbose = FALSE)
+                 return.wXandwU = TRUE, ..., dense=FALSE, verbose = FALSE)
 
 \method{predict}{LKrig}(object, xnew = object$x, Znew = NULL, drop.Z = FALSE,
                  just.fixed = FALSE, return.levels = FALSE, ...)
@@ -166,14 +166,16 @@ the z component follows the shape described above for the no list case.   }
 	For example if a warning is printed that nnzR needs to be at least 2e5 in size, passing 
 	\code{choleskyMemory= list( nnzR= 2e5)} will avoid this warning. 
   
- See the help on \code{LKrigSetup} for explanation of the options. Typically one would setup the LKinfo object outside of this call and 
+ See the help on \code{LKrigSetup} for explanation of the options. Typically one
+ would setup the LKinfo object outside of this call and 
  just pass a few arguments that are being varied. In particular to 
  use LKrig with different lambda values   \code{lambda = 1e-3} in the call 
  would reset the lambda value to 1e-3.
   The minimal set of arguments for a 2-d rectangular
  domain, however,  are  \code{alpha}, \code{nlevel}, \code{NC}, and \code{a.wght}.
  
- \strong{alpha} The sequence of positive weights for each level of the multiresolution process. Usually these add to one and are interpreted as the variance of the process at each level. 
+ \strong{alpha} The sequence of positive weights for each level of the multiresolution process.
+ Usually these add to one and are interpreted as the variance of the process at each level. 
 
  \strong{a.wght} The weight given to the central lattice point in the 
  	spatial autoregression (see details below). 
@@ -184,7 +186,8 @@ level increases the number of basis functions by roughly a factor of
 
 \strong{NC} Number of lattice points in first level and along the largest 
 	dimension. e.g. if NC=5 and the domain is square the domain will 
-	contain 25 lattice points at the first level. Note that there may be additional lattice points added as buffers outside the spatial domain 
+	contain 25 lattice points at the first level. Note that there may be
+	additional lattice points added as buffers outside the spatial domain 
 	(default is 5 on each side). 
 
 Some additional arguments are \code{V} that defines a linear scaling of the 

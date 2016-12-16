@@ -1,5 +1,5 @@
 
-R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -49,4 +49,4 @@ Testing:  predicts at new values
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  2.104   0.060   2.180 
+  2.017   0.041   2.053 

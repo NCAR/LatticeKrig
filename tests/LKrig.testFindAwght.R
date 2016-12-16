@@ -28,13 +28,13 @@ LKinfoTest<- LKinfoUpdate( LKinfoTrue, a.wght=4.3,
                          lambda=lambdaTrue*(1.05))
 
 
-tick<- Sys.time()
+#tick<- Sys.time()
 Fit1<- LKrigFindLambdaAwght( x,Y,LKinfo=LKinfoTest,
                              verbose=FALSE)
-tock<- Sys.time()
-print( tock - tick)
+#tock<- Sys.time()
+#print( tock - tick)
 
-print(Fit1$summary)
+print(signif(Fit1$summary,4))
 
 ##plot( log10(Fit1$lnLike.eval[,1]), Fit1$lnLike.eval[,5], xlim=c(-3,-1.5), ylim=c(328000,339000))
 #points( log10(Fit1$lambda.MLE),Fit1$summary["lnProfLike"], col="red")
@@ -42,10 +42,11 @@ print(Fit1$summary)
 #plot( log10(Fit2$lnLike.eval[,1]), Fit2$lnLike.eval[,4], xlim=c(-3,-1.5), ylim=c(328000,339000))
 #points( log10(Fit2$lambda.MLE),Fit2$summary["lnProfLike"], col="red")
 
-LKinfoTest2<- LKinfoUpdate(LKinfoTest, a.wght= Fit1$a.wght.MLE, lambda=Fit1$lambda.MLE )
+LKinfoTest2<- LKinfoUpdate(LKinfoTest, a.wght= Fit1$a.wght.MLE,
+                           lambda=Fit1$lambda.MLE )
 Fit2<- LKrigFindLambda( x,Y,LKinfo=LKinfoTest2)
-Fit2$summary
-Fit2$lambda.MLE
+signif( Fit2$summary, 4)
+signif(Fit2$lambda.MLE, 4)
 
 test.for.zero( Fit2$summary["lnProfLike"],
                Fit1$summary["lnProfLike"], tol=1e-6, tag=" lambda MLE")
@@ -70,7 +71,7 @@ LKinfoTest<- LKinfoUpdate( LKinfoTrue, a.wght=4.3,
 
 Fit1<- LKrigFindLambdaAwght( x,Y,LKinfo=LKinfoTest,
                              verbose=FALSE)
-print(Fit1$summary)
+print(signif(Fit1$summary,4))
 test.for.zero( Fit1$summary["a.wght.MLE"], 4.2, tol=.01)
 test.for.zero( Fit1$summary["lambda.MLE"], lambdaTrue, tol=.02)
 

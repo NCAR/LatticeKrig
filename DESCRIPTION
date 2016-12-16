@@ -1,6 +1,6 @@
 Package: LatticeKrig
-Version: 6.0
-Date: 2016-10-11
+Version: 6.1
+Date: 2016-12-15
 Title: Multiresolution Kriging Based on Markov Random Fields
 Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut], Colette Smirniotis [aut]
 Authors@R: c( 
@@ -46,6 +46,6 @@ Description: Methods for the interpolation of large spatial
   the estimated surface and conditional and unconditional simulation.
 License: GPL (>= 2)
 URL: http://www.r-project.org
-Depends: R (>= 3.0.1), methods, spam, fields (>= 6.9.1)
-Packaged: 2016-05-21 14:22:35 UTC; nychka
+Depends: R (>= 3.3.2), methods, spam, fields (>= 8.8)
+Packaged: 2016-12-15; nychka
 NeedsCompilation: yes

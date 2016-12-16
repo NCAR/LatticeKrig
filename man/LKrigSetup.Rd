@@ -39,7 +39,7 @@ x = NULL, nlevel = NULL, alpha = NA, nu = NULL, a.wght
                  fixedFunction = "LKrigDefaultFixedFunction",
                  fixedFunctionArgs = list(m = 2), max.points = NULL,
                  mean.neighbor = 50, choleskyMemory = NULL, verbose =
-                 FALSE, noCheck = FALSE, returnCall = FALSE, ...)
+                 FALSE, noCheck = FALSE, returnCall = FALSE, dense=FALSE, ...)
 
 
                  
@@ -77,6 +77,11 @@ variances for the different multiresolution levels.  }
 \item{choleskyMemory}{A list that will be used in the spam call to 
 do the Cholesky decomposition. See the \code{memory} argument in 
 \code{chol.spam}. }
+
+\item{dense}{If FALSE sparse linear algebra is used for the computations. If TRUE the matrices are
+made "dense" (zeroes are filled in) and the ordinary Lapack functions are used for the linear algebra.
+This option is primarily
+for testing and timing sparse verses standard algorithms. }
 
  \item{distance.type}{A text string indicate type distance to use
   	between spatial locations when evaluating the basis

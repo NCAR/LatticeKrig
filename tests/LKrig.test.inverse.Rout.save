@@ -1,5 +1,5 @@
 
-R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -50,4 +50,4 @@ Testing:  SE inverse from first formulas
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  1.243   0.031   1.265 
+  1.271   0.035   1.297 

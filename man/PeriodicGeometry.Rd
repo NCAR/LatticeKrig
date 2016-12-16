@@ -162,7 +162,7 @@ LKinfo0<- LKrigSetup( CO2$lon.lat, NC=3 ,nlevel=3,
 obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 # takes about 1 minute on a macbook air
 # setting findAwght = TRUE  takes about 8 minutes with 
-# lambda = 1.737 and a.wght = 15.8 (independence among basis coefficents)
+# lambda = 1.737 and a.wght = 15.8 (independence among basis coefficients)
 } 
 # a more serious model 
 \dontrun{

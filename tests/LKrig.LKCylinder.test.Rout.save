@@ -1,5 +1,5 @@
 
-R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -43,8 +43,9 @@ Loading required package: maps
 
 
 > options( echo=FALSE)
+[1] 6.2
 Testing:  LKCylinder basis using expliciti formula
 PASSED test at tolerance  1e-10
 > proc.time()
    user  system elapsed 
-  0.979   0.069   1.043 
+  0.949   0.071   1.009 

@@ -1,5 +1,5 @@
 
-R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -70,4 +70,4 @@ Done with testing fast normalize algorithm
 > 
 > proc.time()
    user  system elapsed 
-  2.297   0.046   2.349 
+  2.320   0.041   2.350 

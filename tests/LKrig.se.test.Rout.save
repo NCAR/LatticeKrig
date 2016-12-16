@@ -1,5 +1,5 @@
 
-R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -64,4 +64,4 @@ All done with SE tests TRUE>
 > 
 > proc.time()
    user  system elapsed 
- 18.148   0.114  18.340 
+ 17.528   0.087  17.645 

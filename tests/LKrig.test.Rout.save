@@ -1,5 +1,5 @@
 
-R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -117,4 +117,4 @@ PASSED test at tolerance  1e-08
 Done testing LatticeKrig
 > proc.time()
    user  system elapsed 
- 19.890   0.204  20.099 
+ 21.453   0.314  21.862 

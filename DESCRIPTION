@@ -47,5 +47,5 @@ Description: Methods for the interpolation of large spatial
 License: GPL (>= 2)
 URL: http://www.r-project.org
 Depends: R (>= 3.3.2), methods, spam, fields (>= 8.8)
-Packaged: 2016-12-15; nychka
+Packaged: 2016-12-18 18:11:02 UTC; nychka
 NeedsCompilation: yes

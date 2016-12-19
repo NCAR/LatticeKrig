@@ -46,7 +46,7 @@ LKrigFindLambda(x, y, ..., LKinfo,
 LKrigFindLambdaAwght(x, y, ..., LKinfo, use.cholesky = NULL,
                  lowerBoundLogLambda = -16, upperBoundLogLambda = 4,
                  lowerBoundOmega = -3, upperBoundOmega = 0.75, factr =
-                 1e+07, maxit = 15, verbose = FALSE)
+                 1e+07, pgtol=1e-1, maxit = 15, verbose = FALSE)
 
                                  
 LambdaAwghtObjectiveFunction(PARS, LKrigArgs, capture.env, verbose=FALSE )
@@ -101,8 +101,10 @@ MLE.}
 MLE.}
 \item{maxit}{Maximum number of iterations (passed to optim function)}
 \item{nTasks}{If using Rmpi the number of slaves available.}
-\item{omega}{Value of the omega parameter to convert to  the a.wght format.  }
-\item{PARS}{ PAR[1]= log(lambda) and PAR[2]= .5*log(a.wght-4) (also referred to as \code{omega}).
+\item{omega}{Value of the omega parameter to convert to  the a.wght
+format.  }
+\item{PARS}{ PAR[1]= log(lambda) and PAR[2]= .5*log(a.wght-4)
+(also referred to as \code{omega}).
 For the LKRectangle
 geometry.}
  \item{par.grid}{ A list with components llambda, alpha, a.wght giving
@@ -116,7 +118,11 @@ details the other parts of the covariance specification (e.g. number
 of levels, grid sizes) that do not change.  Note that par.grid assumes
 \emph{ln} lambda not lambda. See details below for some other features
 of the par.grid arguments.  }
-\item{factr}{Controls convergence for the BFGS-L method. ( passed to optim).}
+\item{factr}{Controls convergence for the BFGS-L method.
+( passed to optim).}
+\item{pgtol}{Mysterious tolerance for gradient converenge in L-BFGS. This
+seems to influence the number of iterations the most.}
+ 
 \item{tol}{Tolerance on log likelihood use to determine convergence.}
 
 \item{taskID}{If using Rmpi the slave id.}

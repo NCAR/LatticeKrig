@@ -42,7 +42,7 @@ function can be used to solve a linear inverse type problem (see X and U below).
 	LKrig( x, y, weights = NULL, Z = NULL, LKinfo = NULL, iseed =
                  NA, NtrA = 20, use.cholesky = NULL, return.cholesky =
                  TRUE, X = NULL, U = NULL, wX = NULL, wU = NULL,
-                 return.wXandwU = TRUE, ..., dense=FALSE, verbose = FALSE)
+                 return.wXandwU = TRUE, ..., verbose = FALSE)
 
 \method{predict}{LKrig}(object, xnew = object$x, Znew = NULL, drop.Z = FALSE,
                  just.fixed = FALSE, return.levels = FALSE, ...)
@@ -77,7 +77,7 @@ function can be used to solve a linear inverse type problem (see X and U below).
 
 	
 \item{chull.mask}{An additional constraint for evaluating predictions see
-\code{help(in.poly)}. Usually this is not needed. }
+\code{help(in.poly)}. Usually this is not needed.  }
      
 \item{digits}{Number of digits in printed output.}
    
@@ -215,7 +215,8 @@ weighting between these processes.  Thus, the minimum set of
 parameters needed to describe the covariance of f are the integer
 \code{NC}, two scalars \code{rho} and \code{a.wght}, and a vector
 \code{alpha}. \code{alpha} has a length of  the number of multiresolution
-levels but we recommend that it be constrained sum to one.  The parameter rho is the
+levels but we recommend that it be constrained sum to one.  The parameter
+rho is the
 marginal variance of the process and this multiples alpha.  Thus in
 total there are a 1 + 2 + (nlevel - 1) parameters for a minimal
 specification of the covariance.  Note that this parsimonious
@@ -248,17 +249,35 @@ The data model can also be written in vector form as
 
 Y =  T d + PHI c + e 
 
-Where T is a matrix that combines the low order polynomial with other possible covariates
-and PHI is the matrix basis functions evaluated at the observations. A simple extension 
- is considering a linear inverse problem form. This is an experimental of LatticeKrig that is intended for solving large linear inverse problems. In this case
-one supplies to the \code{LKrig} function two matrices (in spam sparse format) such that
+Where T is a matrix that combines the low order polynomial with other
+possible covariates
+and PHI is the matrix basis functions evaluated at the observations. A
+simple extension 
+ is considering a linear inverse problem form. This is an experimental of
+ LatticeKrig that is intended for solving large linear inverse problems. In
+ this case
+one supplies to the \code{LKrig} function two matrices (in spam sparse
+format) such that
 
 Y = U d + X c + e. 
 
-This features allows for observations that are linear functionals of f and not necessarily the function evaluated at the observation locations. This model is useful for working with demographic
-or tomographic problems where the observations are expressed as particular integrals of f over 
-different regions or different projections. See the last example on how to use this option. 
-If U and X are not supplied the default is to consider a model with observations made at evaluating f at the observation locations. 
+This features allows for observations that are linear functionals of f and
+not necessarily the function evaluated at the observation locations. This
+model is useful for working with demographic
+or tomographic problems where the observations are expressed as particular
+integrals of f over 
+different regions or different projections. See the last example on how to
+use this option. 
+If U and X are not supplied the default is to consider a model with
+observations made at evaluating f at the observation locations. 
+
+\strong{About dense matrix computations:} The value of this package is to
+handle larger spatial data sets by exploiting sparse matrix methods using
+the spam package. However, for small problems, checking, or timing it is
+useful to do the computations using the usual dense matrix decompositions.
+If the component \code{dense} in the LKinfo object is \code{TRUE} then dense
+(i.e. standard) methods will be used. Set this switch from the
+LKrigSetup function.
 
 \strong{Spatial prediction:} The basis functions are assumed to be
 fixed and the coefficients follow a multivariate Gaussian

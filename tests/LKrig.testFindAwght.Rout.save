@@ -25,7 +25,7 @@ Type 'q()' to quit R.
 > library(LatticeKrig)
 Loading required package: spam
 Loading required package: grid
-Spam version 1.3-0 (2015-10-24) is loaded.
+Spam version 1.4-0 (2016-08-29) is loaded.
 Type 'help( Spam)' or 'demo( spam)' for a short introduction 
 and overview of this package.
 Help for individual functions is also obtained by adding the
@@ -39,29 +39,24 @@ The following objects are masked from 'package:base':
 
 Loading required package: fields
 Loading required package: maps
-
- # maps v3.1: updated 'world': all lakes moved to separate new #
- # 'lakes' database. Type '?world' or 'news(package="maps")'.  #
-
-
 > options(echo = FALSE)
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-   3.460e+01    2.781e+04    1.459e+01    9.963e-02    9.985e-01    9.940e-03 
+   3.583e+01    2.774e+04    1.457e+01    9.731e-02    1.178e+00    8.040e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
-   4.193e+00           NA    1.700e+01    1.700e+01    8.600e+01 
+   4.268e+00           NA    3.000e+00    3.000e+00    1.600e+01 
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-   3.616e+01    2.781e+04    1.531e+01    9.963e-02    9.984e-01    9.941e-03 
+   3.661e+01    2.779e+04    1.532e+01    9.928e-02    1.100e+00    8.958e-03 
  llambda.MLE       lnLike counts value         grad 
-  -4.611e+00           NA    1.100e+01           NA 
-[1] 0.009941
-Testing:   lambda MLE
-PASSED test at tolerance  1e-06
+  -4.715e+00           NA    1.100e+01           NA 
+[1] 0.008958
+Testing:   log Like lambda MLE
+PASSED test at tolerance  0.002
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-   4.737e+01    6.873e+04    4.798e+00    5.019e-02    9.975e-01    2.525e-03 
+   4.756e+01    6.872e+04    4.800e+00    5.016e-02    1.047e+00    2.403e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
-   4.206e+00           NA    2.800e+01    2.800e+01    1.410e+02 
-PASSED test at tolerance  0.01
+   4.253e+00           NA    5.000e+00    5.000e+00    2.600e+01 
 PASSED test at tolerance  0.02
+PASSED test at tolerance  0.04
 > proc.time()
    user  system elapsed 
-103.394   1.145 104.846 
+ 22.261   0.236  22.517 

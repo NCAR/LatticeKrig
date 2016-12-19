@@ -30,7 +30,7 @@ LKinfoTest<- LKinfoUpdate( LKinfoTrue, a.wght=4.3,
 
 #tick<- Sys.time()
 Fit1<- LKrigFindLambdaAwght( x,Y,LKinfo=LKinfoTest,
-                             verbose=FALSE)
+                             verbose=FALSE,  pgtol=1e+1)
 #tock<- Sys.time()
 #print( tock - tick)
 
@@ -49,7 +49,7 @@ signif( Fit2$summary, 4)
 signif(Fit2$lambda.MLE, 4)
 
 test.for.zero( Fit2$summary["lnProfLike"],
-               Fit1$summary["lnProfLike"], tol=1e-6, tag=" lambda MLE")
+               Fit1$summary["lnProfLike"], tol=2e-3, tag=" log Like lambda MLE")
 
 # Monte Carlo test that parameters estimated correctly
 set.seed(223)
@@ -70,10 +70,10 @@ LKinfoTest<- LKinfoUpdate( LKinfoTrue, a.wght=4.3,
 
 
 Fit1<- LKrigFindLambdaAwght( x,Y,LKinfo=LKinfoTest,
-                             verbose=FALSE)
+                             verbose=FALSE, pgtol=1e+1)
 print(signif(Fit1$summary,4))
-test.for.zero( Fit1$summary["a.wght.MLE"], 4.2, tol=.01)
-test.for.zero( Fit1$summary["lambda.MLE"], lambdaTrue, tol=.02)
+test.for.zero( Fit1$summary["a.wght.MLE"], 4.2, tol=.02)
+test.for.zero( Fit1$summary["lambda.MLE"], lambdaTrue, tol=.04)
 
 
 

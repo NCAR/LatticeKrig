@@ -296,18 +296,7 @@ matrices.
   LKinfo<- LKrigSetup(x,NC=25,nlevel=1, a.wght=5, alpha=1.0)
   lambdaFit<- LKrigFindLambda( x,y,LKinfo=LKinfo)
   lambdaFit$summary
-\dontrun{  
-# MLEs for a.wght and lambda using unconstarined and constrained MLE
-aWghtFit<- LKrigFindLambdaAwght( x,y,LKinfo=LKinfo)
-aWghtFit0<- LKrigFindLambdaAwght0( x,y,LKinfo=LKinfo)
-aWghtFit$summary
-aWghtFit0$summary
-# cross check
-LKinfo1<- LKinfoUpdate( LKinfo, a.wght= aWghtFit$a.wght.MLE)
-lambdaFit1<- LKrigFindLambda( x,y,LKinfo=LKinfo1)
-lambdaFit1$summary
-test.for.zero(lambdaFit1$summary[2],aWghtFit$summary[2], tol=5e-7  )
-}
+
 
 # grid search over parameters 
 NG<-3

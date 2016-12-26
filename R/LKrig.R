@@ -45,12 +45,9 @@ LKrig <- function(x, y,
 		 list(verbose = verbose)))
 	}
 	else{
-#		cat("LKrig: lambda passed",  list(...)$lambda, fill=TRUE)
-#		cat("LKrig: lambda in LKinfo",  LKinfo$lambda, fill=TRUE)
-#	  print( names( c(list(LKinfo=LKinfo), list(...)) ) )
 		LKinfo<- do.call("LKinfoUpdate", c(list(LKinfo=LKinfo), list(...)) )	
 	}
-#	cat("LKrig: LKinfo after update",  LKinfo$lambda, fill=TRUE)	
+	
 	if( verbose){
 		cat(" ", fill=TRUE)
 		cat("LKrig: updated LKinfo object", fill=TRUE)
@@ -63,7 +60,6 @@ LKrig <- function(x, y,
 # and the full object is only obtained at the end 
 # NOTE default for weights are just 1's and filled in by 
 # the next call
-
     object<- createLKrigObject( x, y, weights, Z,
                                     X, U,  LKinfo, verbose=verbose)
     nObs <-  nrow( object$y )
@@ -79,9 +75,9 @@ LKrig <- function(x, y,
 # and includes possible covariate(s) -- the Z matrix.
 # the choice of fixed part of the model is controlled in LKinfo
 # (see also LKrigSetup)
-if (is.null(wU)) {
-	wU<- LKrigMakewU( object,  verbose=verbose)
-	}
+   if (is.null(wU)) {
+   	wU<- LKrigMakewU( object,  verbose=verbose)
+ 	}
 # some column indices to keep track of fixed part of the model	
 # NOTE nZ <= nt because Z is a subset of U
     object$nt <- ifelse( is.null(ncol(wU)), 0, ncol(wU))
@@ -102,12 +98,17 @@ else{
 timeQ<-system.time(
         Q <- LKrig.precision(LKinfo, verbose=verbose)
         )
-        if( verbose){
-		cat("LKrig: Nonzero entries in Q:", length(Q@entries), fill=TRUE)		
-        }
+
 if( LKinfo$dense){
+  if( !is.null(  use.cholesky)){
+    stop("Can not update (use.cholesky) with dense matrix option")
+  }
   Q<- spam2full(Q)
   wX<- spam2full(wX)
+}
+
+if( verbose & (!LKinfo$dense) ) {
+  cat("LKrig: Nonzero entries in Q:", length(Q@entries), fill=TRUE)		
 }
 
 # G is the regularized (ridge) regression matrix that is 
@@ -146,11 +147,12 @@ if (is.null(use.cholesky)) {
 	}
 
 if( !LKinfo$dense){
-   nonzero.entries<- GCholesky@entries
+   nonzero.entries<- length(GCholesky@entries)
 }
    else{
      nonzero.entries<-NA
    }
+
   if( verbose){
      	cat("LKrig: nonzero entries of GCholesky:",nonzero.entries, fill=TRUE)
   }

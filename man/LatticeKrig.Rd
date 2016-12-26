@@ -114,7 +114,7 @@ The simplest model fit is:
  \deqn{Y_k = p(x_k)  + h(x_k) + e_k }
  \eqn{Y_k} is the \eqn{k^{th}} observation at location \eqn{x_k} with measurment error \eqn{e_k}.
  Here \eqn{p(x)} is a low order polynomial of degree m-1 with the default \code{m==2}. \eqn{h(x)} is a mean zero Gaussian process with the representation:
- \deqn{ h(x)= \sum_{l=1}^L \sum_j=1^{m(j)} \phi_{m,l}(x) c_{m,l} }
+ \deqn{ h(x)= \sum_{l=1}^L \sum_{j=1}^{m(j)} \phi_{m,l}(x) c_{m,l} }
 where \eqn{\phi} are multiresolution basis functions and the coefficients
 have mean zero and spatial dependence specified by a Markov random field. Keep in mind that this unusual form still implies a specific covariance function for \eqn{h(x)}. In fact one can use the Krig or mKrig function from fields
 to reproduce the LatticeKrig estimate for smaller data sets and check computations. 

@@ -74,21 +74,7 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 	print(sum, quote = FALSE)
 	cat(" ", fill = TRUE)
 	
-	if( !x$findAwght){
-	cat("sigma and rho found by maximum likelihood for ", fill = TRUE)  
-	cat("fixed values of alpha and a.wght", fill = TRUE)
-	cat(" Summary of MLE computation:, fill=TRUE")
-	print( x$MLE$summary)
-	cat(" ", fill = TRUE)
-	}
-	else{
-	  cat(" parameters sigma, rho, and the a.wght found  ", fill = TRUE)  
-	  cat("by maximum likelihood for fixed values of alpha", fill = TRUE)
-	  cat(" Summary of MLE computation:", fill=TRUE)
-	  print( x$MLE$summary)
-	  cat(" ", fill = TRUE)
-	}
-	#    
+   
 	if (is.null(x$LKinfo$fixedFunction)) {
 		cat("No fixed part of model", fill = TRUE)
 	} else {
@@ -144,6 +130,21 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 		cat("Basis functions normalized so marginal process variance is stationary", 
 			fill = TRUE)
 	}
+	if( !x$findAwght){
+	  cat("\n", "NOTE: sigma and rho found by maximum likelihood for ", fill = TRUE)  
+	  cat("fixed values of alpha and a.wght", fill = TRUE)
+	  cat("\n"," Summary of MLE computation from optim:", fill=TRUE)
+	  print( x$MLE$summary)
+	  cat(" ", fill = TRUE)
+	}
+	else{
+	  cat("\n", "NOTE: parameters sigma, rho, and the a.wght found  ", fill = TRUE)  
+	  cat("by maximum likelihood for fixed values of alpha", fill = TRUE)
+	  cat(" Summary of MLE computation from optim:", fill=TRUE)
+	  print( x$MLE$summary)
+	  cat(" ", fill = TRUE)
+	}
+	# 
 	invisible(x)
 }
 

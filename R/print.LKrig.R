@@ -50,12 +50,13 @@ print.LKrig <- function(x, digits = 4, ...) {
     }
     c1 <- c(c1, "Smoothing parameter (lambda)")
     c2 <- c(c2, signif(x$lambda, digits))
-    if (NData == 1) {
+    
         c1 <- c(c1, "MLE sigma ")
-        c2 <- c(c2, signif(x$shat.MLE, digits))
+        c2 <- c(c2, signif(x$sigma.MLE.FULL, digits))
+        
         c1 <- c(c1, "MLE rho")
-        c2 <- c(c2, signif(x$rho.MLE, digits))
-    }
+        c2 <- c(c2, signif(x$rho.MLE.FULL, digits))
+       
     c1 <- c(c1, "Nonzero entries in Ridge regression matrix")
     c2 <- c(c2, x$nonzero.entries)
     summary <- cbind(c1, c2)
@@ -66,7 +67,11 @@ print.LKrig <- function(x, digits = 4, ...) {
     	 cat("NOTE: This is an 'inverse' model because an X matrix was supplied", fill=TRUE)}
     print(summary, quote = FALSE)
     cat(" ", fill = TRUE)
-#    
+#  
+    if( NData > 1){
+      cat("Note: MLEs are the combined estimates across replicates.",
+          fill=TRUE)
+    }
     if( is.null( x$LKinfo$fixedFunction)){  
         cat("No fixed part of model", fill = TRUE)
     }
@@ -89,9 +94,9 @@ print.LKrig <- function(x, digits = 4, ...) {
         fill = TRUE)
     cat(" ", fill = TRUE)
 
-      cat( LKinfo$nlevel, " Levels" , LKinfo$latticeInfo$m, "basis functions",
+      cat( LKinfo$nlevel, " Levels" ,  LKinfo$latticeInfo$m, "total basis functions", 
           "with overlap of ", 
-        LKinfo$basisInfo$overlap, "(lattice units)", fill = TRUE)
+        LKinfo$basisInfo$overlap, "(in lattice units)", fill = TRUE)
     cat(" ", fill = TRUE)
 #
   temp<- cbind(  1:LKinfo$nlevel, LKinfo$latticeInfo$mLevel,  LKinfo$latticeInfo$delta)
@@ -103,19 +108,20 @@ print.LKrig <- function(x, digits = 4, ...) {
 #
     cat(" ", fill = TRUE)
     if (length(LKinfo$alpha[[1]]) == 1) {
-        cat("Value(s) for weighting (alpha): ", unlist(LKinfo$alpha), 
+        cat("Value(s) for weighting (alpha parameters): ",
+            "\n", unlist(LKinfo$alpha), 
             fill = TRUE)
     }
     else {
         cat("alpha values passed as a vector for each level", 
             fill = TRUE)
     }
-#  
-# only print out alpha and a.wght if they are not too big
+#    
     cat(" ", fill = TRUE)
     if (length(LKinfo$a.wght[[1]]) == 1) {
         a.wght <- unlist(LKinfo$a.wght)
-        cat("Value(s) for lattice dependence (a): ", a.wght, 
+        cat("Value(s) for lattice dependence (a.wght parameters): ",
+            "\n", a.wght, 
             fill = TRUE)
     }
     else {

@@ -100,21 +100,25 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 		"with overlap of ", LKinfo$basisInfo$overlap, "(lattice units)", 
 		fill = TRUE)
 	cat(" ", fill = TRUE)
+
 	#
 	temp <- cbind(1:LKinfo$nlevel, LKinfo$latticeInfo$mLevel, LKinfo$latticeInfo$delta)
 	dimnames(temp) <- list(rep("", LKinfo$nlevel), c("Level", "Lattice points", 
 		"Spacing"))
+	
 	print(temp)
 	cat(" ", fill = TRUE)
 	cat("Nonzero entries in Ridge regression matrix", x$nonzero.entries, 
 		fill = TRUE)	
 	#
+	return()
 	cat(" ", fill = TRUE)
 	if (length(LKinfo$alpha[[1]]) == 1) {
 		cat("Value(s) for alpha: ", unlist(LKinfo$alpha), fill = TRUE)
 	} else {
 		cat("alpha values passed as a vector for each level", fill = TRUE)
 	}
+	
 	#    
 	cat(" ", fill = TRUE)
 	if (length(LKinfo$a.wght[[1]]) == 1) {
@@ -144,6 +148,7 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 	  print( x$MLE$summary)
 	  cat(" ", fill = TRUE)
 	}
+
 	# 
 	invisible(x)
 }

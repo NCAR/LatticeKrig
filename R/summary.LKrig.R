@@ -19,7 +19,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2
 
-summary.LKrig <- function(x, digits = 4, ...) {
+summary.LKrig <- function(object, digits = 4, ...) {
+  x<- object
   obj<- list()
   LKinfo <- x$LKinfo
  
@@ -57,17 +58,35 @@ summary.LKrig <- function(x, digits = 4, ...) {
   
   c1 <- c(c1, "MLE rho")
   c2 <- c(c2, signif(x$rho.MLE.FULL, digits))
+
+  
+  c1 <- c(c1, "Total number of basis functions")
+  c2 <- c(c2,  LKinfo$latticeInfo$m)
+  
+  c1 <- c(c1, "Multiresolution levels")
+  c2 <- c(c2,  LKinfo$nlevel)
+  
+  c1<- c(c1,"log Profile Likelihood")
+  c2<- c( c2, signif(x$lnProfileLike.FULL,10))
+  
+  c1<- c(c1,"log  Likelihood (if applicable)")
+  c2<- c( c2, x$lnLike.FULL)
   
   c1 <- c(c1, "Nonzero entries in Ridge regression matrix")
   c2 <- c(c2, x$nonzero.entries)
+  
   M<- length( c1)
   summary <-  data.frame(c1, c2)
   names( summary)<- c("", "")
-#  dimnames(summary) <- list(rep("", dim(summary)[1]), rep("", dim(summary)[2]))
-  
+    
   obj$call<-x$call 
   obj$inverseModel <- x$inverseModel
-  obj$summary<- summary
+  obj$parameters<- summary
+  obj$timingLKrig <- x$timingLKrig
   obj$LKinfo<- LKinfo
+  obj$MLE<- x$MLE
   return(obj)
 }
+
+
+

@@ -1,7 +1,7 @@
 
-R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
-Copyright (C) 2016 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin13.4.0 (64-bit)
+R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -54,6 +54,8 @@ Warning messages:
 1: In LKrig.basis(object$x, object$LKinfo, verbose = FALSE) :
   Some normalization weights are zero
 2: In LKrig.basis(object$x, object$LKinfo, verbose = FALSE) :
+  Some normalization weights are zero
+3: In LKrig.basis(object$x, object$LKinfo, verbose = FALSE) :
   Some normalization weights are zero
 Warning message:
 In createLKrigObject(x, y, weights, Z, X, U, LKinfo, verbose = verbose) :
@@ -112,4 +114,4 @@ PASSED test at tolerance  1e-08
 Done testing LatticeKrig
 > proc.time()
    user  system elapsed 
- 20.344   0.247  20.607 
+ 28.526   0.458  29.266 

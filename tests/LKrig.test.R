@@ -14,11 +14,13 @@ options( echo=FALSE)
   good <-  !is.na( y)
   x<- x[good,]
   y<- y[good]
-
+  # tiny example to run fast
+  x<- x[1:15,]
+  y<- y[1:15]
   N<- length( y)
   a.wght<- 5
   lambda <-  1.5
-  obj<- LKrig( x,y,NC=16, lambda=lambda, a.wght=a.wght, alpha=1, nlevel=1, NtrA=20,iseed=122)
+  obj<- LKrig( x,y,NC=16, lambda=lambda, a.wght=a.wght, alpha=1, nlevel=1, NtrA=5,iseed=122)
   LKinfo<- obj$LKinfo
   K<- LKrig.cov( x,x,LKinfo)
   tempM<-  K
@@ -34,10 +36,11 @@ options( echo=FALSE)
   c.coef0 <- forwardsolve(temp2, transpose = TRUE,
                         (y- T.matrix%*%d.coef0), upper.tri = TRUE)
   c.coef0 <- backsolve(temp2, c.coef0)
-### find these using mKrig (still standard Kriging) but using the the LatticeKrig covariance function:
+### find these using mKrig (still standard Kriging) 
+###  but using the the LatticeKrig covariance function:
   obj0<- mKrig( x,y, lambda=lambda, m=2, cov.function="LKrig.cov",
                                  cov.args=list(LKinfo=LKinfo),
-                                 NtrA=20, iseed=122)
+                                 NtrA=5, iseed=122)
   test.for.zero( obj0$c, c.coef0, tag="c from mKrig and by hand" )
 # we also know that for standard Kriging
 # residuals = lambda* c.coef0
@@ -57,12 +60,12 @@ options( echo=FALSE)
   a.wght<-  c(5,5,10)
   lambda<- .1
   obj<- LKrig( x,y,NC=5, lambda=lambda,
-                        nlevel=nlevel, alpha=alpha,a.wght=a.wght, NtrA=20,iseed=122)
+                        nlevel=nlevel, alpha=alpha,a.wght=a.wght, NtrA=5,iseed=122)
   LKinfo<- obj$LKinfo
 
   obj0<- mKrig( x,y, lambda=lambda, m=2, cov.function="LKrig.cov",
                                  cov.args=list(LKinfo=LKinfo),
-                                 NtrA=20, iseed=122)
+                                 NtrA=5, iseed=122)
   test.for.zero( obj0$fitted.values, obj$fitted.values)
   test.for.zero( obj$d.coef, obj0$d, tag= "d from Lattice Krig and mKrig")
 ###########################################################################
@@ -157,8 +160,9 @@ options( echo=FALSE)
   N<- length( y)
   lambda <- .8
 # a micro sized lattice so determinant is not too big or small
-  obj<- LKrig( x,y,NC=3, NC.buffer=1, lambda=lambda,nlevel=nlevel,alpha=alpha,a.wght=a.wght,
-                              NtrA=5,iseed=122)
+  obj<- LKrig( x,y,NC=3, NC.buffer=1, lambda=lambda,
+                nlevel=nlevel,alpha=alpha,a.wght=a.wght,
+                NtrA=5,iseed=122)
   LKinfo<- obj$LKinfo
   grid.info<- LKinfo$grid.info
   PHI<- LKrig.basis( x,LKinfo)
@@ -228,7 +232,7 @@ test.for.zero(  lnDet( B3) - lnDet(Q) - sum( log( weights))  + (N-N2)*log(lambda
                               NtrA=5,iseed=122)
     obj0<- mKrig( x,y, lambda=lambda, m=2, cov.function="LKrig.cov",
                                  cov.args=list(LKinfo=obj$LKinfo),
-                                 NtrA=20, iseed=122)
+                                 NtrA=5, iseed=122)
  
  test.for.zero( obj$lnDetCov,obj0$lnDetCov, tag= "lnDetCov for mKrig and LatticeKrig")
  test.for.zero( obj$quad.form,  obj0$quad.form, tag= "quadratic forms for rho hat")
@@ -260,7 +264,7 @@ test.for.zero(  lnDet( B3) - lnDet(Q) - sum( log( weights))  + (N-N2)*log(lambda
 # compare mKrig and Krig with weights and LatticeKrig
   obj0<- mKrig( x,y,weights, lambda=lambda, m=2, cov.function="LKrig.cov",
                                  cov.args=list(LKinfo=obj$LKinfo),
-                                 NtrA=20, iseed=122)
+                                 NtrA=5, iseed=122)
  
   obj1<- Krig( x,y,weights=weights, lambda=lambda,GCV=TRUE, m=2,
                cov.function="LKrig.cov", cov.args=list(LKinfo=obj$LKinfo))
@@ -288,7 +292,7 @@ test.for.zero(  lnDet( B3) - lnDet(Q) - sum( log( weights))  + (N-N2)*log(lambda
   N<- length( y)
   alpha<- c(1,.5,.5)
   nlevel<-3
-  a.wght<-  c(5,5,10)
+  a.wght<-  c(4.2,4.5,4.5)
   lambda <- .8
 
  obj<- LKrig( x,y,weights=weights,NC=15, lambda=lambda,alpha=alpha,

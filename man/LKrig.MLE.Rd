@@ -293,7 +293,7 @@ matrices.
 
 # This is a single level smoother
  
-  LKinfo<- LKrigSetup(x,NC=25,nlevel=1, a.wght=5, alpha=1.0)
+  LKinfo<- LKrigSetup(x,NC=8,nlevel=1, a.wght=5, alpha=1.0)
   lambdaFit<- LKrigFindLambda( x,y,LKinfo=LKinfo)
   lambdaFit$summary
 
@@ -304,7 +304,7 @@ NG<-3
 # values
   par.grid<- list( a.wght= rep( 4.05,NG),alpha= rep(1, NG),
                       llambda=  seq(-8,-2,,NG))
-  LKinfo<- LKrigSetup(x,NC=12,nlevel=1, a.wght=5, alpha=1.0)
+  LKinfo<- LKrigSetup(x,NC=5,nlevel=1, a.wght=5, alpha=1.0)
   lambda.search.results<-LKrig.MLE( x,y,LKinfo=LKinfo,
                                     par.grid=par.grid,
                                     lambda.profile=FALSE)

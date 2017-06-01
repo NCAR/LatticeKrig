@@ -9,16 +9,18 @@ library(LatticeKrig)
 options(echo = FALSE)
 test.for.zero.flag <- 1
 
+tick<- Sys.time()
+
 set.seed( 122)
 
 
 M<- 1e3 # nummber of independent spatial replications
-N<- 1e2 # number of obs
+N<- 40 # number of obs
 x<- matrix( runif(2*N ), N,2)
 lambdaTrue<- .1^2
 #NOTE: true rho is 1.0 dont add fixed function so likelihood is precise.
-LKinfoTrue<- LKrigSetup(x,NC=3, nlevel=3, a.wght= 4.2,
-                        alpha=c(1.0,.5,.25), lambda=lambdaTrue,
+LKinfoTrue<- LKrigSetup(x,NC=3, nlevel=2, a.wght= 4.2,
+                        alpha=c(1.0,.5), lambda=lambdaTrue,
                         normalize=FALSE, NC.buffer=2, fixedFunction = NULL)
 f<- LKrig.sim( x, LKinfoTrue, M=M) 
 E<- matrix( rnorm( prod( dim( f))), nrow= nrow( f), ncol=ncol(f) )
@@ -28,11 +30,10 @@ LKinfoTest<- LKinfoUpdate( LKinfoTrue, a.wght=4.3,
                          lambda=lambdaTrue*(1.05))
 
 
-#tick<- Sys.time()
+
 Fit1<- LKrigFindLambdaAwght( x,Y,LKinfo=LKinfoTest,
                              verbose=FALSE,  pgtol=1e+1)
-#tock<- Sys.time()
-#print( tock - tick)
+
 
 print(signif(Fit1$summary,4))
 
@@ -49,31 +50,34 @@ signif( Fit2$summary, 4)
 signif(Fit2$lambda.MLE, 4)
 
 test.for.zero( Fit2$summary["lnProfLike"],
-               Fit1$summary["lnProfLike"], tol=2e-3, tag=" log Like lambda MLE")
+               Fit1$summary["lnProfLike"], tol=5e-3, tag=" log Like lambda MLE")
 
 # Monte Carlo test that parameters estimated correctly
 set.seed(223)
-M<- 1e3 # nummber of independent spatial replications
-N<- 1e2 # number of obs
+M<- 1e2 # nummber of independent spatial replications
+N<- 100 # number of obs
 x<- matrix( runif(2*N ), N,2)
 lambdaTrue<- .05^2
 #NOTE: true rho is 1.0
-LKinfoTrue<- LKrigSetup(x,NC=3, nlevel=3, a.wght= 4.2,
-                        alpha=c(1.0,.5,.25), lambda=lambdaTrue,
+LKinfoTrue<- LKrigSetup(x,NC=3, nlevel=2, a.wght= 4.2,
+                        alpha=c(1.0,.5), lambda=lambdaTrue,
                         normalize=FALSE, NC.buffer=2,fixedFunction = NULL )
 f<- LKrig.sim( x, LKinfoTrue, M=M) 
 E<- matrix( rnorm( prod( dim( f))), nrow= nrow( f), ncol=ncol(f) )
 Y<- f + sqrt(lambdaTrue)* E
 
 LKinfoTest<- LKinfoUpdate( LKinfoTrue, a.wght=4.3,
-                           lambda=lambdaTrue*(1.05))
+                           lambda=lambdaTrue*(1.1))
 
 
 Fit1<- LKrigFindLambdaAwght( x,Y,LKinfo=LKinfoTest,
-                             verbose=FALSE, pgtol=1e+1)
+                             verbose=FALSE, pgtol=5e+0)
 print(signif(Fit1$summary,4))
-test.for.zero( Fit1$summary["a.wght.MLE"], 4.2, tol=.02)
-test.for.zero( Fit1$summary["lambda.MLE"], lambdaTrue, tol=.04)
 
+tock<- Sys.time()
+#print( tock - tick)
+
+test.for.zero( Fit1$summary["a.wght.MLE"], 4.2, tol=.02)
+test.for.zero( Fit1$summary["lambda.MLE"], lambdaTrue, tol=.01)
 
 

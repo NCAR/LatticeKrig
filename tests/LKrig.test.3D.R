@@ -5,7 +5,7 @@ test.for.zero.flag<- 1
 #
 # Near interpolation of a 3d function 
 set.seed( 123)
-N<- 3e4
+N<- 1e3
 x<-  matrix( runif(3* N,-1,1), ncol=3, nrow=N)
 y<-   10*exp( -rdist( x, rbind( c(.5,.5,.6) ) )/.5)
 glist<- list( x1=seq( -1,1,,30), x2=seq( -1,1,,30), x3= 0)
@@ -19,7 +19,7 @@ LKinfo<- LKrigSetup( x,  nlevel=1,  a.wght= 6.2, NC=8, NC.buffer=2,
 out1<- LatticeKrig( x,y, LKinfo=LKinfo)
 yTest<- predict( out1, xgrid)
 # accuracy within a few percent relative error.
-test.for.zero( mean( abs(yTest- yTrue)/yTrue), 0, relative=FALSE, tol=3e-2 )
+test.for.zero( mean( abs(yTest- yTrue)/yTrue), 0, relative=FALSE, tol=5e-3 )
 
 # multi level  model
 
@@ -29,7 +29,7 @@ LKinfo<- LKrigSetup( x,  nlevel=3,  a.wght= 8, alpha=c( 1,.5, .2),
                     choleskyMemory=list(nnzR= 2e6))
 
 # test of finding nearest lattice neighbors
-remove( test.for.zero.flag)
+#remove( test.for.zero.flag)
    cat(" Exahautive test of 3d box lattice", fill=TRUE)
 for(  level in 1:LKinfo$nlevel){
 m1<- LKinfo$latticeInfo$mLevel[level]

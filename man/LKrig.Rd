@@ -59,7 +59,7 @@ function can be used to solve a linear inverse type problem (see X and U below).
 
 \method{print}{LKrig}( x, digits=4, ...)
 
-\method{summary}{LKrig}( x, digits=4, ...)
+\method{summary}{LKrig}( object, digits=4, ...)
 
 }
 \arguments{
@@ -109,7 +109,7 @@ from the other, Z, covariates in the fixed component will be omitted.}
 \item{NtrA}{Number of random samples used in Monte Carlo method for
 determining effective degrees of freedom. }
  
-\item{object}{The \code{LKrig} object.}
+\item{object}{An \code{LKrig} object.}
 
 \item{return.cholesky}{If TRUE the Cholesky decomposition is included
     in the output list (with the name \code{Mc}). This is needed for
@@ -479,7 +479,7 @@ in setting up the LKinfo object or passed in the  \dots  for this function.
 \code{V} should be a matrix that represents the transposed, inverse transformation applied to the raw coordinates.  For example if \code{x1} are  locations  d- dimensions 
 ( i.e. x1 has d columns) and \code{V} is a dXd matrix then the transformed coordinates are 
 
- x1Transformed <- x1 %*% t(solve(V))
+ x1Transformed <- x1 \%*\% t(solve(V))
  
 and all subsequent computations will use the transformed coordinates for evaluating the basis functions. This also means that the lattice centers are locations in the 
 transformed scale. The following example might be helpful:
@@ -540,8 +540,7 @@ LKrig also has the flexibility to handle more general weights in the
 GMRF.  This is accomplished by \code{a.wght} being a list with as many
 components as levels. If each component is a vector of length nine
 then these are interpreted as the weights to be applied for the
-lattice point and its 8 nearest neighbors (see help(
-LKrig.MRF.precision) and the commented source code for details). If
+lattice point and its 8 nearest neighbors see  the commented source code in \code{LKrigSAR.LKRectangle} for details. If
 each component is a matrix then these are interpreted as the
 (nonstationary) center weights for each lattice point. Finally if the
 component is an array with three dimensions this specifies the center
@@ -575,7 +574,7 @@ monotonic relationship to lambda. The Monte Carlo method uses the fact
 that if e are iid N(0,1) E( t(e) A(lambda) e) = trace( A(lambda)).
 
 
-\strong{An Extension to linear inverse problems} 
+%\strong{An Extension to linear inverse problems} 
 
 \strong{Descriptions of specific functions and objects:}
 

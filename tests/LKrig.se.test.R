@@ -14,21 +14,35 @@ y <- ozone2$y[16, ]
 good <- !is.na(y)
 x <- x[good, ]
 y <- y[good]
-x <- x[1:20, ]
-y <- y[1:20]
+x <- x[1:10, ]
+y <- y[1:10]
 
 a.wght <- 5
 lambda <- 0.25
 # in both calls iseed is set the same so we can compare 
 # Monte Carlo estimates of effective degrees of freedom
 obj1 <- LKrig(x, y, NC = 5, nlevel = 1, alpha = 1, lambda = lambda, a.wght = 5, 
-	NtrA = 15, iseed = 122, NC.buffer = 1, return.cholesky = TRUE)
+	NtrA = 5, iseed = 122, NC.buffer = 1, return.cholesky = TRUE)
 obj2 <- mKrig(x, y, lambda = lambda, m = 2, cov.function = "LKrig.cov", 
-	cov.args = list(LKinfo = obj1$LKinfo), NtrA = 15, iseed = 122)
-obj3 <- Krig(x, y, lambda = lambda, m = 2, cov.function = "LKrig.cov", 
+	cov.args = list(LKinfo = obj1$LKinfo), NtrA = 5, iseed = 122)
+obj3 <- Krig(x, y, lambda = lambda,  m = 2, cov.function = "LKrig.cov", 
 	cov.args = list(LKinfo = obj1$LKinfo))
 test.for.zero(obj1$fitted.values, obj2$fitted.values, tag = "comparing predicted values LKrig and mKrig")
-test.for.zero(obj1$eff.df, obj2$eff.df, tag = "comparing effective degrees of freedom from MC trace (same seed) LKrig and mKrig")
+
+# as interim for avoiding bug in fields 8.15 compute eff.df directly
+#
+NtrA<- 5
+set.seed( 122)
+Ey <- matrix(rnorm(obj2$np * NtrA), nrow = obj2$np, 
+             ncol = NtrA)
+trA.info <- colSums(Ey * (predict.mKrig(obj2, ynew = Ey,
+                                        collapseFixedEffect=FALSE)))
+trA.est <- mean(trA.info)
+test.for.zero(obj1$eff.df, trA.est, 
+              tag = "comparing Monte Carlo based effective degrees of freedom")
+######## WARNING: Use this code once fields 8.16 is on CRAN
+########test.for.zero(obj1$eff.df, obj2$eff.df, 
+########              tag = "comparing effective degrees of freedom from MC trace (same seed) LKrig and mKrig")
 test.for.zero(obj1$fitted.values, obj3$fitted.values, tag = "comparing predicted values LKrig and Krig")
 
 test3.se <- predictSE.Krig(obj3, x[2:3, ])
@@ -41,14 +55,14 @@ test.for.zero(test1.se, test3.se, tag = "comparing SE values LKrig and Krig equa
 ##### weighted case
 ###########################
 set.seed(123)
-weights <- runif(20)
+weights <- runif(10)
 obj1 <- LKrig(x, y, NC = 16, nlevel = 1, alpha = 1, lambda = lambda, a.wght = 5, 
-	NtrA = 20, iseed = 122, return.cholesky = TRUE, weights = weights)
+	NtrA = 5, iseed = 122, return.cholesky = TRUE, weights = weights)
 obj2 <- mKrig(x, y, lambda = lambda, m = 2, cov.function = "LKrig.cov", 
-	cov.args = list(LKinfo = obj1$LKinfo), NtrA = 20, iseed = 122, weights = weights)
+	cov.args = list(LKinfo = obj1$LKinfo), NtrA = 5, iseed = 122, weights = weights)
 obj0 <- Krig(x, y, lambda = lambda, m = 2, cov.function = "LKrig.cov", 
 	cov.args = list(LKinfo = obj1$LKinfo), weights = weights)
-test0.se <- predictSE.Krig(obj0, x[1:3, ])
+test0.se <- predictSE.Krig( obj0, x[1:3, ])
 test1.se <- predictSE.LKrig(obj1, x[1:3, ])
 test2.se <- predictSE.mKrig(obj2, x[1:3, ])
 test.for.zero(test0.se, test2.se, tag = "sanity for SE Krig and mKrig unequal weights")
@@ -60,7 +74,7 @@ set.seed(122)
 nX <- nrow(x)
 Z <- matrix(runif(nX * 2), ncol = 2, nrow = nX)
 obj1 <- LKrig(x, y, NC = 16, nlevel = 1, alpha = 1, lambda = lambda, a.wght = 5, 
-	NtrA = 20, iseed = 122, return.cholesky = TRUE, weights = weights, 
+	NtrA = 5, iseed = 122, return.cholesky = TRUE, weights = weights, 
 	Z = Z)
 obj0 <- Krig(x, y, lambda = lambda, m = 2, cov.function = "LKrig.cov", 
 	cov.args = list(LKinfo = obj1$LKinfo), weights = weights, Z = Z)

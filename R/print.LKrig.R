@@ -57,8 +57,22 @@ print.LKrig <- function(x, digits = 4, ...) {
         c1 <- c(c1, "MLE rho")
         c2 <- c(c2, signif(x$rho.MLE.FULL, digits))
        
+    
+    
+    c1 <- c(c1, "Total number of basis functions")
+    c2 <- c(c2,  LKinfo$latticeInfo$m)
+    
+    c1 <- c(c1, "Multiresolution levels")
+    c2 <- c(c2,  LKinfo$nlevel)
+    
+    c1<- c(c1,"log Profile Likelihood")
+    c2<- c( c2, signif(x$lnProfileLike.FULL,10))
+    c1<- c(c1,"log  Likelihood (if applicable)")
+    c2<- c( c2, x$lnLike.FULL)
+    
     c1 <- c(c1, "Nonzero entries in Ridge regression matrix")
     c2 <- c(c2, x$nonzero.entries)
+    
     summary <- cbind(c1, c2)
     dimnames(summary) <- list(rep("", dim(summary)[1]), rep("", dim(summary)[2]))
     cat("Call:\n")

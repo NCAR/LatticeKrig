@@ -14,25 +14,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-which.max.matrix <- function(z) {
-    if (!is.matrix(z)) {
-        stop("Not a matrix")
-    }
-    m <- nrow(z)
-    n <- ncol(z)
-    # take care of NAs
-    ind <- which.max(z)
-    iy <- trunc((ind - 1)/m) + 1
-    ix <- ind - (iy - 1) * m
-    return(cbind(ix, iy))
-}
 
-
-which.max.image <- function(obj) {
-    ind.z <- which.max.matrix(obj$z)
-    return(list(x = obj$x[ind.z[, 1]], y = obj$y[ind.z[, 2]], 
-        z = obj$z[ind.z], ind = ind.z))
-}
 
 LKArrayShift<-  function (A, shift, periodic=FALSE) 
 {

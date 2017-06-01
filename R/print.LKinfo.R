@@ -48,7 +48,19 @@ print.LKinfo <- function(x, ...) {
     if (!is.null(x$nu)) {
         cat("based on smoothness nu = ", x$nu, fill = TRUE)
     }
-    cat("a.wght: ", unlist(x$a.wght), fill = TRUE)
+    temp<- unlist(x$a.wght)
+    
+    if( length( temp)<= x$nlevel * 9){
+    cat("a.wght: ", temp, fill = TRUE)
+    }
+    else{
+      cat("dim(A.wght[[k]]): ",
+          fill=TRUE )
+      for ( k in 1: x$nlevel){
+      cat(" Level", k,
+          dim(x$a.wght[[k]]), fill=TRUE )
+      }
+    }
        cat(" ", fill = TRUE)
   # Details on basis functions at each level
       bType <- LKinfo$basisInfo$BasisType

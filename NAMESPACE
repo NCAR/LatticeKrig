@@ -1,9 +1,8 @@
-useDynLib(LatticeKrig)
+useDynLib(LatticeKrig,.registration=TRUE)
 
 exportPattern("^[^\\.]")
 importFrom("methods", "new")
-importFrom("stats", "optimize", "predict", "rnorm", "var", "optim")
-  
+importFrom("stats", "optimize", "predict", "rnorm", "var", "optim","sd")
 import("spam")
 import("fields")
   
@@ -14,6 +13,8 @@ S3method(print, LKinfo)
 S3method(predict, LKrig)
 S3method(predictSE, LKrig)
 S3method(predictSurface, LKrig)
+
+S3method(summary, LKrig)
 
 S3method( surface,LKrig)
 

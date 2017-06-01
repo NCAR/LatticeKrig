@@ -69,8 +69,10 @@ LKrig.sim.conditional <- function(LKrigObj, M = 1, x.grid = NULL,
         }
         g.conditional.draw[, k] <- out$g.conditional
     }
-    #
+    # sample standard deviation across ensemble members
+   	SE<-  apply(g.conditional.draw, 1, FUN=sd)
     return(list(x.grid = x.grid, ghat = ghat, g.draw = g.conditional.draw,
+                           SE = SE,
                            d.coef.draw= d.coef.draw))
 }
 

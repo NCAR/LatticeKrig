@@ -149,7 +149,7 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
   return(out)
 }
 
-# LKrigSAR.LKSphere=function(
+
 LKrigSAR.LKSphere = function(object, Level, ...) {
   if( Level>7){
     stop("can not handle more than 7 levels")}
@@ -169,29 +169,46 @@ LKrigSAR.LKSphere = function(object, Level, ...) {
 #  set their diagonal entries differently if this is needed..
 # The B matrix is already in spind format and the entries  (ra) are 
 # converted to be the SAR matrix.
+  print(delta)
+  print( dType)
   B = LKDist(  grid[,1:2], grid[,1:2], delta = delta,
                   distance.type= dType)
 # find the diagonal elements of the sparse matrix
 # compute weights for slightly unequal distributions
   ind1<- B$ind[,1]
   ind2<- B$ind[,2]
+  print( table( ind1))
+  raTemp<- rep( NA, length( ind1))
   Diagonal<- ind1==ind2
-  if( sum( Diagonal)!= nrow( grid)) {
+  if( sum( Diagonal)!= nrow(grid)) {
     stop( "Number of diagonal elements in B different from grid")}
+# fill diagonal elements  
+    raTemp[ Diagonal ] <- a.wght
     for (I in 1:n ){
-    J<- ind2[ (ind1==I)&!Diagonal]
-    nJ<- length(J) # this better be either 5 or 6 nearest neighbors!
-    x1<- grid3d[J,]
-    x0<- grid3d[I,]
-    u<- projectionSphere( x0,x1) 
+# find positions in matrix entries that correspond to the Ith node point
+# and is not the diagonal one.
+   
+      indNeighbors <- (ind1 == I) & !Diagonal 
+# indices of nearest neighbors    
+      J<- ind2[ indNeighbors ]
+      nJ<- length(J) 
+      # this better be either 5 or 6  nearest neighbors for the full sphere
+      # but may  be less if the region is a lon/lat rectangle bounding the data.
+      x1<- grid3d[J,]
+      x0<- grid3d[I,]
+      u<- projectionSphere( x0,x1) 
     # u are local 2 d coordinates on tangent plane to sphere at x0
     # x0 projects to (0,0)
-    X<- cbind( rep( 1,nJ), u )
-    c2<- (X)%*%(solve( t(X)%*%X, c( 1,0,0) )  )
-    # c2 sum to 1 by properties of unbiasedness for constant function.
-    B$ra[J]<- -1*c2
-  }
-  B$ra[Diagonal ] <- a.wght
+      X<- cbind( rep( 1,nJ), u )
+    # find weights to predict a linear function
+    # at node from the nearest neighbors. 
+      c2<- c( (X)%*%(solve( t(X)%*%X, c( 1,0,0) )  ))
+    #   NOTE: c2 sum to 1 by properties of unbiasedness
+    #   for constant function.
+      raTemp[ indNeighbors ]<- -1*c2
+    }
+#    
+  B$ra<- raTemp
   return(B)
 # NOTE: B is converted to spam format in LKrig.precision   
 }

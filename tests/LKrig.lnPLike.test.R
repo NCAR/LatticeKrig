@@ -67,7 +67,7 @@ options( echo=FALSE)
 # now check these formulas as implemented in LatticeKrig
   obj0<- mKrig( x,Y, weights= weights, lambda=lambda, m=2, cov.function="LKrig.cov",
                                  cov.args=list(LKinfo=LKinfo),
-                                 NtrA=20, iseed=122)
+                                 NtrA=20, iseed=122,collapseFixedEffect = FALSE)
   test.for.zero(  obj0$rho.MLE, obj$rho.MLE,
            tag="MLEs for rho with replicate fields" )
 

@@ -20,7 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2
 
 LKrig.traceA <- function(GCholesky, wX, wU, lambda, weights, NtrA, iseed = NA) {
-# do not disrupt an external use of the random number generator    	
+# do not disrupt an external use of the random number generator 
     if (exists(".Random.seed", 1)) {
         save.seed <- .Random.seed
     }

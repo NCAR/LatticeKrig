@@ -22,8 +22,6 @@
 \alias{LKrig.shift.matrix}
 \alias{LKArrayShift}
 \alias{LKrig.rowshift}
-\alias{which.max.matrix}
-\alias{which.max.image}
 \alias{expandMList}
 \alias{expandMatrix0}
 \alias{expandMatrix}
@@ -46,8 +44,7 @@ LKrig.rowshift.periodic( A, shift.row)
 LKrig.rowshift( A, shift.row, shift.col)
 LKArrayShift(A, shift, periodic = FALSE)
 
-which.max.matrix(z)
-which.max.image(obj)
+
 expandMatrix0( A, B)
 expandMatrix( ...)
 expandMList( Mlist, byrow=TRUE)
@@ -78,8 +75,6 @@ this will be done column by column.}
 
 \item{nPad}{An array with the number of padding indices in each dimension.}
 
-\item{obj}{An image list with the usual components x, y, and z.}
-
 \item{periodic}{  A vector of  logicals columns.TRUE indicates an index where the shift will be periodic --
 entries shifted beyond the dimensions will be wrapped to the other
 side. e.g. for the matrix version c(FALSE, TRUE) indicates the 
@@ -93,8 +88,6 @@ rows.
 
 \item{shift.col}{An integer that specifies the number of positions
  that the columns of the matrix are shifted.}
-
-\item{z}{A matrix.}
 
 \item{\dots}{Matrices to be expanded.}
 } \details{

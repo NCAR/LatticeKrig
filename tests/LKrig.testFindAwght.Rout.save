@@ -1,7 +1,7 @@
 
-R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
-Copyright (C) 2016 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin13.4.0 (64-bit)
+R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -41,22 +41,22 @@ Loading required package: fields
 Loading required package: maps
 > options(echo = FALSE)
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-   3.583e+01    2.774e+04    1.457e+01    9.731e-02    1.178e+00    8.040e-03 
+   1.510e+01    8.142e+03    1.527e+01    9.682e-02    1.196e+00    7.836e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
-   4.268e+00           NA    3.000e+00    3.000e+00    1.600e+01 
+   4.265e+00           NA    3.000e+00    3.000e+00    1.600e+01 
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-   3.661e+01    2.779e+04    1.532e+01    9.928e-02    1.100e+00    8.958e-03 
+    17.70000   8178.00000     19.60000      0.09951      1.09300      0.00906 
  llambda.MLE       lnLike counts value         grad 
-  -4.715e+00           NA    1.100e+01           NA 
-[1] 0.008958
+    -4.70400           NA     11.00000           NA 
+[1] 0.00906
 Testing:   log Like lambda MLE
-PASSED test at tolerance  0.002
+PASSED test at tolerance  0.005
        EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-   4.756e+01    6.872e+04    4.800e+00    5.016e-02    1.047e+00    2.403e-03 
+   2.332e+01    1.084e+04    3.237e-01    4.981e-02    9.975e-01    2.487e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
-   4.253e+00           NA    5.000e+00    5.000e+00    2.600e+01 
+   4.249e+00           NA    5.000e+00    5.000e+00    2.600e+01 
 PASSED test at tolerance  0.02
-PASSED test at tolerance  0.04
+PASSED test at tolerance  0.01
 > proc.time()
    user  system elapsed 
- 22.261   0.236  22.517 
+ 24.937   0.175  25.183 

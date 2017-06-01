@@ -153,6 +153,7 @@ if( !LKinfo$dense){
      nonzero.entries<-NA
    }
 
+
   if( verbose){
      	cat("LKrig: nonzero entries of GCholesky:",nonzero.entries, fill=TRUE)
   }

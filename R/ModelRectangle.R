@@ -38,6 +38,42 @@ setDefaultsLKinfo.LKRectangle <- function(object, ...) {
 return(object)
 }
 
+LKinfoCheck.LKRectangle<- function( object,...){
+  # first run all the default checks
+       LKinfoCheck.default( object)
+  # now check that a.wght are stable values
+      a.wght<- object$a.wght
+      floorAwght<- object$floorAwght
+      NL<- length( a.wght) 
+      stationary <-     attr( object$a.wght, "stationary")
+      first.order<-     attr( object$a.wght, "first.order")
+      isotropic  <-     attr( object$a.wght, "isotropic")
+      # go through cases and find the testValue should be TRUE
+      testValue<- rep(NA, NL)
+      for (  k in 1:NL){
+      if( first.order[k] & stationary[k]){ 
+        testValue[k]<-  a.wght[[k]] > floorAwght 
+      }
+      if(!first.order[k] & stationary[k]){
+        aValues<- a.wght[[k]]
+        testValue[k]<- sum( aValues) > 0  
+        }
+      if(first.order[k] & !stationary[k]){
+            aValues<- a.wght[[k]]
+            testValue[k]<- all(aValues > floorAwghtsum)
+          }
+      if(!first.order[k] & !stationary[k]){
+              aValues<- a.wght[[k]]
+              a.wghtSums<- apply( aValues, c(1,2), "sum")
+              testValue[k]<- all( a.wghtSums >0 )
+            }
+      }
+    if( !all( testValue)){
+      stop("a.wght do not satisfy stability condition")
+    }
+}        
+          
+        
 LKrigSetupLattice.LKRectangle <- function(object,  verbose, NC = NULL, 
 	NC.buffer = 5, ...) {
 	###### some common setup operations to all geometries
@@ -145,10 +181,11 @@ LKrigSetupAwght.LKRectangle <- function(object, ...) {
 	if (!is.list(a.wght)) {
 		# some checks on a.wght
 		# coerce a.wght to list if it is passed as something
-# else (most likely a vector)
-if (nlevel == 1) {
-			a.wght <- list(a.wght)
-		} else {
+    # else (most likely a vector)
+    if (nlevel == 1) {
+ 			a.wght <- list(a.wght)
+		} 
+	  else {
 			# repeat a.wght to fill out for all levels.
 			if (length(a.wght) == 1) {
 				a.wght <- rep(a.wght, nlevel)
@@ -170,34 +207,47 @@ if (nlevel == 1) {
 # at a given level this is the usual case
 # if not stationary a.wght should be a list of arrays that
 # give values for each node separately
-stationary <- is.null(dim(a.wght[[1]]))
-	first.order <- rep(NA, nlevel)
-	# simple check on sizes of arrays
-	if (stationary) {
-		for (k in 1:length(a.wght)) {
-			N.a.wght <- length(a.wght[[1]])
+  stationary <-  rep(NA, nlevel)
+	first.order<-  rep(NA, nlevel)
+	isotropic  <-  rep(NA, nlevel)
+# simple check on sizes of arrays
+	for (k in 1:length(a.wght)) {
+	   # number of dimensions can be NULL, 2 or 3
+	    dim.a.wght <- dim(a.wght[[k]])
+	    print( dim.a.wght) # BUG
+	    stationaryLevel <- is.null(dim.a.wght) 
+	    stationary[k]<- stationaryLevel
+	    isotropic[k]<- stationaryLevel
+	    if( stationaryLevel){
+		  	N.a.wght <- length(a.wght[[k]])
 			# allowed lengths for a.wght are just the center: 1 value
 			# or 9 values for center,  first, and second order neighbors
-if (is.na(match(N.a.wght, c(1, 9)))) {
-				stop("a.wght needs to be of length 1 or 9")
+        if (is.na(match(N.a.wght, c(1, 9)))) {
+			  	stop("a.wght needs to be of length 1 or 9")
+        }
+		  	first.order[k] <- ifelse(N.a.wght == 1, TRUE, FALSE)
+		  	isotropic[k]<- first.order[k]
+    	}
+     else {
+      nDim<- length( dim.a.wght ) 
+      if( nDim!=2 & nDim!=3){
+        stop(paste( nDim, "Wrong dimensions for a.wght[[k]]") )
+      }
+			if ((dim.a.wght[1] != mx[k, 1]) |
+			    (dim.a.wght[2] != mx[k, 2])
+			    ) {
+				stop(paste("a.wght matrix at level ", k,
+				           " has wrong first two dimensions:", 
+				 	dim.a.wght, " compare to lattice: ", mx[k, ]))
 			}
-			first.order[k] <- ifelse(N.a.wght == 1, TRUE, FALSE)
+			first.order[k] <- nDim == 2
 		}
-	} else {
-		for (k in 1:length(a.wght)) {
-			dim.a.wght <- dim(a.wght[[k]])
-			if ((dim.a.wght[1] != mx[k, 1]) | (dim.a.wght[2] != mx[k, 
-				2])) {
-				stop(paste("a.wght matrix at level ", k, " has wrong first two dimensions:", 
-					dim.a.wght, " compare to lattice ", mx[k, ]))
-			}
-			first.order[k] <- length(dim.a.wght) == 2
-		}
-	}
+}
+	#### 
 	#   
 	RBF <- object$basisInfo$BasisFunction
 	# lots of conditions on SAR when the fast normalization FORTRAN can be used.    
-	fastNormalization <- stationary & all(first.order) & all(!is.na(unlist(a.wght))) & 
+	fastNormalization <- all(stationary) & all(first.order) & all(!is.na(unlist(a.wght))) & 
 		(RBF == "WendlandFunction") & (object$basisInfo$BasisType == 
 		"Radial")
 	#NOTE: current code is hard wired for Wendland 2 2 RBF 
@@ -212,6 +262,9 @@ if (fastNormalization) {
 	attr(a.wght, which = "stationary") <- stationary
 	attr(a.wght, which = "isotropic") <- isotropic
 	#
+	print( first.order)
+	print( stationary)
+	print( isotropic)
 	return(a.wght)
 }
 
@@ -333,13 +386,16 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     m<- mx1*mx2
     #
     a.wght<- (object$a.wght)[[Level]]
-    if( any(unlist(a.wght)<4) ){
+    
+    stationary <-     attr( object$a.wght, "stationary")
+    first.order<-     attr( object$a.wght, "first.order")
+    isotropic  <-     attr(object$a.wght, "isotropic")
+    distance.type <-  object$distance.type
+    if( stationary & isotropic) {
+      if( any(unlist(a.wght)< 4) ){
         stop("a.wght less than 4")
       }
-    stationary <-     attr( object$a.wght, "stationary")
-    first.order<-    attr( object$a.wght, "first.order")
-    isotropic  <- attr(object$LKinfo$a.wght, "isotropic")
-    distance.type <-  object$distance.type
+    }
     
     #  pass a.wght as an (mx1 by mx2)  matrix
     #  otherwise fill out matrix of this size with single value

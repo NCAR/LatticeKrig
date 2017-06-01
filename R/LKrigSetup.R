@@ -121,12 +121,12 @@ LKrigSetup <- function(x = NULL,
 # reformat, modify, and check the parameters for the Markox random field/ GP model
 #  fix up the alpha parameters
 #   the default method is probably adequate for most geometries and SARs
-      LKinfo$alpha<- LKrigSetupAlpha(LKinfo)
-      if( verbose){
+    LKinfo$alpha<- LKrigSetupAlpha(LKinfo)
+    if( verbose){
         print(alpha)}
 # fix up the a.wght parameters specfic geometries might need 
 # a specific function here.
-      LKinfo$a.wght<-LKrigSetupAwght(LKinfo)
+    LKinfo$a.wght<-LKrigSetupAwght(LKinfo)
 # set lambda if sigma and rho are passed.
     if (is.na(lambda[1])) {
         lambda <- sigma^2/rho

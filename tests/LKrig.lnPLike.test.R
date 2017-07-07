@@ -29,9 +29,16 @@ options( echo=FALSE)
   weights<- runif(N)
   W<- diag(weights)
 # a micro sized lattice so determinant is not too big or small
-  obj<- LKrig( x,y,NC=5, weights= weights, lambda=lambda,nlevel=nlevel,alpha=alpha,a.wght=a.wght,
-                              NtrA=5,iseed=122)
-  LKinfo<- obj$LKinfo
+#  obj<- LKrig( x,y,NC=5, weights= weights, lambda=lambda,
+#               nlevel=nlevel,alpha=alpha,a.wght=a.wght,
+#                              NtrA=5,iseed=122)
+  
+ 
+  LKinfo<- LKrigSetup( x,NC=5, lambda=lambda,
+                       nlevel=nlevel,alpha=alpha,a.wght=a.wght,
+                       fixedFunctionArgs = list(m = 2))
+  obj<- LKrig( x,y,LKinfo=LKinfo, weights= weights, NtrA=5,iseed=122)
+  
 # The equivalent Kriging using mKrig and the LatticeKrig covariance function
   obj0<- mKrig( x,y, weights= weights, lambda=lambda, m=2, cov.function="LKrig.cov",
                                  cov.args=list(LKinfo=LKinfo),
@@ -42,7 +49,8 @@ options( echo=FALSE)
   test.for.zero( obj$lnProfileLike.FULL,obj0$lnProfileLike.FULL, 
                  tag="lnProfileFULL from LKrig and identical compuation
                  using mKrig")
- 
+  
+
 ###### check of formula with weights
   PHI<- as.matrix(LKrig.basis( x,LKinfo))
   Q <- as.matrix(LKrig.precision(LKinfo))
@@ -60,14 +68,45 @@ options( echo=FALSE)
   test.for.zero( obj$quad.form,  obj0$quad.form, tag= "quadratic forms for rho MLE")
   test.for.zero( obj0$lnProfileLike, obj$lnProfileLike,
                                 tag="Profile Likelihood concentrated on lambda" )
+  
+  # with replicated fields -- first pass including if LKrigSetup works and no fixed part.
+  yRep<- cbind( y, y+5, y*1.2)
+  LKinfo<- LKrigSetup( x,NC=5, weights= weights, lambda=lambda,
+                       nlevel=nlevel,alpha=alpha,a.wght=a.wght,
+                       fixedFunction=NULL)
+  
+  #                       fixedFunctionArgs = list(m = 1))
+  
+  objR<- LKrig( x,yRep, LKinfo= LKinfo, weights= weights,
+                NtrA=5,iseed=122)
+  # The equivalent Kriging using mKrig and the LatticeKrig covariance function
+  obj0R<- mKrig( x,yRep, weights= weights, lambda=LKinfo$lambda, m=0,
+                 cov.function="LKrig.cov",
+                 cov.args=list(LKinfo=LKinfo), collapseFixedEffect = FALSE,
+                 NtrA=5, iseed=122)
+  # quick up front test of likelihood computation
+  # This is only valid if mKrig is computating the likelihood correctly ;-).  
+  test.for.zero( objR$rho.MLE,obj0R$rho.MLE, 
+                 tag="individual rho estimates from LKrig and identical compuation
+                 using mKrig")
+  test.for.zero( objR$rho.MLE.FULL,obj0R$rho.MLE.FULL, 
+                 tag=" full rho estimate from LKrig and identical compuation
+                 using mKrig")
+  test.for.zero( objR$lnProfileLike,obj0R$lnProfileLike, 
+                 tag=" individual lnProfile from LKrig and identical computation
+                 using mKrig")
+  
+  
+# try this out with replicated data and fixed part 
   Y<- cbind( y,2*y, y*3)
   obj<- LKrig( x,Y,NC=5, weights= weights, lambda=lambda,nlevel=nlevel,alpha=alpha,a.wght=a.wght,
                               NtrA=5,iseed=122)
   LKinfo<- obj$LKinfo
 # now check these formulas as implemented in LatticeKrig
-  obj0<- mKrig( x,Y, weights= weights, lambda=lambda, m=2, cov.function="LKrig.cov",
-                                 cov.args=list(LKinfo=LKinfo),
-                                 NtrA=20, iseed=122,collapseFixedEffect = FALSE)
+  obj0<- mKrig( x,Y, weights= weights, lambda=lambda, m=2, 
+                cov.function="LKrig.cov",
+                cov.args=list(LKinfo=LKinfo),
+                NtrA=20, iseed=122, collapseFixedEffect = FALSE)
   test.for.zero(  obj0$rho.MLE, obj$rho.MLE,
            tag="MLEs for rho with replicate fields" )
 

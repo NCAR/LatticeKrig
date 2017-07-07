@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2
 
-summary.LKrig <- function(object, digits = 4, ...) {
+summary.LKrig <- function(object, digits = 4, stripAwght=TRUE, ...) {
   x<- object
   obj<- list()
   LKinfo <- x$LKinfo
@@ -83,6 +83,12 @@ summary.LKrig <- function(object, digits = 4, ...) {
   obj$inverseModel <- x$inverseModel
   obj$parameters<- summary
   obj$timingLKrig <- x$timingLKrig
+  # fastNormalization matrices will add to the size of LKinfo
+  # just reset to message
+  if( stripAwght){
+  attr(LKinfo$a.wght, 
+  which = "fastNormDecomp") <- "Omitted by summary.LKrig function"
+  }
   obj$LKinfo<- LKinfo
   obj$MLE<- x$MLE
   return(obj)

@@ -214,7 +214,6 @@ LKrigSetupAwght.LKRectangle <- function(object, ...) {
 	for (k in 1:length(a.wght)) {
 	   # number of dimensions can be NULL, 2 or 3
 	    dim.a.wght <- dim(a.wght[[k]])
-	    print( dim.a.wght) # BUG
 	    stationaryLevel <- is.null(dim.a.wght) 
 	    stationary[k]<- stationaryLevel
 	    isotropic[k]<- stationaryLevel
@@ -262,9 +261,7 @@ if (fastNormalization) {
 	attr(a.wght, which = "stationary") <- stationary
 	attr(a.wght, which = "isotropic") <- isotropic
 	#
-	print( first.order)
-	print( stationary)
-	print( isotropic)
+
 	return(a.wght)
 }
 
@@ -391,7 +388,7 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     first.order<-     attr( object$a.wght, "first.order")
     isotropic  <-     attr(object$a.wght, "isotropic")
     distance.type <-  object$distance.type
-    if( stationary & isotropic) {
+    if( all(stationary & isotropic) ) {
       if( any(unlist(a.wght)< 4) ){
         stop("a.wght less than 4")
       }

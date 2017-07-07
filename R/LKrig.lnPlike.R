@@ -71,7 +71,7 @@ LKrig.lnPlike<- function(GCholesky, Q, quad.form, nObs, nReps,
   rho.MLE.FULL <- mean(rho.MLE)
   sigma.MLE.FULL <- sqrt(lambda * rho.MLE.FULL)
   lnProfileLike.FULL <- nReps*(-(n/2) - log(2 * pi) * (n/2) - (n/2) * log(rho.MLE.FULL) - 
-                                 (1/2) * lnDetCov)
+                                 (1/2) * lnDetCov )
   
   #
   return(list(lnProfileLike = lnProfileLike,

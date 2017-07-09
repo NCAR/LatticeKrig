@@ -32,10 +32,14 @@ the linear model.}
  LKrigDefaultFixedFunction(x, Z = NULL, m=2,distance.type="Euclidean") 
  LKrigPeriodicFixedFunction(x, Z = NULL, m = 2, distance.type = "Euclidean")
  
-predictLKrigFixedFunction(object, xnew, Znew = NULL, drop.Z = FALSE)
+predictLKrigFixedFunction(object, xnew, Znew = NULL, drop.Z = FALSE,
+collapseFixedEffect = FALSE)
 }
 
 \arguments{
+
+\item{collapseFixedEffect}{If FALSE the fixed part of the model is found seperately for each replicated data set. If TRUE the estimate is polled across replicates.}
+ 
 \item{drop.Z}{If TRUE only spatial drift is evaluated the contribution for covariates
 is omitted.}
 

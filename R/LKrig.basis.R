@@ -76,7 +76,7 @@ LKrig.basis <- function(x1, LKinfo, verbose = FALSE)
         PHItemp <- Radial.basis(  x1, centers, basis.delta[l],
                                 max.points = LKinfo$basisInfo$max.points,
                              mean.neighbor = LKinfo$basisInfo$mean.neighbor, 
-                       BasisFunction = get(LKinfo$basisInfo$BasisFunction),
+                             BasisFunction = get(LKinfo$basisInfo$BasisFunction),
                              distance.type = LKinfo$distance.type,
                                    verbose = verbose)
                              )

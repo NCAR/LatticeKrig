@@ -19,6 +19,7 @@ S3method(summary, LKrig)
 S3method( surface,LKrig)
 
 S3method(LKinfoCheck, default)
+S3method(LKinfoCheck, LKRectangle)
 S3method(LKrigSAR,LKBox)
 S3method(LKrigSAR,LKCylinder)
 S3method(LKrigSAR,LKInterval)

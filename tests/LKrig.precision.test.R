@@ -107,7 +107,7 @@ temp<- matrix( 1:m, mx[1,1],mx[1,2])
   cat("Now check spatial a.wght and alpha", fill=TRUE)
 
   LKinfo<- LKrigSetup( cbind( c( -1,1), c( -1,1) ), nlevel=1, NC=5,
-                        a.wght=4,
+                        a.wght=4.5,
                         alpha=1)
   a.wght<-  list( matrix(4 + (1:LKinfo$latticeInfo$m)*.1, LKinfo$latticeInfo$mx[1,2], LKinfo$latticeInfo$mx[1,2]))
   LKinfo<- LKrigSetup( cbind( c( -1,1), c( -1,1) ), nlevel=1, NC=5,

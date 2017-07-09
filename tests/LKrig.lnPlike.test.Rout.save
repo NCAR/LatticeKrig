@@ -1,7 +1,7 @@
 
-R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
-Copyright (C) 2016 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin13.4.0 (64-bit)
+R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -50,6 +50,18 @@ Testing:  quadratic forms for rho MLE
 PASSED test at tolerance  1e-08
 Testing:  Profile Likelihood concentrated on lambda
 PASSED test at tolerance  1e-08
+Testing:  
+individual rho estimates from LKrig and identical compuation
+                 using mKrig
+PASSED test at tolerance  1e-08
+Testing:  
+ full rho estimate from LKrig and identical compuation
+                 using mKrig
+PASSED test at tolerance  1e-08
+Testing:  
+ individual lnProfile from LKrig and identical computation
+                 using mKrig
+PASSED test at tolerance  1e-08
 Testing:  MLEs for rho with replicate fields
 PASSED test at tolerance  1e-08
 Testing:  Profile Likelihood concentrated on lambda with replicate fields
@@ -63,4 +75,4 @@ PASSED test at tolerance  1e-08
 all done with lnPLike with weights
 > proc.time()
    user  system elapsed 
- 12.070   0.121  12.245 
+ 11.091   0.239  10.553 

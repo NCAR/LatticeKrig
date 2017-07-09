@@ -38,6 +38,7 @@ LKrigSetup <- function(x = NULL,
 # setDefaultsLKinfo below.
                        fixedFunction="LKrigDefaultFixedFunction",    
                        fixedFunctionArgs = list(m=2),
+                       collapseFixedEffect = FALSE,
 # defaults for sparse matrix size.                        
                        max.points=NULL, mean.neighbor=50, choleskyMemory=NULL,
 # useful for debugging                       
@@ -69,11 +70,13 @@ LKrigSetup <- function(x = NULL,
                 BasisType = BasisType,
             fixedFunction = fixedFunction,
         fixedFunctionArgs = fixedFunctionArgs,
+      collapseFixedEffect = collapseFixedEffect,
                max.points = max.points,
             mean.neighbor = mean.neighbor,
            choleskyMemory = choleskyMemory,
                 setupArgs =  setupArgs,
                     dense = dense
+        
                  ) 
 # 
     LKinfo$basisInfo<- list(             BasisType = BasisType,

@@ -39,7 +39,8 @@ LKrig.traceA <- function(GCholesky, wX, wU, lambda, weights, NtrA, iseed = NA) {
         assign(".Random.seed", save.seed, pos = 1)
     }
     #
-    out3 <- LKrig.coef(GCholesky, wX, wU, wEy, lambda) 
+    out3 <- LKrig.coef(GCholesky, wX, wU, wEy, lambda,
+                       collapseFixedEffect=FALSE) 
     wEyhat <- (wX %*% out3$c.coef)
     if( !is.null(wU) ){
         wEyhat <- wEyhat + wU %*% out3$d.coef

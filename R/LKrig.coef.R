@@ -19,7 +19,9 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2
 
-LKrig.coef <- function(GCholesky, wX, wU, wy, lambda, verbose=FALSE) {
+LKrig.coef <- function(GCholesky, wX, wU, wy, lambda,
+                       collapseFixedEffect = FALSE,
+                       verbose=FALSE) {
     if (length(lambda) > 1) {
         stop("lambda must be a scalar")
     }
@@ -39,6 +41,14 @@ LKrig.coef <- function(GCholesky, wX, wU, wy, lambda, verbose=FALSE) {
         Omega <- solve(A)
 # GLS estimates
         d.coef <- Omega %*% b
+# combine the different fixed effects estimates across replicates.        
+        if(  collapseFixedEffect ){
+           d.coefMean<- rowMeans( d.coef)
+           dimTemp<- dim ( d.coef)
+           d.coef<- matrix( d.coefMean,
+                            nrow = dimTemp[1],
+                            ncol = dimTemp[2])
+        }
         residualFixed<- wy - wU %*% d.coef
    }
    else{
@@ -65,6 +75,8 @@ LKrig.coef <- function(GCholesky, wX, wU, wy, lambda, verbose=FALSE) {
     	cat("c.coef: ", c.coef, fill=TRUE)
     }
     return( list(c.coef = c.coef, d.coef = d.coef,
-                 Omega = Omega, quad.form=quad.form) )
+                 Omega = Omega, quad.form=quad.form,
+                 collapseFixedEffect= collapseFixedEffect )
+            )
 }
 

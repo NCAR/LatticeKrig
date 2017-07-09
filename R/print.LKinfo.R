@@ -20,6 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2
 
 print.LKinfo <- function(x, ...) {
+  print( x$call)
     LKinfo <- x
     L <- LKinfo$nlevel
     cat("Classes for this object are: " , class( LKinfo), fill=TRUE)
@@ -40,6 +41,9 @@ print.LKinfo <- function(x, ...) {
     	cat("transformed ranges:",fill=TRUE)
     	print( LKinfo$latticeInfo$grid.info$range)
     }
+    cat(" ", fill = TRUE)
+    cat("Logical (collapseFixedEffect) if fixed effects will be pooled:" ,
+        LKinfo$collapseFixedEffect, fill = TRUE)
     cat(" ", fill = TRUE)
     cat("Number of levels:", L, fill = TRUE)
     cat("delta scalings:", x$latticeInfo$delta, fill = TRUE)

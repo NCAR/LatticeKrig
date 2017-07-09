@@ -17,7 +17,6 @@
 \name{LKGeometry}
 \alias{LKGeometry}
 \alias{LKBox}
-\alias{LKRectangle}
 \alias{LKInterval}
 \title{Tailoring the LatticeKrig model to a specific geometry.
 }
@@ -41,10 +40,21 @@
 		\item{LKrigSAR.LKInterval}{Creates a sparse 1-d spatial autoregressive matrix.}
 		\item{LKrigLatticeCenters.LKInterval}{Returns the spatial locations of the lattice points.}
 	}
-	Nothing else is needed to coax the LatticeKrig computation to fit a 1-d spatial model. There are more details and flexibility in specifying the model, but the ones listed above are generic in that they make sense for any LatticeKrig model and are not specific to the 1-d case.  
-The \code{.LKInterval} tag on each of these functions indicates that these are S3 versions of a "method". The actual source code in LatticeKrig just relies on calling the generic 
-method, e.g. LKrigSetupLattice, and the geometry, added as a class indicates, which function is actually used. Checking what each of these functions does and then 
-seeing how they are called in \code{LKrigSetup} and \code{LKrig.basis} will give a simple introduction to how the code is structured. 
+	Nothing else is needed to coax the LatticeKrig
+	computation to fit a 1-d spatial model. There are
+	more details and flexibility in specifying the model,
+	but the ones listed above are generic in that they
+	make sense for any LatticeKrig model and are not
+	specific to the 1-d case.  
+The \code{.LKInterval} tag on each of these functions
+indicates that these are S3 versions of a "method". The
+actual source code in LatticeKrig just relies on
+calling the generic 
+method, e.g. LKrigSetupLattice, and the geometry, added as a class indicates, which function is actually used.
+Checking what each of these functions does and then 
+seeing how they are called in \code{LKrigSetup} and \code{LKrig.basis} will give a simple introduction to
+how the code is structured. See
+\code{\link{LKRectangle}} for details on the most common 2-d geometry.
 }
 
 \section{Use of the LKInfo object}{

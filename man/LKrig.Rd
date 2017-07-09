@@ -43,10 +43,12 @@ function can be used to solve a linear inverse type problem (see X and U below).
 	LKrig( x, y, weights = NULL, Z = NULL, LKinfo = NULL, iseed =
                  NA, NtrA = 20, use.cholesky = NULL, return.cholesky =
                  TRUE, X = NULL, U = NULL, wX = NULL, wU = NULL,
-                 return.wXandwU = TRUE, ..., verbose = FALSE)
+                 return.wXandwU = TRUE,
+                 ..., verbose = FALSE)
 
 \method{predict}{LKrig}(object, xnew = object$x, Znew = NULL, drop.Z = FALSE,
-                 just.fixed = FALSE, return.levels = FALSE, ...)
+                 just.fixed = FALSE, return.levels = FALSE,
+                 collapseFixedEffect=object$collapseFixedEffect, ...)
                  
 \method{predictSE}{LKrig}(object, xnew = NULL, Znew = object$Z, verbose = FALSE,
                  ...)
@@ -59,7 +61,7 @@ function can be used to solve a linear inverse type problem (see X and U below).
 
 \method{print}{LKrig}( x, digits=4, ...)
 
-\method{summary}{LKrig}( object, digits=4, ...)
+\method{summary}{LKrig}( object, digits=4, stripAwght = TRUE,...)
 
 }
 \arguments{
@@ -81,6 +83,8 @@ function can be used to solve a linear inverse type problem (see X and U below).
 	
 \item{chull.mask}{An additional constraint for evaluating predictions see
 \code{help(in.poly)}. Usually this is not needed.  }
+
+\item{collapseFixedEffect}{If FALSE the fixed part of the model is found seperately for each replicated data set. If TRUE the estimate is polled across replicates.This is largely a modeling decision whether variation among the replicate fields is due to the spatial component or also include variation in the fixed effects across replicates -- guess they are not really fixed then!}
      
 \item{digits}{Number of digits in printed output.}
    
@@ -123,6 +127,15 @@ determining effective degrees of freedom. }
 returned as columns in a matrix. }
 
 \item{return.wXandwU}{If TRUE the matrices wX and xU are included in the LKrig object.}
+\item{stripAwght}{ If TRUE the attributes for the a.wght returned by the summary
+are wiped out. Why do this? In some cases the a.wght list has some attributes
+attached to
+it that are large. For example if fastNormalize is TRUE for LKRectangle 
+there are some 
+precomputed matrices that are included to speed the normalization of the basis
+functions. These attributes make the a.wght itself hard to print out and if the
+summaries for many fits are accumulated these attributes greatly inflate the size
+of the results. }
 
 \item{U}{For linear inverse problems the matrix that maps coefficients of the fixed part of model to the predicted
 	values of observations.}

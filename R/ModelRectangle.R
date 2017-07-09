@@ -56,20 +56,22 @@ LKinfoCheck.LKRectangle<- function( object,...){
       }
       if(!first.order[k] & stationary[k]){
         aValues<- a.wght[[k]]
+        # test is not perfect but idea
         testValue[k]<- sum( aValues) > 0  
         }
       if(first.order[k] & !stationary[k]){
             aValues<- a.wght[[k]]
-            testValue[k]<- all(aValues > floorAwghtsum)
+            testValue[k]<- all(aValues > floorAwght)
           }
       if(!first.order[k] & !stationary[k]){
               aValues<- a.wght[[k]]
               a.wghtSums<- apply( aValues, c(1,2), "sum")
               testValue[k]<- all( a.wghtSums >0 )
-            }
+          }
       }
     if( !all( testValue)){
-      stop("a.wght do not satisfy stability condition")
+      stop( paste( testValue,  "a.wghts at some level(s)
+                    do not satisfy stability condition") )
     }
 }        
           

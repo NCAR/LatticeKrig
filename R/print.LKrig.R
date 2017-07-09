@@ -42,7 +42,7 @@ print.LKrig <- function(x, digits = 4, ...) {
         c1 <- c(c1, "Number of covariates")
         c2 <- c(c2, x$nZ)
     }
-    if (!is.na(x$eff.df)) {
+    if (!is.null(x$eff.df)) {
         c1 <- c(c1, " Effective degrees of freedom (EDF)")
         c2 <- c(c2, signif(x$eff.df, digits))
         c1 <- c(c1, "   Standard Error of EDF estimate: ")
@@ -75,13 +75,26 @@ print.LKrig <- function(x, digits = 4, ...) {
     
     summary <- cbind(c1, c2)
     dimnames(summary) <- list(rep("", dim(summary)[1]), rep("", dim(summary)[2]))
-    cat("Call:\n")
-    dput(x$call)
+#    cat("Call:\n")
+#    dput(x$call)
     if( x$inverseModel){
     	 cat("NOTE: This is an 'inverse' model because an X matrix was supplied", fill=TRUE)}
     print(summary, quote = FALSE)
     cat(" ", fill = TRUE)
 #  
+    if (NData > 1) {
+      cat(" ", fill = TRUE)
+      if( x$collapseFixedEffect){
+        cat("Estimated fixed effects pooled across
+            replicates", fill=TRUE)
+      }
+      else{
+        cat("Estimated fixed effects found separately
+            for each replicate", fill=TRUE) 
+      }
+      cat("collapseFixedEffect :", x$collapseFixedEffect, fill=TRUE)
+    }
+    
     if( NData > 1){
       cat("Note: MLEs are the combined estimates across replicates.",
           fill=TRUE)

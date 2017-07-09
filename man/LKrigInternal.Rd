@@ -40,7 +40,8 @@ coefficients of the basis functions and compute the likelihood.
 createLKrigObject(x, y, weights = NULL, Z, X, U, LKinfo, verbose = FALSE)
 LKrigMakewU(object, verbose = FALSE)
 LKrigMakewX(object, verbose = FALSE)
-LKrig.coef( GCholesky, wX, wU, wy, lambda, verbose = FALSE)
+LKrig.coef( GCholesky, wX, wU, wy, lambda,
+collapseFixedEffect = FALSE,  verbose = FALSE)
 LKrig.lnPlike( GCholesky, Q, quad.form, nObs, nReps, weights, LKinfo)
 LKrig.lnPlikeOLD(Mc, Q, wy, residuals, weights, LKinfo)
 LKrig.traceA(GCholesky, wX, wU, lambda, weights, NtrA, iseed = NA)
@@ -49,9 +50,8 @@ LKrigUnrollZGrid( grid.list, ZGrid=NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
-%  \item{distance.type}{Distance (and geometry) for coordinates.}
-
-  
+  \item{collapseFixedEffect}{If FALSE estimate fixed effects
+            separately for each replicated data set. }
   \item{grid.list}{The grid for evaluating surface}
   \item{GCholesky}{SPAM cholesky decomposition of the "G" matrix.}
 

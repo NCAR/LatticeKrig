@@ -19,7 +19,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2
 
-predictLKrigFixedFunction <- function(object, xnew=NULL, Znew = NULL, drop.Z = FALSE){
+predictLKrigFixedFunction <- function(object, xnew=NULL, Znew = NULL,
+                                      drop.Z = FALSE,
+                         collapseFixedEffect = FALSE){
+# currently collapseFixedEffect not used in this function
      if( is.null(xnew)){
        xnew<- object$x
      }

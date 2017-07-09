@@ -1480,4 +1480,4 @@ Testing:  checking computation of marginal variance LKBox
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
- 10.244   0.890  11.195 
+ 10.418   0.938  11.414 

@@ -17,6 +17,7 @@
 \name{LKinfoCheck}
 \alias{LKinfoCheck}
 \alias{LKinfoCheck.default}
+\alias{LKinfoCheck.LKRectangle}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Check the LKinfo object
 %%  ~~function to do ... ~~
@@ -41,6 +42,7 @@ try( LKinfoCheck( LKinfo) )
 \usage{
 LKinfoCheck(object, ...)
 \method{LKinfoCheck}{default}(object, ...)
+\method{LKinfoCheck}{LKRectangle}(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

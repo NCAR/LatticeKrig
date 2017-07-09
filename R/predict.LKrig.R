@@ -21,7 +21,9 @@
 
 predict.LKrig <- function(object, xnew = object$x, Znew = NULL, drop.Z = FALSE,
        just.fixed=FALSE, 
-	return.levels = FALSE, ...) {
+	return.levels = FALSE,
+	collapseFixedEffect = object$collapseFixedEffect,
+	 ...) {
 	#
 	if (!drop.Z & is.null(Znew)) {
 		Znew <- object$Z
@@ -30,7 +32,9 @@ predict.LKrig <- function(object, xnew = object$x, Znew = NULL, drop.Z = FALSE,
 	if (findFixedPart) {	
 		temp1 <-
 		predictLKrigFixedFunction(object, xnew = xnew, 
-            Znew = Znew, drop.Z = drop.Z)	}
+            Znew = Znew, drop.Z = drop.Z,
+            collapseFixedEffect = collapseFixedEffect 
+            )	}
 	if( just.fixed){
 		return( temp1)
 	}

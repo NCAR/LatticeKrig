@@ -58,21 +58,27 @@ if (is.null(Znew) & (object$nZ > 0)) {
     # use the predict computations but with covariance vector
     # as "observations"
     # it may not be obvious why this formula makes sense!	
+	# collapseFixedEffect=FALSE because
+	# we want the "fixed effect" d.coef computation
+	# to be done separately for each column of wk0
 	hold <- LKrig.coef(
 	          GCholesky = object$Mc,
 	                 wX = object$wX, 
 		               wU = object$wU,
 		               wy = wk0,
 		           lambda = lambda,
-		          verbose = verbose)
+		          verbose = verbose,
+  collapseFixedEffect = FALSE
+	             )
 	# version of 'c'coefficents for usual Kriging model
+	# as for  mKrig in  the fields package 
 	c.mKrig <- (wk0 - object$wU %*% hold$d.coef
 	                        - object$wX %*% hold$c.coef)/lambda
 	d.coef <- hold$d.coef
 	# colSums used to find multiple quadratic forms  
 	#e.g.  diag(t(x) %*%A%*%x) == colSums( x* (A%*%(x)))
-	temp1 <- rho * (colSums(t0 * (Omega %*% t0)) - 2 * colSums(t0 * 
-		d.coef))
+	temp1 <- rho * (colSums(t0 * (Omega %*% t0)) -
+	                      2 * colSums(t0 * d.coef))
 	# find marginal variances -- trival in the stationary case!
 	temp0 <- rho * (LKrig.cov(xnew, LKinfo = LKinfo, marginal = TRUE) - 
 		colSums(wk0 * c.mKrig))

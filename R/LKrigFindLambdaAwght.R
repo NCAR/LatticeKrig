@@ -15,12 +15,15 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   # For rectangle omega = log(kappa) = log(sqrt(Awght-4))
   # but will change with other models. 
   # Parts of the LKrig call that will be fixed.  (except updates to LKinfo)                             
-  if( !attr(LKinfo$a.wght,"isotropic") ){
-    stop("findAwght only setup to estimate a single a.wght parameter 
-         in the model.")
+  if( any( attr(LKinfo$a.wght,"isotropic") ) == FALSE  ){
+      stop( paste(attr(LKinfo$a.wght,"isotropic"), 
+           "findAwght only setup to estimate a single a.wght
+                 parameter in the model.")
+          )
   }
   LKrigArgs <- c(list(x = x, y = y), list( ...),
-                 list( LKinfo=LKinfo, NtrA= 0  ))
+                 list( LKinfo=LKinfo, NtrA = 0  ))
+  
   if( verbose){
     cat( "LKrigFindLambdaAwght: Set of LKrigArgs before first call:", names(LKrigArgs ), fill=TRUE)
   }
@@ -118,7 +121,6 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
   names( out) <-  c("EffDf", "lnProfLike", "GCV", "sigma.MLE", "rho.MLE", 
                     "lambda.MLE", "a.wght.MLE", "lnLike", "functionEval", 
                     "gradientEval", "totalEval")
-    
   out[ 1] <- LKrigObject$trA.est
   out[ 2] <- LKrigObject$lnProfileLike.FULL
   out[ 3] <- LKrigObject$GCV

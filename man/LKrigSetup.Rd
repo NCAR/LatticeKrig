@@ -37,7 +37,9 @@ x = NULL, nlevel = NULL, alpha = NA, nu = NULL, a.wght
                  "Euclidean", BasisFunction = "WendlandFunction",
                  overlap = 2.5, V = NULL, BasisType = "Radial",
                  fixedFunction = "LKrigDefaultFixedFunction",
-                 fixedFunctionArgs = list(m = 2), max.points = NULL,
+                 fixedFunctionArgs = list(m = 2),
+                 collapseFixedEffect = FALSE,
+                 max.points = NULL,
                  mean.neighbor = 50, choleskyMemory = NULL, verbose =
                  FALSE, noCheck = FALSE, returnCall = FALSE, dense=FALSE, ...)
 
@@ -78,8 +80,18 @@ variances for the different multiresolution levels.  }
 do the Cholesky decomposition. See the \code{memory} argument in 
 \code{chol.spam}. }
 
-\item{dense}{If FALSE sparse linear algebra is used for the computations. If TRUE the matrices are
-made "dense" (zeroes are filled in) and the ordinary Lapack functions are used for the linear algebra.
+\item{collapseFixedEffect}{If FALSE the fixed part of the model is
+found seperately for each replicated data set. If TRUE the estimate is
+polled across replicates.This is largely a modeling decision whether
+variation among the replicate fields is due to the spatial component or
+also include variation in the fixed effects across replicates -- guess
+they are not really fixed then!}
+
+\item{dense}{If FALSE sparse linear algebra is used for the
+computations
+. If TRUE the matrices are
+made "dense" (zeroes are filled in) and the ordinary Lapack functions
+are used for the linear algebra.
 This option is primarily
 for testing and timing sparse verses standard algorithms. }
 

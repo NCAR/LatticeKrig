@@ -40,8 +40,8 @@ Despite the simple syntax,
 LatticeKrig still takes advantage of the multi-resolution features of the basic 
 \code{LKrig} function and any \code{LKrig} parameter can be passed through the
 function call. See the example below for varying the range parameter.
-Also, see \code{\link{LKinfo}} for documentation on the complete object that
-describes the LatticeKrig model and \code{\link{LKGeometry}} for documentation on
+Also, see \code{\link{LKinfo}} and\code{\link{LKrigSetup}}  for documentation on the complete object that
+describes the LatticeKrig model and the function to create it easily.  See \code{\link{LKGeometry}} for documentation on
 extending or adding other spatial models to this package. 
 
 The returned value from this function can be used subsequently for prediction, 
@@ -96,9 +96,10 @@ Or for the function \code{print.LatticeKrig} \code{x} is the returned object fro
 
  \item{verbose}{ If TRUE print out intermediate results. }
 
-  \item{\dots}{Additional arguments to pass to LKrig. See help(LKrig) for a complete list. But for convenience we note that  if you get some pesky memory warnings from spam
+  \item{\dots}{Additional arguments to pass to LKrig. 
+  The easiest way to pass a full specification is to create an LKinfo object beforehand and then jsut pass that (see example below.) This gives more control and the setup function will do some error checking on argumetns. Also see help(LKrig) for a complete list of arguments to pass.  For convenience we note that  if you get some pesky memory warnings from spam
   you can set the storage higher by adding the argument \code{choleskyMemory}. For example to bump up to 2E6 include:
-  \code{choleskyMemory=list(nnzR= 2E6)}.
+  \code{choleskyMemory=list(nnzR= 2E6)}. 
   }
   
   \item{digits}{Number of significant digits in printed summary.}
@@ -244,13 +245,23 @@ LKrig, LKrig.setup, LKrigFindLambda, LKinfo, LKrig.sim.conditional
  out.surf<- predictSurface( obj, nx=100, ny=100)
 # image.plot( out.surf) 
 }
+# running an example by first setting up the model object
+\dontrun{
+# this is just a small model to run quickly
+# compare the LKinfo object here  to one created implictily:  obj$LKinfo
+LKinfo1<- LKrigSetup( x, NC=5, nlevel=3, a.wght=4.1, nu=1.0)
+obj1<- LatticeKrig( x,y, LKinfo= LKinfo1)
+}
 #
 # In this example lon/lat are treated as just Euclidean coordinates 
-# a quick adjustment to account for the difference in physical distance in N-S verses E_W
+# a quick adjustment for small regions is to account for the difference
+# in physical distance in N-S verses E_W
 # is to just scale the longitude degrees to be comparable to degrees in latitude
 # at least in the middle of the domain. The assumption is that for small spatial
 # domains this approximation will not be bad for the coordinates at the edges too.
 # You accomplish this by adding a scaling, V matrix:
+# Here the V argument is rolled into the LKinfo object created within the function
+#
 \dontrun{
   meanLat<- mean( x[,2])*pi/180
   Vlonlat <- diag(  c( 1/cos(meanLat), 1) )
@@ -260,10 +271,10 @@ LKrig, LKrig.setup, LKrigFindLambda, LKinfo, LKrig.sim.conditional
 \dontrun{
 # Refit using with just one level of  basis functions
 # on a 20X20 grid witin the spatial domain ( so about 400) 
-# actually number is 720 ( see obj1b$LKinfo) due adding edge nodes and also 
-# aspect ratio of spatial domain 
-# and find the a.wght parameter along with nugget and process variances. 
-# this takes a while partly because LatticeKrig model is no optimized for small data sets!
+# actually number is 720 ( see obj1b$LKinfo) due adding edge nodes
+# Add an aspect ratio of spatial domain 
+# and find the a.wght parameter along with nugget and process variances.
+# this takes a while partly because LatticeKrig model is not optimized for small data sets!
   obj1b<- LatticeKrig( x, y, nlevel=1, NC=20, findAwght=TRUE)
 # rudimentary look at how likelihood was optimized
 #log lambda and omega =  log(a.wght-4)/2 are useful parametrizations ...
@@ -273,6 +284,29 @@ LKrig, LKrig.setup, LKrigFindLambda, LKinfo, LKrig.sim.conditional
        zlim =c(-640,-612))
   points( obj1b$MLE$lnLike.eval[,c("logLambda","omega")],cex=.25)
       
+}
+# fitting replicate spatial data sets
+# here we use the common observations over days for the ozone
+# data set. Whether these are true replicated fields is in question
+# but the analysis is still useful
+
+\dontrun{
+Y<-  na.omit( t( ozone2$y) ) 
+ind<- attr( Y,"na.action")
+X<- ozone2$lon.lat[-ind, ]
+
+out1<- LatticeKrig( X, Y, nlevel=1, NC=20, findAwght=TRUE)
+out2<- LatticeKrig( X, Y, nlevel=1, NC=20, findAwght=TRUE,
+                        collapseFixedEffect=TRUE)
+# compare the two models 
+# Note second a.wght reflects more spatial correlation when individual 
+# fixed effect is not removed ( 4.4 verses 4.07)
+# nugget variance is nearly the same!
+out1$MLE$summary[1:7]                        
+out2$MLE$summary[1:7]
+                        
+
+
 }
 \dontrun{
 # Refit using the tensor product type of basis functions

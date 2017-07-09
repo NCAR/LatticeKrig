@@ -58,4 +58,4 @@ All done with SE tests TRUE>
 > 
 > proc.time()
    user  system elapsed 
- 23.793   0.331  24.403 
+ 16.847   0.183  17.178 

@@ -75,7 +75,9 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
                                  LKrigObject$lnProfileLike.FULL) 
                                 )
   if(verbose){
-    cat("capture.evaluations first call", fill=TRUE )
+    cat("Capture.evaluations first call", fill=TRUE )
+    cat("lambda", "log lambda", "a.wght", "omega",
+         "rhoMLE", "sigmaMLE", "logProfileLike", fill=TRUE)
     cat( capture.evaluations, fill=TRUE)
   }
   
@@ -168,7 +170,7 @@ LambdaAwghtObjectiveFunction<- function(PARS, LKrigArgs, capture.env, verbose=FA
                      hold$lnProfileLike.FULL 
   )
   if( verbose){
-    cat(PARS, rowForCapture[c(5,1,2,5)], fill=TRUE )
+    cat( rowForCapture, fill=TRUE )
   }
   lnProfileLike.FULL<- hold$lnProfileLike.FULL 
   temp.eval <- get("capture.evaluations",

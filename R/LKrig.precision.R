@@ -42,14 +42,14 @@ LKrig.precision <- function(LKinfo, return.B = FALSE,
                 cat("length alpha parameter", length( alpha.level), fill=TRUE)
             }
             if( any( is.na(c(alpha.level)) ) ){
-                	stop("NAs in alpha list")}             	
-            if (length(alpha.level) == 1) {
-                tempra <- 1/sqrt(alpha.level[1]) * tempB$ra
+                	stop("NAs in alpha list")
+            } 
+            if( length(alpha.level) > 1 ){
+              stop("alpha at a fixed level can only be a scalar \n
+                   see alpha.object as the current way 
+                   to describe a spatially varying alpha")
             }
-            else {
-                rowindices <- tempB$ind[, 1]
-                tempra <- 1/sqrt(alpha.level[rowindices]) * tempB$ra
-            }
+              tempra <- 1/sqrt(alpha.level) * tempB$ra
             # accumulate the new block
             # for the indices that are not zero
             ra <- c(ra, tempra)

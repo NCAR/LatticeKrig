@@ -20,7 +20,8 @@
 # or see http://www.r-project.org/Licenses/GPL-2
 
 LKrig.cov <- function(x1, x2 = NULL, LKinfo, C = NA, 
-                      marginal = FALSE) {
+                      marginal = FALSE, theta=NULL) {
+  # theta is a dummy argument 
 	PHI1 <- LKrig.basis(x1, LKinfo)
 	# sparse precision matrix for the basis coeficients	
 	Q <- LKrig.precision(LKinfo)

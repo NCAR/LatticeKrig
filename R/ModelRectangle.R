@@ -70,8 +70,8 @@ LKinfoCheck.LKRectangle<- function( object,...){
           }
       }
     if( !all( testValue)){
-      stop( paste( testValue,  "a.wghts at some level(s)
-                    do not satisfy stability condition") )
+      stop( paste( "a.wght sums", a.wghtSum, 
+"a.wghts at some level(s) do not satisfy stability condition") )
     }
 }        
           
@@ -251,6 +251,10 @@ LKrigSetupAwght.LKRectangle <- function(object, ...) {
 	fastNormalization <- all(stationary) & all(first.order) & all(!is.na(unlist(a.wght))) & 
 		(RBF == "WendlandFunction") & (object$basisInfo$BasisType == 
 		"Radial")
+	if( !is.null(object$setupArgs$BCHook)){
+#	  cat("turn off fast normalization")
+	  fastNormalization <- FALSE
+	}
 	#NOTE: current code is hard wired for Wendland 2 2 RBF 
 	# with fast normalization. 
 if (fastNormalization) {
@@ -466,6 +470,16 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     # return spind format because this is easier to accumulate
     # matrices at different multiresolution levels
     # see calling function LKrig.precision
+    if(!is.null(object$setupArgs$BCHook)){
+        #cat("adjusted SAR boundaries")
+    M<- da[1]
+    for( i in 1: M){
+      rowI<- which(Bi== i)
+      rowNN<- rowI[-1]
+      ra[rowNN]<-  4*ra[rowNN] / length(rowNN )
+    }
+    
+    }
     return(list(ind = cbind(Bi, Bj), ra = ra, da = da))
 }
 

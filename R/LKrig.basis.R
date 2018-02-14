@@ -137,13 +137,16 @@ LKrig.basis <- function(x1, LKinfo, verbose = FALSE)
         # explicit designation of spam prevents this being used 
         # without the spam library 
         # NOTE: when spam is loaded this is equivalent to just cbind( PHI, PHItemp)
+        
+        if (!is.null( LKinfo$alpha.object[[l]]) ) {
+          wght <- c(predict(LKinfo$alpha.object[[l]], x1))
+          PHItemp <- diag.spam(sqrt(wght)) %*% PHItemp
+        }
+        
         PHI <- spam::cbind.spam(PHI, PHItemp)
     }
     # include a spatially varying multiplication of process.
-    if (!is.null( LKinfo$rho.object) ) {
-        wght <- c(predict(LKinfo$rho.object, x1))
-        PHI <- diag.spam(sqrt(wght)) %*% PHI
-        }
+   
     # attach  LKinfo list to the matrix to help identify how the basis functions
     # are organized.
     attr(PHI, which = "LKinfo") <- LKinfo

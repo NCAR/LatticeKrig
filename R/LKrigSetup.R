@@ -44,7 +44,7 @@ LKrigSetup <- function(x = NULL,
 # useful for debugging                       
                        verbose = FALSE, noCheck=FALSE,
                        returnCall = FALSE,
-                       dense=FALSE,
+                       dense=FALSE, 
 # these additional arguments will just be added as a list to the LKinfo object as setupArgs
                           ... ) { 
 #

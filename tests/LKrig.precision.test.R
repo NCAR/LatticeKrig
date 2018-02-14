@@ -5,7 +5,7 @@
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 
 library( LatticeKrig)
-options( echo=FALSE)
+#options( echo=FALSE)
 
 ##########################################
   test.for.zero.flag<- 1

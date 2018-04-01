@@ -35,15 +35,18 @@ if (is.null(ZGrid) & !drop.Z & (!is.null(object$Z))) {
 		grid.list <- fields.x.to.grid(object$x, nx = nx, 
 			ny = ny, xy = xy)
 	}
+  
 	# do some checks on Zgrid and also reshape as a matrix
 	# rows index grid locations and columns the covariates (like Z in predict).
-Z <- LKrigUnrollZGrid(grid.list, ZGrid)
+  Z <- LKrigUnrollZGrid(grid.list, ZGrid)
 	# here is the heavy lifting
 	xg <- make.surface.grid(grid.list)
+	
 	# NOTE: the predict function called will need to do some internal  the checks
 	# whether the evaluation of a large number of grid points (xg)  makes sense.
-out <- predict(object, xg, Znew = Z, drop.Z = drop.Z, 
+	out <- predict.LKrig(object, xg, Znew = Z, drop.Z = drop.Z, 
 		...)
+
 	# reshape as list with x, y and z components    
 	out <- as.surface(xg, out)
 	#
@@ -53,7 +56,22 @@ if (!extrap) {
 			stop("need an x matrix in object")
 		}
 		if (is.na(chull.mask)) {
-			chull.mask <- unique.matrix(object$x[, xy])
+			X <- unique.matrix(object$x[, xy])
+			# x can just be the lower left and upper right corners
+			# add all four
+			if( nrow( X)==2){
+			  xr<- range(X[,1])
+			  yr<- range(X[,2])
+			  chull.mask<- rbind( c(xr[1], yr[1]),
+			                      c(xr[2], yr[1]),
+			                      c(xr[2], yr[2]),
+			                      c(xr[1], yr[2])
+			                     )
+			}
+			else{
+			  chull.mask<- X
+			}
+			
 		}
 		out$z[!in.poly(xg[, xy], xp = chull.mask,
 		                      convex.hull = TRUE)] <- NA

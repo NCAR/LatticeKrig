@@ -16,6 +16,7 @@
 
 \name{LKrigSetupAwght}
 \alias{LKrigSetupAwght}
+\alias{LKrigSetupAwghtObject}
 \alias{LKrigSetupAwght.default}
 \alias{LKrigSetupAwght.LKRectangle}
 
@@ -30,13 +31,15 @@
 \usage{
 LKrigSetupAwght(object, ...)
 \method{LKrigSetupAwght}{default}(object, ...)
+
 \method{LKrigSetupAwght}{LKRectangle}(object, ...)
 
+LKrigSetupAwghtObject(object)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
-  		The partial LKinfo object created within \code{LKrigSetup}.
+  		The partial or complete \code{LKinfo} object created within \code{LKrigSetup}.
 %%     ~~Describe \code{object} here~~
 }
   \item{\dots}{
@@ -45,10 +48,32 @@ LKrigSetupAwght(object, ...)
 }
 }
 \details{
-	The simplest function of this method is to convert the sequence of 
- 	a.wght values into a list. If only a scalar a.wght value is supplied then the default method just repeats this for each level. The attribute
+	The simplest function of this method is to convert the 
+ 	a.wght value into a list that has the length of the number of levels.
+ 	If only a scalar a.wght value is supplied then the default method
+ 	just repeats this for each level. 
+ 	
+ 	The function \code{LKrigSetupAwghtObject} uses the
+ 	a.wghtObject component  in the LKinfo object to fill
+ 	in a.wght parameters for the different
+ 	levels. This is convenient because the lattice locations are different at each level. The parameters are filled in at level, \code{Level} according to 
+ 	
+ 	\preformatted{
+ 	 latticeLocations<- make.surface.grid( 
+ 	                          object$latticeInfo$grid[[Level]])
+ 	 a.wght<- predict( object$a.wghtObject, latticeLocations )
+ 	}
+ 	here the predict function is whatever is supplied according to the 
+ 	class for a.wghtObject. Note that since the returned set of 
+ 	parameters will be in the format used internally a.wght here will be
+ 	a list with each component being a matrix. Number of rows are each to
+ 	the number of lattice points (or basis functions) at that level. 
+ 	This is easier implement that it may seem and see the examples in \link{nonstationaryModels}.
+ 	
+ 	The attribute
  	\code{fastNormalize} (either TRUE or FALSE) is attached to this 
- 	list to indicate how the marginal variance of the process should be found.
+ 	list to indicate how the marginal variance of the process should be
+ 	found.
  	  
 \preformatted{ 	 	
   LKinfo<- LKrigSetup( x,LKGeometry="LKInterval", alpha=c( 1,.2,.01),

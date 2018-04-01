@@ -21,7 +21,8 @@
 
 LKrig.cov <- function(x1, x2 = NULL, LKinfo, C = NA, 
                       marginal = FALSE, theta=NULL) {
-  # theta is a dummy argument 
+  # theta is a dummy argument for future development where a 
+  # range parameter is specified directly 
 	PHI1 <- LKrig.basis(x1, LKinfo)
 	# sparse precision matrix for the basis coeficients	
 	Q <- LKrig.precision(LKinfo)

@@ -78,7 +78,7 @@ print.LKrig <- function(x, digits = 4, ...) {
 #    cat("Call:\n")
 #    dput(x$call)
     if( x$inverseModel){
-    	 cat("NOTE: This is an 'inverse' model because an X matrix was supplied", fill=TRUE)}
+    	 cat("NOTE: This is an 'inverse' model because U and  X matrices are supplied", fill=TRUE)}
     print(summary, quote = FALSE)
     cat(" ", fill = TRUE)
 #  

@@ -71,6 +71,9 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 	dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
 	cat("Call:\n")
 	dput(x$call)
+	if( x$inverseModel){
+	  cat("NOTE: This is an 'inverse' model because U and  X matrices are supplied", fill=TRUE)}
+	cat(" ", fill = TRUE)	
 	print(sum, quote = FALSE)
 	cat(" ", fill = TRUE)
 	

@@ -11,7 +11,9 @@ options( echo=FALSE)
   test.for.zero.flag<- 1
   alpha<- c(1,.5,.5)
   nlevel<-3
-  a.wght<-  c(5,5,10)
+# in order to give different a.wght by level this should be in the 
+# form of a list with each value (not just a vector)
+  a.wght<-list(5,5,10)
   lnDet<- function(A){
   sum( log( eigen( A, symmetric=TRUE)$values))}
 

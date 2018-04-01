@@ -44,7 +44,8 @@ specification.}
 
 \usage{
 #
-LKrig.cov(x1, x2 = NULL, LKinfo, C = NA, marginal = FALSE) 
+LKrig.cov(x1, x2 = NULL, LKinfo, C = NA, marginal = FALSE,
+theta = NULL) 
 LKrig.cov.plot( LKinfo, NP=200, center = NULL, xlim = NULL, ylim = NULL)
 LKrigCovWeightedObs(x1, wX, LKinfo) 
 LKrig.basis(x1, LKinfo, verbose = FALSE)
@@ -100,6 +101,9 @@ evaluation, columns index basis functions).}
 t(B)\%*\%B.}
 
 \item{Q}{A sparse (spam format) precision matrix.}
+
+\item{theta}{Currently \code{theta} is a place holder argument
+    for future development. }
 
 \item{wX}{The wX matrix constructed in the \code{\link{LKrig}} function.}
 
@@ -182,7 +186,8 @@ multiresolution process at once. Also it is important to work with the
 precision matrix rather than the covariance.  The function
 \code{LKrig.normalize.basis.slow} takes advantage of the sparsity of the
 precision matrix for the coefficients.
-\code{LKrig.normalize.basis.fast} is even a more efficient version when
+\code{LKrig.normalize.basis.fast} is even a more efficient version 
+for an isotropic type model when
 a.wght is constant for a given level and takes advantage of the
 Kronecker structure on the precision matrix at each level.
 
@@ -204,20 +209,29 @@ lattice with a period indicating zero weights).
 
 \preformatted{
                                                  __________ 
-   .   -1     .         |  -1      .            |  a.wght  -1
+   .   -1     .         |  -e      .            |  a.wght  -e
                         |                       |
-  -1  a.wght  -1        | a.wght   -1           |   -1      .
+  -1  a.wght  -1        | a.wght   -e           |   -e      .
                         |                       |
-   .  -1      .         |  -1      .            |    .      .
+   .  -1      .         |  -e      .            |    .      .
 
 Interior point        Left edge              Upper left corner
 }
 
-Previous versions of LatticeKrig considered an edge correction to
-reflect other boundary conditions.  We have found these corrections to
-be numerically unstable, however, and so prefer at this time of
-writing adding a buffer of lattice points and using the uncorrected
-weights described above.
+To adjust for edges and corner lattice points we take two strategies. 
+The first is add extra lattice points around the edges so the actual
+spatial domain has lattice points with the complete number of neighbors.
+The default for the LKRectangle geometry is to add a buffer of 5 points
+( \code{NC.buffer = 5} ) around the edges. In addition  the neighbor
+weights are inflated sum to a fixed value. For example in the case of
+LKRectangle and following the schematic above we want the neighbor weights
+to sum to -4. Thus "e" for the middle figure will be set to -4/3 and for
+the right figure
+-2. Empirically these adjustments were found to improve how a.wght
+parameters chosen close to 4 could generate long range spatial correlations
+in the lattice coefficients. Note that these simple boundary adjustments
+happen to the buffer points and so are less likely to introduce artifacts
+into the spatial domain. 
  
 }
 
@@ -248,8 +262,6 @@ If  \code{varLevels} is a row of this matrix then  sum( varLevels* LKinfo$alpha)
 for the full process when the different levels are weighted by alpha. This is weighted sum is the marginal
 variance returned by \code{LKrig.cov} and \code{ marginal=TRUE} ( Also assuming that \code{LKinfo$rho.object}
 is NULL, which it usaully is.) . 
-
-
 
 
 \strong{LKrig.sim:} A matrix with dimensions of \code{nrow(x1)} by
@@ -325,8 +337,8 @@ LKrig, mKrig, Krig, fastTps, Wendland, LKrigSAR
 # effective range scales as roughly kappa where a.wght =  4 + kappa^2    
 # or exponential decreasing marginal variances for the components.
     NC<- 10 
-    nlevel<- 4
-    a.wght<- rep(  4 + 1/(.5)^2, nlevel)
+    nlevel <- 4
+    a.wght <-  4 + 1/(.5)^2
     alpha<-  1/2^(0:(nlevel-1)) 
     LKinfo2<- LKrigSetup( cbind( c( -1,1), c(-1,1)), NC=NC,
                    nlevel=nlevel, a.wght=a.wght,alpha=alpha)
@@ -423,7 +435,7 @@ set.panel()
 # note that there are no buffering grid points.
   set.panel(3,2)
   LKinfo<-LKrigSetup(cbind( c(-1,1), c(-1,1)), NC=6,
-                    a.wght=rep(5,3), alpha=c(1,.5,.25), nlevel=3,
+                    a.wght=5, alpha=c(1,.5,.25), nlevel=3,
                     NC.buffer=0)
 # evaluate the basis functions on a grid to look at them
   xtemp<- seq(-1,1,,40)

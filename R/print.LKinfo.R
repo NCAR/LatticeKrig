@@ -52,8 +52,16 @@ print.LKinfo <- function(x, ...) {
     if (!is.null(x$nu)) {
         cat("based on smoothness nu = ", x$nu, fill = TRUE)
     }
+    if(!is.null( x$alphaObject)){ 
+      cat("alpha specified at each level by objects: ",fill=TRUE)
+      cat("Level ", "Class", fill=TRUE)
+      for( level in 1:L){
+               cat( level, class(x$alphaObject[[1]]), fill=TRUE )
+      }
+    }
     temp<- unlist(x$a.wght)
     
+    cat(" ", fill = TRUE)
     if( length( temp)<= x$nlevel * 9){
     cat("a.wght: ", temp, fill = TRUE)
     }
@@ -63,6 +71,13 @@ print.LKinfo <- function(x, ...) {
       for ( k in 1: x$nlevel){
       cat(" Level", k,
           dim(x$a.wght[[k]]), fill=TRUE )
+      }
+    }
+    if(!is.null( x$a.wghtObject)){ 
+      cat("a.wght specified at each level by objects: ",fill=TRUE)
+      cat("Level ", "Class", fill=TRUE)
+      for( level in 1:L){
+        cat( level, class(x$a.wghtObject[[1]]), fill=TRUE )
       }
     }
        cat(" ", fill = TRUE)

@@ -45,6 +45,7 @@ predict.LKrig <- function(object, xnew = object$x, Znew = NULL, drop.Z = FALSE,
 if (!return.levels) {
 		temp2 <- PHIg %*% object$c.coef
 		if (findFixedPart) {
+		  
 			return(temp1 + temp2)
 		} else {
 			return(temp2)

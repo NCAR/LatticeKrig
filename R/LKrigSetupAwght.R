@@ -24,6 +24,12 @@ LKrigSetupAwght <- function(object,...){
 }
 
 LKrigSetupAwght.default<- function( object,...){
+  
+# convert the prediction objects into values for the a.wght
+  if( !is.null(object$a.wghtObject)){
+    object$a.wght<- LKrigSetupAwghtObject( object)
+  }
+  
   a.wght<- object$a.wght
   nlevel<- object$nlevel
   isotropic<- ifelse( length( a.wght)==1, TRUE, FALSE)

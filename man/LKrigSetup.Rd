@@ -29,20 +29,19 @@ describing the LatticeKrig spatial model.
 }
 \usage{
 LKrigSetup(
-x = NULL, nlevel = NULL, alpha = NA, nu = NULL, a.wght
-                 = NA, normalize = TRUE, lambda = NA, sigma = NA, rho =
-                 NA, rho.object = NULL,
-                 latticeInfo = NULL, basisInfo =NULL,
-                 LKGeometry = "LKRectangle", distance.type =
+x = NULL, nlevel = NULL, alpha = NA, alphaObject =
+                 NULL, nu = NULL, a.wght = NA, a.wghtObject = NULL,
+                 normalize = TRUE, lambda = NA, sigma = NA, rho = NA,
+                 rho.object = NULL, latticeInfo = NULL, basisInfo =
+                 NULL, LKGeometry = "LKRectangle", distance.type =
                  "Euclidean", BasisFunction = "WendlandFunction",
                  overlap = 2.5, V = NULL, BasisType = "Radial",
                  fixedFunction = "LKrigDefaultFixedFunction",
-                 fixedFunctionArgs = list(m = 2),
-                 collapseFixedEffect = FALSE,
-                 max.points = NULL,
-                 mean.neighbor = 50, choleskyMemory = NULL, verbose =
-                 FALSE, noCheck = FALSE, returnCall = FALSE, dense=FALSE, ...)
-
+                 fixedFunctionArgs = list(m = 2), collapseFixedEffect =
+                 FALSE, max.points = NULL, mean.neighbor = 50,
+                 choleskyMemory = NULL, verbose = FALSE, noCheck =
+                 FALSE, returnCall = FALSE, dense = FALSE, ...)
+)
 
                  
 LatticeKrigEasyDefaults(argList, nlevel, x)
@@ -56,18 +55,37 @@ LKinfoUpdate(LKinfo, ... )
 	
 \item{alpha}{A vector of length \code{nlevel} with the relative
 variances for the different multiresolution levels.  }
+\item{alphaObject}{For nonstationary models an object to be used with the predict function to give the alpha values at the process locations.
+Typically this is a list of "predict" objects. 
+See \link{nonstationaryModels} for examples how to use this option. 
+}
 
- \item{a.wght}{ In most cases, a vector of length \code{nlevel} that are the 
-    neighboring weights in the spatial autoregession. The setup function will
-    check that the value is in a valid range for a geometry.
+ \item{a.wght}{This parameter controls the correlation range in the SAR
+ model. In most cases, a scalar value and for the 2-d model by default
+ greater than 4. 
+   If a vector this can specify an anisotropic set of weights. To
+   specify a.wght parameters that are different for each level they
+   should be in the form of a list 
+   of length \code{nlevel}. E.g.  \code{a.wght = list( 4.5, 5, 10)}
+   will specify different a.wghts for 3 different levels.   The setup
+   function will
+    check that the values are in a valid range for a geometry and the
+    length of the list agrees with the number of levels. 
     
-  	The details of how this is connected to the covariance function varies
-  	based on the geometry. However, qualitatively this is related to a range parameter.
-  	For the LKRectangle geometry and a stationary model,  at level k the center point has
+  	The details of how this is connected to the covariance function
+  	varies
+  	based on the geometry. However, qualitatively this is related to a
+  	range parameter. For the LKRectangle geometry and a stationary
+  	model,  at level k the center point has
   	weight 1 with the 4 nearest neighbors given weight
-  	-1/a.wght[k]. In this case a.wght must be greater than 4 for the fields to be
-  	stationary and following Lindgren and Rue the range parameter is approximately
-  	 \code{1/sqrt(a.wght-4)}  }
+  	-1/a.wght[k]. In this case a.wght must be greater than 4 for the
+  	fields to be
+  	stationary and following Lindgren and Rue the range parameter is
+  	approximately \code{1/sqrt(a.wght-4)}. 
+}
+
+\item{a.wghtObject}{For nonstationary models an object to be used with the predict function to give the a.wght values at the lattice locations. See \link{nonstationaryModels} for examples how to used option. 
+}
 
  \item{basisInfo}{ A list with extra components the object used to
   	describe the multiresolution basis.  Usually this will not be
@@ -264,14 +282,16 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
 
 \examples{
   data(ozone2)
-  # find the ranges of the  data, this is the same as passing the entire set of observation
-  # locations and is more compact 
-  x<-apply( ozone2$lon.lat, 2,"range")
-  
-  LKinfo<- LKrigSetup( x, NC=10, nlevel=2, alpha=c(1,.5), a.wght=c(5,5))
+  # find the ranges of the  data, this is the same as passing
+  # the entire set of observation locations and is more compact 
+  sDomain<-apply( ozone2$lon.lat, 2,"range")
+  LKinfo<- LKrigSetup( sDomain, NC=10, nlevel=2, alpha=c(1,.5),
+                       a.wght = 5)
   print( LKinfo)
-  LKinfo2<- LKinfoUpdate( LKinfo,  a.wght=c(4.1,4.1), NC=12)
-  LKinfo3<-  LKrigSetup( x, NC=12, nlevel=2, alpha=c(1,.5), a.wght=c(4.1,4.1))
+  LKinfo2<- LKinfoUpdate( LKinfo,  a.wght=4.1, NC=12)
+  LKinfo3<- LKrigSetup( sDomain, NC=12, nlevel=2, alpha=c(1,.5),
+                        a.wght=4.1)
+# LKinfo2 and LKinfo3 should be the same.                         
  
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

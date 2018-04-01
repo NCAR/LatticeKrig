@@ -138,9 +138,15 @@ LKrig.basis <- function(x1, LKinfo, verbose = FALSE)
         # without the spam library 
         # NOTE: when spam is loaded this is equivalent to just cbind( PHI, PHItemp)
         
-        if (!is.null( LKinfo$alpha.object[[l]]) ) {
-          wght <- c(predict(LKinfo$alpha.object[[l]], x1))
+        if (!is.null( LKinfo$alphaObject[[l]]) ) {
+          wght <- c(predict(LKinfo$alphaObject[[l]], x1))
+          # Somehow spam does not handle diag of one element right  
+          if( length( wght)>1){
           PHItemp <- diag.spam(sqrt(wght)) %*% PHItemp
+          }
+          else{
+            PHItemp <-sqrt(wght)*PHItemp
+          }
         }
         
         PHI <- spam::cbind.spam(PHI, PHItemp)

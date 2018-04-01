@@ -191,7 +191,7 @@ the z component follows the shape described above for the no list case.   }
  domain, however,  are  \code{alpha}, \code{nlevel}, \code{NC}, and \code{a.wght}.
  
  \strong{alpha} The sequence of positive weights for each level of the multiresolution process.
- Usually these add to one and are interpreted as the variance of the process at each level. 
+ Usually these sum to one and are interpreted as the variance of the process at each level. 
 
  \strong{a.wght} The weight given to the central lattice point in the 
  	spatial autoregression (see details below). 
@@ -532,22 +532,14 @@ predict(rho.object, x)} is associated with the marginal variance of
 the full spatial process.
 
 A second option is to allow the alpha variance component parameters to
-vary across the lattices at each level. For this case alpha is a list
-with \code{nlevel} components and each component being a matrix with
-the same dimensions as the lattice at that level.  The SAR weight
-matrix is taken to be the usual weights but each row is scaled by the
-corresponding value in the alpha weight matrix. To be precise the
-weight matrix is given in pseudo R code by
+vary across space and at each level. The model in this case could be 
 
-\code{diag( 1/sqrt( c(alpha[[i]]))\%*\%B}
+g(x) = sqrt(rho(x)) * sum.i sqrt(alpha(x).i) * g.i(x)
 
-leading to the precision matrix at level i of
+To specifiy this case \code{alpha} should be a list
+with \code{nlevel} components and each component being a "predict" object that will evaluate the alpha  variance at a given level at arbitrary spatial locations. 
+Explicitly alpha should be set up so that  \code{ predict(alpha[[l]], x1) } will return a vector of  values for alpha at level \code{l} and at locations \code{x1}. This happens in \code{LKrig.basis} and the user is referred to this function to see how it is handled and possibly to make modifications to the model.  Similar to the scalar alpha case we recommend that the alpha's across levels sum to one and it still may make sense to have the rho parameter vary across space as well. Here alpha would control a varying correlation range and rho the marginal variance. 
 
-  Q.i = t(B) \%*\% diag( c(1/alpha[[i]]))\%*\%B
-
-In this code, note that the matrix of weights, \code{alpha[[i]]} is
-being stacked as a larger vector to match the implicit indexing of the
-basis coefficients.
 
 LKrig also has the flexibility to handle more general weights in the
 GMRF.  This is accomplished by \code{a.wght} being a list with as many
@@ -560,7 +552,7 @@ component is an array with three dimensions this specifies the center
 and 8 nearest neighhors for every point in the lattice.  At this point
 the choice of these weights beyond a stationary model is experimental
 and we will defer further documentation of these features to a future
-version. 
+version of this package. 
 
 \strong{The smoothing parameter lambda and effective degrees of
 freedom} Consistent with other fields package functions, the two main
@@ -923,7 +915,9 @@ LKinfo<- LKrigSetup( x,
 }
 
 \dontrun{
-# an example of a linear inverse problem 
+##################################################################
+#  a linear inverse problem 
+##################################################################
 # NOTE the settings in the model are small to make for a fast example
 #
 data(ozone2)

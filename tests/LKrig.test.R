@@ -57,7 +57,7 @@ options( echo=FALSE)
 #
   alpha<- c(1,.5,.2)
   nlevel<-3
-  a.wght<-  c(5,5,10)
+  a.wght<-  list(5,5,10)
   lambda<- .1
   obj<- LKrig( x,y,NC=5, lambda=lambda,
                         nlevel=nlevel, alpha=alpha,a.wght=a.wght, NtrA=5,iseed=122)
@@ -83,59 +83,8 @@ options( echo=FALSE)
   
 #### tests with  spatially varying alpha's
 
-# first a sanity check that the marginalization and alpha option is working
-# even when alpha's constant (obviously this is useful for debugging!)
-# nu weighted alpha that constant by level to get the basis function counts.
-   LKinfo<- LKrigSetup( x, NC=5, nlevel=3, nu=1, a.wght=5)
-   N<- LKinfo$latticeInfo$mx[,1] * LKinfo$latticeInfo$mx[,2]
-   glist<- fields.x.to.grid( x,10, 10)
-   xg<-  make.surface.grid(glist)
-   alpha.list<-  list( rep( 1,N[1]), rep(.5,N[2]), rep( .2,N[3]))
-   LKinfo2<- LKrigSetup( x, NC=5, nlevel=3, alpha= alpha.list, a.wght=5)
-   PHI1<- LKrig.basis(x, LKinfo2)
-   PHI2<- LKrig.basis(xg, LKinfo2)                  
-   Q<- LKrig.precision( LKinfo2)
-# find covariane matrix "by hand" for this case.
-   Ktest1<- PHI1%*%solve(Q)%*%t(PHI2)
-   test.for.zero( Ktest1, LKrig.cov( x,xg, LKinfo=LKinfo2), tag="spatial alpha cov")
-# check marginal variance 
-   Ktest2<- PHI2%*%solve(Q)%*%t(PHI2)
-   test.for.zero( diag(Ktest2), LKrig.cov( xg, LKinfo=LKinfo2, marginal =TRUE), tag="spatial alpha mar var")
 
-# now varying alphas using same kind of tests
-   set.seed( 678)
-# here alpha weights are all different and random.
-   alpha.list<- list(  runif(N[1]), runif(N[2]), runif(N[3]) )
- LKinfo2<- LKrigSetup( x, NC=5, nlevel=3, alpha= alpha.list, a.wght=5)
-   PHI1<- LKrig.basis(x, LKinfo2)
-   PHI2<- LKrig.basis(xg, LKinfo2)                  
-   Q<- LKrig.precision( LKinfo2)
-   Ktest1<- PHI1%*%solve(Q)%*%t(PHI2)
-   test.for.zero( Ktest1, LKrig.cov( x,xg, LKinfo=LKinfo2), tag="spatial alpha cov w/ tricksy alpha")
-   Ktest2<- PHI2%*%solve(Q)%*%t(PHI2)
-   test.for.zero( diag(Ktest2), LKrig.cov( xg, LKinfo=LKinfo2, marginal =TRUE), tag="spatial alpha mar var  tricksy alpha")
 
-  lambda<- .1
-  obj<- LKrig( x,y,NC=5, lambda=lambda,
-                        nlevel=nlevel, alpha=alpha,a.wght=a.wght, NtrA=20,iseed=122)
-  LKinfo<- obj$LKinfo
-  obj0<- mKrig( x,y, lambda=lambda, m=2, cov.function="LKrig.cov",
-                                 cov.args=list(LKinfo=LKinfo),
-                                 NtrA=20, iseed=122)
-#  check predicted values
-  glist<- fields.x.to.grid( x,10, 10)
-  xg<-  make.surface.grid(glist)
-  grid.info<- obj$LKinfo$grid.info
-  LKinfo<- obj$LKinfo
-# first "by hand"
-  Tmatrix<- cbind( rep(1,nrow(xg)), xg)
-  yhat0<- Tmatrix%*%obj0$d +
-            LKrig.cov( xg,x, LKinfo)%*%obj0$c
-  PHIg<- LKrig.basis( xg, LKinfo)
-  yhat1<- Tmatrix%*%obj$d.coef + PHIg%*%obj$c.coef
-  test.for.zero( yhat1, predict(obj,xg), tag="predicted values from LatticeKrig and by hand, spatial alpha"  )
-  test.for.zero( predict(obj,xg), predict(obj0,xg),
-                           tag="predicted values LatticeKrig and mKrig, spatial alpha")
 ########## done with spatially varying alpha
 
 # tests for computing the determinant and quad form from log likelihood
@@ -144,7 +93,7 @@ options( echo=FALSE)
   test.for.zero.flag<- 1
   alpha<- c(1,.5,.5)
   nlevel<-3
-  a.wght<-  c(5,5,10)
+  a.wght<-  list(5,5,10)
   lnDet<- function(A){
   sum( log( eigen( A, symmetric=TRUE)$values))}
 
@@ -252,13 +201,12 @@ test.for.zero(  lnDet( B3) - lnDet(Q) - sum( log( weights))  + (N-N2)*log(lambda
   N<- length( y)
   alpha<- c(1,.5,.25)
   nlevel<-3
-  a.wght<-  c(5, 5, 4.5)
+  a.wght<-  list(5, 5, 4.5)
   lambda <- .5
   N<- length(y)
   set.seed(243)
   weights<- runif(N)*10 + 30
 #  weights<- rep( 1, N)
-  test.for.zero.flag<- 1
   obj<- LKrig( x,y,weights,NC=5,
                     lambda=lambda,alpha=alpha,nlevel=nlevel, a.wght=a.wght, NtrA=5,iseed=122)
 # compare mKrig and Krig with weights and LatticeKrig
@@ -292,7 +240,7 @@ test.for.zero(  lnDet( B3) - lnDet(Q) - sum( log( weights))  + (N-N2)*log(lambda
   N<- length( y)
   alpha<- c(1,.5,.5)
   nlevel<-3
-  a.wght<-  c(4.2,4.5,4.5)
+  a.wght<-  list(4.2,4.5,4.5)
   lambda <- .8
 
  obj<- LKrig( x,y,weights=weights,NC=15, lambda=lambda,alpha=alpha,

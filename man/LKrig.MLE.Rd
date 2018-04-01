@@ -322,7 +322,7 @@ NG<-3
 # consider 3 values for a.wght (range parameter)
 # in this case the log lambdas passed are the starting values for optim.
   NG<-3
-  par.grid<- list( a.wght= c( 4.05,4.1,5),alpha= rep(1, NG),
+  par.grid<- list( a.wght= c( 4.05,4.1,5) ,alpha= rep(1, NG),
                       llambda= c(-5,NA,NA))
 # NOTE: NAs in llambda mean use the previous MLE for llambda as the
 # current starting value. 
@@ -354,7 +354,8 @@ NG<-3
   y<- y[ind]
   
   Ndes<- 10  
-# NOTE: this is set is  very small just to make example run fast
+# NOTE: this is set to be very small just to make this
+#       example run fast
   set.seed(124)
   par.grid<- list()
 # create grid of alphas to sum to 1 use a mixture model parametrization
@@ -362,10 +363,10 @@ NG<-3
 # alpha2 = exp( gamma1) / ( 1 + exp( gamma1))
 # 
   par.grid$gamma<- cbind(runif( Ndes, -3,2), runif( Ndes, -3,2))
-  par.grid$a.wght<- matrix( 4.5, nrow=Ndes, ncol=3)
+  par.grid$a.wght<- rep( 4.5, Ndes)
 # log lambda grid search values
   par.grid$llambda<- runif( Ndes,-5,-3)  
-   LKinfo1<- LKrigSetup( x, NC=5, nlevel=3, a.wght=5, alpha=c(1.0,.5,.25))
+  LKinfo1<- LKrigSetup( x, NC=5, nlevel=3, a.wght=5, alpha=c(1.0,.5,.25))
 # NOTE: a.wght in call is not used. Also a better search is to profile over
 #  llambda
 
@@ -387,6 +388,13 @@ NG<-3
 \dontrun{
 # a two level model search 
 # with profiling over lambda.
+data(NorthAmericanRainfall)
+# rename for less typing
+  x<- cbind( NorthAmericanRainfall$longitude,
+             NorthAmericanRainfall$latitude)
+# mean total precip in 1/10 mm for JJA 
+  y<- log10(NorthAmericanRainfall$precip)
+
 #  This takes a few minutes
   Ndes<- 40 
   nlevel<-2 
@@ -397,8 +405,7 @@ NG<-3
   set.seed(123)
   par.grid$gamma<- runif( Ndes,-3,4)
 ## values for range (a.wght)
-  a.wght<-  4 + 1/exp(seq( 0,4,,Ndes))
-  par.grid$a.wght<- cbind( a.wght, a.wght)
+  par.grid$a.wght<- 4 + 1/exp(seq( 0,4,,Ndes))
 # log lambda grid search values (these are the starting values)
   par.grid$llambda<- rep(-4, Ndes)
 
@@ -432,7 +439,7 @@ y<- ozone2$y[16,]
 good<- !is.na(y)
 y<- y[good]
 x<- x[good,]
-par.grid<- expand.grid( nu = c(.5,1.0, 1.5), a.wght= c(4.1,4.5,5) )
+par.grid<- expand.grid( nu = c(.5,1.0, 1.5), a.wght= list(4.1,4.5,5) )
 par.grid$llambda<- rep( NA, length(par.grid$nu))
 LKinfo<- LKrigSetup(x,  nlevel=3,NC=5, a.wght=4.5)
 out<- LKrig.MLE( x,y, LKinfo=LKinfo, par.grid=par.grid)
@@ -441,9 +448,10 @@ cbind( par.grid, out$summary[,1:5])
 }
 \dontrun{
 # an MLE fit taking advantage of replicated fields
+# check based on simulated data
 
 N<- 200
-M<-10
+M<-50 # number of independent replicated fields
 sigma<- sqrt(.01)
 set.seed(123)
 x<- matrix( runif(N*2), N,2)
@@ -465,18 +473,25 @@ print( obj$rho.MLE.FULL)
 
 fitMLE1<- LKrigFindLambda( x,y, LKinfo=LKinfo)
 fitMLE1$summary
-aWghtGrid<-  c( 4.01, 4.05, 4.1, 4.2, 4.5, 4.7, 5, 8, 16)
+aWghtGrid<-  c( 4.01, 4.05, 4.1, 4.2, 4.5, 4.6, 4.7, 5, 8, 16)
 par.grid<- list( a.wght = aWghtGrid)
 
 fitMLE2<- LKrig.MLE( x,y, LKinfo=LKinfo,
                       par.grid= par.grid )
-fitMLE2$summary    
-plot(  log( aWghtGrid -4)/2, fitMLE2$summary[,2])
+fitMLE2$summary   
 
 LKinfo1<- LKinfoUpdate( LKinfo, lambda=.1, a.wght= 4.2)                   
 fitMLE4<- LKrigFindLambdaAwght( x,y, LKinfo=LKinfo1)
-fitMLE4$summary[2]
+fitMLE4$summary
 
+plot(  log( aWghtGrid -4)/2, fitMLE2$summary[,2], type="b",
+  xlab="log( a.wght - 4)/2",
+  ylab= "log Profile likelihood" )
+
+
+points( log(fitMLE4$summary["a.wght.MLE"] -4)/2,
+     fitMLE4$summary["lnProfLike"], pch="+", col="red"  )
+xline( log(fitMLE4$summary["a.wght.MLE"] -4)/2, col="red", lty=2)
 }
 
 }

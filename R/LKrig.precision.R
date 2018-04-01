@@ -45,9 +45,11 @@ LKrig.precision <- function(LKinfo, return.B = FALSE,
                 	stop("NAs in alpha list")
             } 
             if( length(alpha.level) > 1 ){
-              stop("alpha at a fixed level can only be a scalar \n
-                   see alpha.object as the current way 
-                   to describe a spatially varying alpha")
+              print(alpha.level)
+              cat("alpha at each level can only be a scalar \n
+                   see alphaObject in help(LKrigSetup) as the current way \n
+              to describe a spatially varying alpha", fill=TRUE)
+              stop("alpha parameters not in right format")
             }
               tempra <- 1/sqrt(alpha.level) * tempB$ra
             # accumulate the new block

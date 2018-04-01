@@ -74,10 +74,13 @@ Or for the function \code{print.LatticeKrig} \code{x} is the returned object fro
      \item{X}{For linear inverse problems the matrix that maps coefficients of the basis to the   
   	 predicted values of observations. X must be in spam format. To convert from spind or dense
   	 format  to spam format see \code{help(spam)} as an alternative  
-  	 \code{\link{spind2spam}}.}
+  	 \code{\link{spind2spam}}. See an example for this extension in the
+  	 \code{\link{LKrig}} help file. 
+  	 } 
   	 
-  	 \item{U}{For linear inverse problems the matrix that maps coefficients of the   fixed part of the model to the predicted
-	values of observations.}
+  	 \item{U}{For linear inverse problems the matrix that maps coefficients of the fixed part of the model to the predicted
+	values of observations. This needs to specified along wiht \code{X} 
+	}
   
    \item{nlevel}{Number of levels for the multi-resolution basis. Each
    level increases the number of basis functions by roughly a factor of
@@ -97,7 +100,7 @@ Or for the function \code{print.LatticeKrig} \code{x} is the returned object fro
  \item{verbose}{ If TRUE print out intermediate results. }
 
   \item{\dots}{Additional arguments to pass to LKrig. 
-  The easiest way to pass a full specification is to create an LKinfo object beforehand and then jsut pass that (see example below.) This gives more control and the setup function will do some error checking on argumetns. Also see help(LKrig) for a complete list of arguments to pass.  For convenience we note that  if you get some pesky memory warnings from spam
+  The easiest way to pass a full specification is to create an LKinfo object beforehand and then just pass that (see example below.) This gives more control and the setup function will do some error checking on argumetns. Also see help(LKrig) for a complete list of arguments to pass.  For convenience we note that  if you get some pesky memory warnings from spam
   you can set the storage higher by adding the argument \code{choleskyMemory}. For example to bump up to 2E6 include:
   \code{choleskyMemory=list(nnzR= 2E6)}. 
   }

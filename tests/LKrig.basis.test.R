@@ -9,7 +9,7 @@
 # Important check is of the FORTRAN function dfind2d
 # that does pairwise distances among points within a specified range.
 
-library(LatticeKrig)
+suppressMessages(library(LatticeKrig))
 options( echo=FALSE)
  test.for.zero.flag<- 1
 set.seed(123)

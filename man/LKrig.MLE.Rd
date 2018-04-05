@@ -441,7 +441,7 @@ y<- y[good]
 x<- x[good,]
 par.grid<- expand.grid( nu = c(.5,1.0, 1.5), a.wght= list(4.1,4.5,5) )
 par.grid$llambda<- rep( NA, length(par.grid$nu))
-LKinfo<- LKrigSetup(x,  nlevel=3,NC=5, a.wght=4.5)
+LKinfo<- LKrigSetup(x,  nlevel=3, nu=.5, NC=5, a.wght=4.5)
 out<- LKrig.MLE( x,y, LKinfo=LKinfo, par.grid=par.grid)
 # take a look
 cbind( par.grid, out$summary[,1:5])

@@ -27,26 +27,21 @@ LKrigSetupAlpha.default<- function( object, ...){
    alpha <- object$alpha
    nlevel <- object$nlevel
 # some obvious defaults for alpha to simplify calls from LatticeKrig or LKrig. 
-   if( is.na(alpha[1]) ) {
-       if( nlevel==1){
-          alpha<- 1.0
-        }
-       else{
-           # define alpha based on the power nu.
-           # See Corollary 4.1   Nychka et al. (2015) JCGS
-           if( !is.null( object$nu)){
-                thetaL<-  2^(-1*(1:nlevel))
-       		alpha<- thetaL^(2*object$nu)
-                # normalize to sum to 1
-       		alpha<- alpha/ sum( alpha)
-       	}
-       	else{
-          alpha<- rep( NA, nlevel)
-          }
-       }
+# if alpha varies over space then set the scalat parameters to one.    
+   if( is.na(alpha[1]) & !is.null(object$alphaObject)){
+     alpha<- rep( 1.0, nlevel)
    }
-    scalar.alpha <- !is.list(alpha) 
-    if (scalar.alpha & (nlevel != 1) & (length(alpha) == 1)){
+   if( !is.null( object$nu)){
+     thetaL<-  2^(-1*(1:nlevel))
+     alpha<- thetaL^(2*object$nu)
+     # normalize to sum to 1
+     alpha<- alpha/ sum( alpha)
+   }
+#   
+# more defaults for scalar alphas    
+   if( is.na(alpha[1])&  nlevel==1 ) { alpha<- 1.0 }
+   scalar.alpha <- !is.list(alpha) 
+   if (scalar.alpha & (nlevel != 1) & (length(alpha) == 1)){
                 stop( "Only one alpha specifed for multiple levels")}     
 # coerce alpha to a list if it is passed as something else
     if (!is.list(alpha)) {

@@ -63,7 +63,8 @@ LKrig.sim.conditional <- function(LKrigObj, M = 1, x.grid = NULL,
    	ghat<- predict( LKrigObj, x= x.grid, Z = Z.grid )
     for (k in 1:M) {
         cat(k, " ")
-        out<- simConditionalDraw( k, LKrigObj, ghat, x.grid, Z.grid,  PHIGrid, seeds, ..., verbose=verbose)
+        out<- simConditionalDraw( k, LKrigObj, ghat, x.grid, Z.grid,  PHIGrid,
+                                 seeds, ..., verbose=verbose)
         if( !is.null(LKrigObj$LKinfo$fixedFunction) ){
         d.coef.draw[,k] <- out$d.coef
         }
@@ -76,7 +77,8 @@ LKrig.sim.conditional <- function(LKrigObj, M = 1, x.grid = NULL,
                            d.coef.draw= d.coef.draw))
 }
 
-simConditionalDraw <- function(index=1,  LKrigObj, ghat, x.grid, Z.grid, PHIGrid, seeds= 123,  verbose=FALSE){
+simConditionalDraw <- function(index=1,  LKrigObj, ghat, x.grid, Z.grid,
+                               PHIGrid, seeds= 123,  verbose=FALSE){
 require(LatticeKrig)
         set.seed( seeds[index] )
 # generate process at grid and also on the observation locations.
@@ -94,6 +96,9 @@ require(LatticeKrig)
         # use LKrig to find the predictions for the xgrid locations
         # NOTE that LKrig will still estimate the fixed part.
         # and it is important to include this part of estimate
+        if(verbose){
+           cat("simConditionalDraw Call to LKrig: ", fill=TRUE)
+        }
         obj.fit.synthetic <- LKrig(LKrigObj$x, y.synthetic.data,
                                    LKinfo = LKrigObj$LKinfo,
                                        wX = LKrigObj$wX,
@@ -101,14 +106,16 @@ require(LatticeKrig)
                                    lambda = LKrigObj$lambda,
                                         Z = LKrigObj$Z,
                                   weights = LKrigObj$weights,
-                             use.cholesky = LKrigObj$Mc)      
+                             use.cholesky = LKrigObj$Mc, 
+                                  verbose = verbose)      
         #
         # predict field
         spatialPart<- (PHIGrid%*% obj.fit.synthetic$c.coef)
         ghat.synthetic<-  spatialPart
         if( !is.null(LKrigObj$LKinfo$fixedFunction) ){       	
                  fixedPart<- predict(
-                 obj.fit.synthetic, xnew=x.grid, Znew = Z.grid, just.fixed=TRUE)
+                     obj.fit.synthetic, xnew=x.grid, Znew = Z.grid,
+                     just.fixed=TRUE)
                  d.coef <- obj.fit.synthetic$d.coef
                  ghat.synthetic<- ghat.synthetic + fixedPart
          }

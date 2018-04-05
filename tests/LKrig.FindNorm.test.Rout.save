@@ -1,6 +1,6 @@
 
-R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -26,23 +26,7 @@ Type 'q()' to quit R.
 > # Important check is of the FORTRAN function dfind2d
 > # that does pairwise distances among points within a specified range.
 > 
->   library(LatticeKrig)
-Loading required package: spam
-Loading required package: grid
-Spam version 1.4-0 (2016-08-29) is loaded.
-Type 'help( Spam)' or 'demo( spam)' for a short introduction 
-and overview of this package.
-Help for individual functions is also obtained by adding the
-suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
-
-Attaching package: 'spam'
-
-The following objects are masked from 'package:base':
-
-    backsolve, forwardsolve
-
-Loading required package: fields
-Loading required package: maps
+>   suppressMessages(library(LatticeKrig))
 >   options( echo=FALSE)
 Testing:  check using Qinverse formula
 PASSED test at tolerance  1e-07
@@ -65,4 +49,4 @@ Done with testing fast normalize algorithm
 > 
 > proc.time()
    user  system elapsed 
-  3.515   0.060   3.580 
+  4.110   0.132   4.407 

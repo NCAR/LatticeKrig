@@ -41,7 +41,7 @@ setDefaultsLKinfo.LKInterval <- function(object, ...) {
 
 LKrigSetupLattice.LKInterval <- function(object, verbose,
                                        NC, NC.buffer=5,  ...){
-#object is usually of class LKinfo
+#object is of class LKinfo
   range.x<- rangeLocations<-  range(object$x)
   if( ncol( object$x) !=1) {
        stop( "x is not 1-d !")
@@ -92,11 +92,15 @@ LKrigSetupLattice.LKInterval <- function(object, verbose,
 LKrigSAR.LKInterval<- function(object, Level, ... ){
    m<- object$latticeInfo$mLevel[Level] 
    a.wght<- (object$a.wght)[[Level]]
-   if( length(a.wght) > 1) {
-     stop("a.wght must be constant")
+   if( length(a.wght) == 1) {
+     a.wght<- rep( a.wght, m)
+   }
+   if( length( a.wght)!=m){
+     cat("Level, m, length( a.wght): ", Level, m, length( a.wght), fill=TRUE)
+     stop("a.wght wrong length")
    }
    da<- c( m,m)
-   ra<- c(rep( a.wght, m), rep( -1, (m-1)), rep( -1, (m-1)) )
+   ra<- c(a.wght, rep( -1, (m-1)), rep( -1, (m-1)) )
    Bi <-  c( 1:m,2:m, 1:(m-1))
    Bj<- c( 1:m, 1:(m-1), 2:m)
   return(list(ind = cbind(Bi, Bj), ra = ra, da = da)) 

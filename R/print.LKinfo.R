@@ -20,7 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2
 
 print.LKinfo <- function(x, ...) {
-  print( x$call)
+#  print( x$call)
     LKinfo <- x
     L <- LKinfo$nlevel
     cat("Classes for this object are: " , class( LKinfo), fill=TRUE)
@@ -28,9 +28,13 @@ print.LKinfo <- function(x, ...) {
     cat("The second class usually will indicate the geometry
      e.g.  2-d rectangle is  LKRectangle", fill=TRUE)
     cat(" ", fill = TRUE) 
-    
+    cat("Some details on spatial autoregression flags:",     fill=TRUE)
+    cat( "stationary: ",  attr( LKinfo$a.wght,"stationary"),  fill=TRUE)
+    cat("first order (by level): ",  attr( LKinfo$a.wght,"first.order"), fill=TRUE)
+    cat("isotropic: "  ,   attr( LKinfo$a.wght,"isotropic"),   fill=TRUE)
+    cat(" ", fill = TRUE)
     if(LKinfo$dense){
-      cat("Hey, the dense flag is TRUE so computations will
+      cat("Hey! The dense flag is TRUE so computations will
           not be done using sparse matrices.", fill=TRUE)
     }
     cat("Ranges of locations in raw scale:", fill=TRUE)

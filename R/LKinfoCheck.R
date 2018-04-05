@@ -25,12 +25,12 @@ LKinfoCheck <- function(object,...){
 
 LKinfoCheck.default<- function( object,...){
   LKinfo<- object
-   testNames<- names(LKinfo)
-   targetNames<- c("nlevel","alpha", "a.wght",          
+  testNames<- names(LKinfo)
+  targetNames<- c("nlevel","alpha", "a.wght",          
        "normalize", "lambda","sigma","rho",
      "latticeInfo","basisInfo","distance.type")
 
-   testMatch<- is.na( match(targetNames,testNames) ) 
+  testMatch<- is.na( match(targetNames,testNames) ) 
   if( any( testMatch) ){
     stop(paste( "missing the required component", targetNames[ testMatch ] ))
   }

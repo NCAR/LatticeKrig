@@ -34,7 +34,6 @@ LKrig <- function(x, y,
           return.wXandwU = TRUE,
                	            ...,
                	 verbose = FALSE) {
-    	 	
 # if LKinfo is missing create it from passed arguments 
 # if it is passed update this object with the ... arguments
 # for example a new lambda value can be passed in this part.

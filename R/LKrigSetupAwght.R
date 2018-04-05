@@ -29,11 +29,9 @@ LKrigSetupAwght.default<- function( object,...){
   if( !is.null(object$a.wghtObject)){
     object$a.wght<- LKrigSetupAwghtObject( object)
   }
-  
   a.wght<- object$a.wght
   nlevel<- object$nlevel
   isotropic<- ifelse( length( a.wght)==1, TRUE, FALSE)
-  print( a.wght)
   if (!is.list(a.wght)) {
         # some checks on a.wght
         # coerce a.wght to list if it is passed as something

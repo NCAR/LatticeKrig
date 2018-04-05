@@ -1,4 +1,4 @@
-library( LatticeKrig)
+suppressMessages( library( LatticeKrig))
 
 #options( echo =FALSE)
 

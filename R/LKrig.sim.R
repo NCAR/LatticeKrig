@@ -40,12 +40,13 @@ LKrig.sim <- function(x1, LKinfo, M = 1, just.coefficients = FALSE) {
    Qc <- chol(Q, memory = LKinfo$choleskyMemory)
 	m <- LKinfo$latticeInfo$m
 	E <- matrix(rnorm(M * m), nrow = m, ncol = M)
-	A <- backsolve(Qc, E)
+	randomC <- backsolve(Qc, E)
 	if (just.coefficients) {
-		return(A)
-	} else {
+		return(randomC)
+	} 
+	else {
 		PHI1 <- LKrig.basis(x1, LKinfo)
-		return(PHI1 %*% A)
+		return(PHI1 %*% randomC)
 	}
-}
+}	
 

@@ -36,25 +36,9 @@ LKrig.precision <- function(LKinfo, return.B = FALSE,
             if( verbose){
             	cat("dim indices in spind of B:",dim( tempB$ind) , fill=TRUE)            	
             }
-            # multiply this block by 1/ sqrt(diag( alpha[[j]]))
-            alpha.level <- (LKinfo$alpha)[[j]]
-            if( verbose){
-                cat("length alpha parameter", length( alpha.level), fill=TRUE)
-            }
-            if( any( is.na(c(alpha.level)) ) ){
-                	stop("NAs in alpha list")
-            } 
-            if( length(alpha.level) > 1 ){
-              print(alpha.level)
-              cat("alpha at each level can only be a scalar \n
-                   see alphaObject in help(LKrigSetup) as the current way \n
-              to describe a spatially varying alpha", fill=TRUE)
-              stop("alpha parameters not in right format")
-            }
-              tempra <- 1/sqrt(alpha.level) * tempB$ra
             # accumulate the new block
             # for the indices that are not zero
-            ra <- c(ra, tempra)
+            ra <- c(ra,tempB$ra )
             ind <- rbind(ind, tempB$ind + offset[j])
             # increment the dimensions
             da[1] <- da[1] + tempB$da[1]

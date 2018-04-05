@@ -1,6 +1,6 @@
 
-R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -20,23 +20,7 @@ Type 'q()' to quit R.
 > # University Corporation for Atmospheric Research
 > # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 > 
-> library( LatticeKrig)
-Loading required package: spam
-Loading required package: grid
-Spam version 1.4-0 (2016-08-29) is loaded.
-Type 'help( Spam)' or 'demo( spam)' for a short introduction 
-and overview of this package.
-Help for individual functions is also obtained by adding the
-suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
-
-Attaching package: 'spam'
-
-The following objects are masked from 'package:base':
-
-    backsolve, forwardsolve
-
-Loading required package: fields
-Loading required package: maps
+> suppressMessages(library( LatticeKrig))
 > options( echo=FALSE)
 Testing:  d from LKrig and by hand
 PASSED test at tolerance  1e-08
@@ -61,18 +45,6 @@ Warning message:
 In createLKrigObject(x, y, weights, Z, X, U, LKinfo, verbose = verbose) :
   Not all x locations are unique: see the results of
                            duplicated(cat.matrix(x)) 
-Testing:  spatial alpha cov
-PASSED test at tolerance  1e-08
-Testing:  spatial alpha mar var
-PASSED test at tolerance  1e-08
-Testing:  spatial alpha cov w/ tricksy alpha
-PASSED test at tolerance  1e-08
-Testing:  spatial alpha mar var  tricksy alpha
-PASSED test at tolerance  1e-08
-Testing:  predicted values from LatticeKrig and by hand, spatial alpha
-PASSED test at tolerance  1e-08
-Testing:  predicted values LatticeKrig and mKrig, spatial alpha
-PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
@@ -114,4 +86,4 @@ PASSED test at tolerance  1e-08
 Done testing LatticeKrig
 > proc.time()
    user  system elapsed 
- 26.475   0.261  26.773 
+ 16.960   0.191  17.194 

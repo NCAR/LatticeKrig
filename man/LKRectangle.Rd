@@ -41,8 +41,7 @@ fill out a rectangle and they do not need to regularly spaced. The \code{nu} par
 
 \preformatted{
  sDomain<- cbind( c(-1,1), c( -1, 1))
-LKinfo<- LKrigSetup(sDomain, nlevel=3, NC=4,
-a.wght=4.1, nu=1.0)
+LKinfo<- LKrigSetup(sDomain, nlevel=3, NC=4, a.wght=4.1, nu=1.0)
 }
 
 with the result 
@@ -166,12 +165,11 @@ the central lattice point and 8 nearest neighbors with the indexing:
 E.g. the 5 element is the center, 3  is the lower left hand
 corner etc. 
 
-\strong{List of three dimensional arrays}
-This is the nuclear option to handle a completely nonstationary correlation strucutre! Each component of the list can be a 3-d array, first two 
- dimensions should be the same as the lattice at that level and the third dimension should
-be 9. Each SAR neighborhood is filled according to the lattice
-position and the indexing of the nearest neighbors described
-above. Typically one would use the setup function with a fixed a.wght first to get the right dimensions for the lattice at each level. 
+\strong{Nonstationary models}
+This is the nuclear option to handle a completely nonstationary correlation
+strucutre! In this case one specifies the models by passing prediction
+objects for one or more of \code{rho.object}, \code{alphaObject} or 
+\code{a.wghtObject}. 
 }
 \author{
 Doug Nychka
@@ -187,40 +185,37 @@ Doug Nychka
 }
 \examples{
 # the grid with only 2 extra boundary points
-
-sDomain<- cbind( c(-1,1), c( -1, 1))
-LKinfo<- LKrigSetup(sDomain, nlevel=3, NC=4, a.wght=4.1,
- NC.buffer=2)
-LKgrid<- LKinfo$latticeInfo$grid
-plot(   make.surface.grid(LKgrid[[1]]),
+  sDomain<- cbind( c(-1,1), c( -1, 1))
+  LKinfo<- LKrigSetup(sDomain, nlevel=3, NC=4, a.wght=4.1,
+           NC.buffer=2, alpha=c(1,.5,.125) )
+  LKgrid<- LKinfo$latticeInfo$grid
+  plot(   make.surface.grid(LKgrid[[1]]),
                           pch=16, cex=1.5)
-points( make.surface.grid(LKgrid[[2]]), 
+  points( make.surface.grid(LKgrid[[2]]), 
                           pch=15, cex=.8, col="red" )
-points( make.surface.grid(LKgrid[[3]]),
+  points( make.surface.grid(LKgrid[[3]]),
                           pch="+", col="green" )
-rect(sDomain[1,1],sDomain[1,2],
+  rect(sDomain[1,1],sDomain[1,2],
      sDomain[2,1],sDomain[2,2], lwd=3 )
 
 # basis functions on a grid
 # this function actually evaluates all of them on the grid.
-xg<- make.surface.grid(
+  xg<- make.surface.grid(
         list(x=seq( -2,2,,80), y=seq( -2,2,,80)) )
-out<- LKrig.basis( xg, LKinfo)
-
+  out<- LKrig.basis( xg, LKinfo)
 # basis functions 20, 26, 100  and 200
-plot(   make.surface.grid( LKgrid[[1]] ) , 
+  plot(   make.surface.grid( LKgrid[[1]] ) , 
                           pch=16, cex=.5)
-rect(sDomain[1,1],sDomain[1,2],
+  rect(sDomain[1,1],sDomain[1,2],
      sDomain[2,1],sDomain[2,2], lwd=3,border="grey" )
-contour( as.surface(xg, out[,20]), col="red1",
+  contour( as.surface(xg, out[,20]), col="red1",
                                      add=TRUE)
-contour( as.surface(xg, out[,36]), col="red4", 
+  contour( as.surface(xg, out[,36]), col="red4", 
                                      add=TRUE)
-contour( as.surface(xg, out[,100]), col="blue1",
+  contour( as.surface(xg, out[,100]), col="blue1",
                                      add=TRUE)
-contour( as.surface(xg, out[,200]), col="blue4",
+  contour( as.surface(xg, out[,200]), col="blue4",
                                       add=TRUE)
-title( "basis functions 20, 26, 100, 200")
+  title( "basis functions 20, 26, 100, 200")
 }
-
 \keyword{spatial}% __ONLY ONE__ keyword per line

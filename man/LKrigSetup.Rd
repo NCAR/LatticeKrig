@@ -24,7 +24,8 @@
 Create or update the LatticeKrig model object  (LKinfo) for spatial fitting. 
 }
 \description{
-This function combines some input arguments with defaults for other to create a list 
+This function combines some input arguments with defaults for other
+to create a list 
 describing the LatticeKrig spatial model. 
 }
 \usage{
@@ -41,8 +42,6 @@ x = NULL, nlevel = NULL, alpha = NA, alphaObject =
                  FALSE, max.points = NULL, mean.neighbor = 50,
                  choleskyMemory = NULL, verbose = FALSE, noCheck =
                  FALSE, returnCall = FALSE, dense = FALSE, ...)
-)
-
                  
 LatticeKrigEasyDefaults(argList, nlevel, x)
 

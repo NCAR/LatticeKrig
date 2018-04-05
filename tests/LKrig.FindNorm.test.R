@@ -9,7 +9,7 @@
 # Important check is of the FORTRAN function dfind2d
 # that does pairwise distances among points within a specified range.
 
-  library(LatticeKrig)
+  suppressMessages(library(LatticeKrig))
   options( echo=FALSE)
   test.for.zero.flag<-1
 
@@ -44,6 +44,7 @@ test.for.zero( diag(covMatrix), rep( varTest, nrow( xNew)),
 
 # multiple levels no normalization
  alpha<- c( 1, .8,.2)
+ alpha<- alpha/sum( alpha)
  LKinfo<- LKrigSetup( cbind( c(3,5), c(3,5)), NC=2, NC.buffer=2,
                      a.wght=5,  alpha=alpha, nlevel=3, normalize=FALSE)                   
   PHI<- LKrig.basis(xNew, LKinfo)
@@ -55,8 +56,10 @@ test.for.zero( diag(covMatrix), rep( varTest, nrow( xNew)),
 
 # multiple levels
  alpha<- c( 1, .8,.2)
+ alpha<- alpha/sum( alpha)
+ 
  LKinfo<- LKrigSetup( cbind( c(3,5), c(3,5)), NC=2, NC.buffer=2,
-                     a.wght=8,  alpha=alpha, nlevel=3, normalize=TRUE,
+                     a.wght=4.5,  alpha=alpha, nlevel=3, normalize=TRUE,
                      BasisType="Tensor")
   varTest<- sum( alpha)                    
   PHI<- LKrig.basis(xNew, LKinfo)

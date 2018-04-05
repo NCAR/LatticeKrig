@@ -38,7 +38,7 @@ setDefaultsLKinfo.LKRectangle <- function(object, ...) {
 return(object)
 }
 
-LKinfoCheck.LKRectangle<- function( object,...){
+LKinfoCheck.LKRectangle<- function( object, ...){
   # first run all the default checks
        LKinfoCheck.default( object)
   # now check that a.wght are stable values
@@ -62,7 +62,7 @@ LKinfoCheck.LKRectangle<- function( object,...){
         aValues<- a.wght[[k]]
         nDim<- dim(aValues) 
         NAwght<- length( aValues)
-      if( isotropic[k]  &  stationary[k]){ 
+      if( isotropic[k] & stationary[k]){ 
         testValue <-  a.wght[[k]] > floorAwght 
       }
       if(!isotropic[k]  &  stationary[k]){
@@ -93,7 +93,6 @@ LKinfoCheck.LKRectangle<- function( object,...){
                " has  dimensions:", nDim,
                " compare to lattice: ", mx[k, ], fill=TRUE)
          stop("Mismatch between basis and rows of a.wght matix")}  
-       print( isotropic[k])
        dimOK2 <-   ( (nDim[2]==1) &  isotropic[k] ) |
                    ( (nDim[2]==9) & !isotropic[k] )
        if( !dimOK2){
@@ -235,11 +234,11 @@ LKrigSetupAwght.LKRectangle <- function(object, ...) {
 	first.order<-  rep(NA, nlevel)
 	isotropic  <-  rep(NA, nlevel)
 # simple check on sizes of arrays
-	for (k in 1:length(a.wght)) {
+	for (k in 1:length(a.wght) ){
 	  NAwght <- length(a.wght[[k]])
 	  nDim<- dim( a.wght[[k]])
 # model is stationary if single a.wght or or length 9.
-	stationaryLevel  <- !is.matrix(a.wght[[k]])
+	stationaryLevel  <- !is.matrix( a.wght[[k]] )
 	stationary[k]    <- stationaryLevel
 	isotropic[k]     <- ifelse( stationaryLevel,
 	                            NAwght  == 1,
@@ -257,13 +256,13 @@ LKrigSetupAwght.LKRectangle <- function(object, ...) {
 		  if( !dimOK){
 			 cat( "a.wght matrix at level ", k,
 				           " has  dimensions:", nDim,
-			             " compare to lattice: ", mx[k, ], fill=TRUE)
+                             " compare to lattice: ", mx[k, ],
+                             fill=TRUE)
        stop("There is a mismatch")
 			}
 			first.order[k] <- nDim[2] == 1
 		}
 	}
-	
 	#### 
 	#   
 	RBF <- object$basisInfo$BasisFunction

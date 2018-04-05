@@ -4,7 +4,7 @@
 # University Corporation for Atmospheric Research
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 
-library( LatticeKrig)
+suppressMessages(library( LatticeKrig))
 options( echo=FALSE)
 
 ##########################################

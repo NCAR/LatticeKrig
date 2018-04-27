@@ -82,13 +82,14 @@ LKrig.MLE <- function(x, y, ..., LKinfo, use.cholesky=NULL, par.grid = NULL,
           	cat("LKrig.MLE: find lambda grid value", k,  fill=TRUE)
           	print( obj)
           }              
-     # Note: if lambda.profile == FALSE the starting lambda is passed through as the "optimal" one
-        llambda.opt<- obj$summary["llambda.opt"]
+     # Note: if lambda.profile == FALSE then "MLE" set to NA
+     #
+        llambda.MLE<- obj$summary["llambda.MLE"]
      # compare to current largest likelihood and update the LKinfo.MLE list if bigger.
         if ( obj$summary["lnProfLike"] > lnProfileLike.max ) {
               lnProfileLike.max <- obj$summary["lnProfLike"] 
               LKinfo.MLE <- obj$LKinfo
-              lambda.MLE<- exp( llambda.opt)
+              lambda.MLE<- exp( llambda.MLE)
         }
      # save summary results from this set of parameters.
        out[k, ] <- obj$summary

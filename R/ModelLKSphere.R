@@ -169,15 +169,12 @@ LKrigSAR.LKSphere = function(object, Level, ...) {
 #  set their diagonal entries differently if this is needed..
 # The B matrix is already in spind format and the entries  (ra) are 
 # converted to be the SAR matrix.
-  print(delta)
-  print( dType)
   B = LKDist(  grid[,1:2], grid[,1:2], delta = delta,
                   distance.type= dType)
 # find the diagonal elements of the sparse matrix
 # compute weights for slightly unequal distributions
   ind1<- B$ind[,1]
   ind2<- B$ind[,2]
-  print( table( ind1))
   raTemp<- rep( NA, length( ind1))
   Diagonal<- ind1==ind2
   if( sum( Diagonal)!= nrow(grid)) {

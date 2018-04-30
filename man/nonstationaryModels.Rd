@@ -87,7 +87,7 @@ predict function.
 ##### This is an extended example showing how to define 
 ##### spatially varying rho parameter 
 #######################################################
-# Define two useful predict functions. 
+# Define a useful predict function. 
 #######################################################
   predict.surfaceGrid<- function(object,x){
     interp.surface( object, x)
@@ -98,18 +98,20 @@ predict function.
 ##### Nonstationary examples
 ###############################################
 # spatial domain    
-sDomain<- rbind( c(-1,-1),
+sDomain<- rbind( c(-1.2,-1.2),
                  c(1,1))
 
 # we will use this coarse grid to define any 
 # surfaces of parameters
 # (unrelated to the lattice grids and plotting grid!)
-  gridList<- list( x = seq( -1.8,1.8,,20),
-                   y = seq(-1.8, 1.8,,25) )
+# this is larger than the sDomain to accomodate buffer points
+# (with larger ranges when NC is small)
+  gridList<- list( x = seq( -3, 3,,50),
+                   y = seq( -3, 3,,75) )
   xPoints<- make.surface.grid( gridList)
   fineGrid<- make.surface.grid(
-                 list( x = seq(-1, 1, ,50),
-                       y = seq(-1, 1, ,50)
+                 list( x = seq(-1, 1, ,45),
+                       y = seq(-1, 1, ,60)
                        )
                                )
  
@@ -117,18 +119,21 @@ sDomain<- rbind( c(-1,-1),
 ### end of setup 
 #################################################
 # rho increases across the domain as a function of first coordinate. 
-  rhoTemp<- ifelse(xPoints[,1] < -.5, .05, 10)
+  rhoTemp<-  .01 +  10* pnorm( xPoints[,1], mean=.25, sd =.3 )
   rho.object<- as.surface( xPoints, rhoTemp) 
   class( rho.object)<- "surfaceGrid"
      
-  LKinfo<- LKrigSetup( sDomain, NC= 10, nlevel =3,
+  LKinfo<- LKrigSetup( sDomain, NC= 4, nlevel = 3,
                  a.wght=4.5, nu=1, rho.object=rho.object)   
-  # simulate a field from this model
- 
+# simulate a field from this model
   set.seed(123)
   look<- LKrig.sim( fineGrid, LKinfo)
   image.plot( as.surface( fineGrid, look))
-  xline( -.5, col="magenta")
+  xline( .25, col="grey30")
+# see also 
+# temp<- as.surface( fineGrid, look)
+# I<- 20
+# matplot(temp$x, temp$z, type="l", xlab="x", ylab="GP slice" )
   
 ######################################################
 ##### spatially varying alpha parameters 
@@ -191,7 +196,8 @@ sDomain<- rbind( c(-1,-1),
      
 
 # define the 2-d LatticeKrig model
-  LKinfo2<- LKrigSetup(sDomain, NC = 20,  
+ 
+  LKinfo2<- LKrigSetup(sDomain, NC = 5, NC.buffer=0, 
               alpha = c(1, .5, .125), nlevel = 3, 
               a.wghtObject =  a.wghtObjectA)
               
@@ -224,7 +230,7 @@ sDomain<- rbind( c(-1,-1),
                    )
                    ) 
   
-  LKinfo3<- LKrigSetup(sDomain, NC = 20, 
+  LKinfo3<- LKrigSetup(sDomain, NC = 5, 
       a.wght= list( a.wghtM2), 
               alpha = c(1,.5, .125), nlevel = 3, 
               a.wghtObject =  NULL, normalize=TRUE )

@@ -280,7 +280,8 @@ matrices.
 }
 \examples{
 # 
-# fitting summer precip for  sub region of North America
+# fitting summer precip for  sub region of North America (Florida)
+# (tiny subregion is just to make this run under 5 seconds). 
 # total precip in 1/10 mm for JJA 
   data(NorthAmericanRainfall)
 # rename for less typing
@@ -293,18 +294,15 @@ matrices.
 
 # This is a single level smoother
  
-  LKinfo<- LKrigSetup(x,NC=8,nlevel=1, a.wght=5, alpha=1.0)
+  LKinfo<- LKrigSetup(x,NC=4, nlevel=1, a.wght=5, alpha=1.0)
   lambdaFit<- LKrigFindLambda( x,y,LKinfo=LKinfo)
   lambdaFit$summary
 
-
+\dontrun{
 # grid search over parameters 
-NG<-3
-#NOTE: make this larger ( e.g. 15) for a better (real!) grid search on log lambda
-# values
+  NG<-15
   par.grid<- list( a.wght= rep( 4.05,NG),alpha= rep(1, NG),
                       llambda=  seq(-8,-2,,NG))
-  LKinfo<- LKrigSetup(x,NC=5,nlevel=1, a.wght=5, alpha=1.0)
   lambda.search.results<-LKrig.MLE( x,y,LKinfo=LKinfo,
                                     par.grid=par.grid,
                                     lambda.profile=FALSE)
@@ -314,8 +312,9 @@ NG<-3
          xlab="effective degrees freedom",
          ylab="ln profile likelihood")
 # fit at largest likelihood value:
-    lambda.MLE.fit<- LKrig( x,y,
+  lambda.MLE.fit<- LKrig( x,y,
                     LKinfo=lambda.search.results$LKinfo.MLE)
+}                    
                     
 \dontrun{                    
 # optimizing  Profile likelihood over lambda using optim

@@ -144,8 +144,9 @@ basis functions in the model.
 #  runs quickly)
  data(CO2)
 # to look at raw data: quilt.plot(CO2$lon.lat, CO2$y, nx=288, ny=165)
+# NOTE: NC=1 is related to how grid for sphere is set up.
   LKinfo0<- LKrigSetup( CO2$lon.lat, NC=1 ,nlevel=2,
-                       a.wght=6.1, alpha=c(1, .25),
+                       a.wght=6.1, alpha=c(1,.25),
                        LKGeometry="LKSphere" )                                         
   # Use MLE for lambda found below 
   obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.01068)
@@ -166,7 +167,6 @@ obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 } 
 # a more serious model 
 \dontrun{
-    
   LKinfo1<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1, lambda=.2,
                        a.wght=5, alpha=1, 
                        LKGeometry="LKRing" )                                         

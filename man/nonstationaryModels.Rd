@@ -1,7 +1,7 @@
 \name{nonstationaryModels}
 \alias{nonstationaryModels}
-\title{Specifying a nonstationary model in alpha}
-\description{An overview of specifying nonstationary models with some specific 2-d examples.}
+\title{Specifying differne nonstationary model}
+\description{An overview of specifying nonstationary models with some specific 2-d examples showing how to vary the alpha, rho and a.wght parameters.}
 \details{
 The Lattice Krig model can be extended in a natural way to have a  nonstationary covariance that has a multiscale structure. 
 

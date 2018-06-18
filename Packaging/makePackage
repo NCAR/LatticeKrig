@@ -1,0 +1,95 @@
+
+
+# run check
+
+
+
+
+
+
+~/Src/R-devel/bin/R  CMD build --force  LatticeKrig
+~/Src/R-devel/bin/R  CMD check --as-cran LatticeKrig_5.4.tar.gz
+
+# all the checks and tests are in fields.Rcheck
+# to create comparision files for tests
+
+# first make sure fields tests out
+grep FAILED LatticeKrig.Rcheck/tests/*.Rout
+
+# turn up any warnings that print from running examples:
+grep Warning LatticeKrig.Rcheck/fields-Ex*.Rout
+
+# Now check \dontrun examples
+cd LatticeKrig.Rcheck 
+sed -e "s/##D/ /" LatticeKrig-ex.R > temp.R
+sed -e "s/library('LatticeKrig')/library('LatticeKrig', lib.loc='.')/" temp.R > all-ex.R 
+R --save < all-ex.R > all-ex.Rout
+
+
+#################
+
+# take a look 
+grep Warning all-ex*.Rout
+open LatticeKrig-Ex.pdf
+
+# then if tests are correct
+cp  LatticeKrig.Rcheck/tests/LKrig.basis.test.Rout       LatticeKrig/tests/LKrig.basis.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.precision.test.Rout   LatticeKrig/tests/LKrig.precision.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.test.Rout             LatticeKrig/tests/LKrig.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.lnPlike.test.Rout     LatticeKrig/tests/LKrig.lnPlike.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.nullspace.test.Rout   LatticeKrig/tests/LKrig.nullspace.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.se.test.Rout          LatticeKrig/tests/LKrig.se.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.test.3D.Rout          LatticeKrig/tests/LKrig.test.3D.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.FindNorm.test.Rout    LatticeKrig/tests/LKrig.FindNorm.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.LKCylinder.test.Rout  LatticeKrig/tests/LKrig.LKCylinder.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.test.inverse.Rout     LatticeKrig/tests/LKrig.test.inverse.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrigMarginalVariance.test.Rout LatticeKrig/tests/LKrigMarginalVariance.test.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.testFindAwght.Rout    LatticeKrig/tests/LKrig.testFindAwght.Rout.save
+#cp  LatticeKrig.Rcheck/tests/LKSpheretest.Rout           LatticeKrig/tests/LKSpheretest.Rout.save
+########## final build for version
+#
+R CMD build --force LatticeKrig
+
+R CMD check --as-cran LatticeKrigRIGHTVERSION.gz
+
+
+ftp -a cran.wu-wien.ac.at
+cd incoming
+
+# send file
+# email message to
+# cran@r-project.org
+ in subject: CRAN submission LatticeKrig version
+
+############ check for long lines
+foreach i ( *.Rd )
+ echo $i
+awk 'length($0) > 80' $i
+end
+########## tidying up the code
+cd LatticeKrig
+
+cp -r R  R.OLD
+cd R
+# subdirectory of tidied code in the R directory
+mkdir R.tidy
+### in R:
+R 
+source("~/Home/Src/Rmisc/Mytidy.R")
+source.files<- system( " ls *.R", intern=TRUE)
+for( sfile in source.files){
+ Mytidy( sfile, dir="../R.tidy")
+}
+
+### in UNIX
+cd ~/Home/Src/LatticeKrig 
+cp R/R.tidy*.R R 
+
+
+#DOI splash page:
+www.image.ucar.edu/LatticeKrig
+edit web space at
+webpub.ucar.edu
+/test/image
+http://test.www.image.ucar.edu/
+

@@ -1,0 +1,26 @@
+LKinfo                  Specifying the Lattice Krig covariance
+                        object('LKinfo') and related utility functions.
+LKrig                   Spatial prediction and inference using a
+                        compactly supported multi-resolution basis and
+                        a lattice model for the basis coefficients.
+LKrig.MLE               Simple function to search over covariance
+                        parameters for Lattice Krig
+LKrig.basis             Functions for generating a multiresolution,
+                        compactly supported basis, multiresolution
+                        covariance functions and simulating from these
+                        processes.
+LKrig.coef              Internal functions for LatticeKrig package.
+LKrig.rowshift.periodic
+                        Miscellaneous internal functions for
+                        LatticeKrig package.
+LKrig.sim               Functions for simulating a multiresolution
+                        process following the Lattice Krig covariance
+                        model.
+LKrigDefaultFixedFunction
+                        Creates fixed part of spatial model.
+LatticeKrig             User-friendly spatial prediction and inference
+                        using a compactly supported multi-resolution
+                        basis and a lattice model for the basis
+                        coefficients.
+Radial.basis            Two dimensional radial basis functions based on
+                        a Wendland function.

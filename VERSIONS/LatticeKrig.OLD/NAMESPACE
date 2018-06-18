@@ -1,0 +1,8 @@
+useDynLib(LatticeKrig, dfind2d, dfind3d)
+exportPattern("^[^\\.]")
+useDynLib(LatticeKrig)
+S3method(print, LKrig)
+S3method(predict, LKrig)
+
+import("spam")
+import("fields")

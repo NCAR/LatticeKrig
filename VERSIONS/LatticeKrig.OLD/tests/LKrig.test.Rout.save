@@ -1,0 +1,106 @@
+
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin10.8.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # fields, Tools for spatial data
+> # Copyright 2004-2011, Institute for Mathematics Applied Geosciences
+> # University Corporation for Atmospheric Research
+> # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+> 
+> library( LatticeKrig)
+Loading required package: spam
+Loading required package: grid
+Spam version 0.40-0 (2013-09-11) is loaded.
+Type 'help( Spam)' or 'demo( spam)' for a short introduction 
+and overview of this package.
+Help for individual functions is also obtained by adding the
+suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
+
+Attaching package: 'spam'
+
+The following objects are masked from 'package:base':
+
+    backsolve, forwardsolve
+
+Loading required package: fields
+Loading required package: maps
+> options( echo=FALSE)
+testing:  d from LKrig and by hand
+    PASSED test at tolerance  1e-08
+testing:  c from mKrig and by hand
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+testing:  c from mKrig and from residuals of LatticeKrig (this is big!)
+    PASSED test at tolerance  1e-08
+testing:  Monte Carlo traces
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+testing:  d from Lattice Krig and mKrig
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+testing:  marginal variance
+    PASSED test at tolerance  1e-08
+testing:  spatial alpha cov
+    PASSED test at tolerance  1e-08
+testing:  spatial alpha mar var
+    PASSED test at tolerance  1e-08
+testing:  spatial alpha cov w/ tricksy alpha
+    PASSED test at tolerance  1e-08
+testing:  spatial alpha mar var  tricksy alpha
+    PASSED test at tolerance  1e-08
+testing:  predicted values from LatticeKrig and by hand, spatial alpha
+    PASSED test at tolerance  1e-08
+testing:  predicted values LatticeKrig and mKrig, spatial alpha
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+testing:  LatticeKrig and direct test of lnDetCov
+    PASSED test at tolerance  1e-08
+testing:  Det with weights1
+    PASSED test at tolerance  1e-08
+testing:  Det with weights1=2
+    PASSED test at tolerance  1e-08
+testing:  Det with weights3
+    PASSED test at tolerance  1e-08
+Warning message:
+In rm(obj, obj0) : object 'obj0' not found
+testing:  lnDetCov for mKrig and LatticeKrig
+    PASSED test at tolerance  1e-08
+testing:  quadratic forms for rho hat
+    PASSED test at tolerance  1e-08
+testing:  Profile Likelihood concentrated on lambda
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+testing:  predicted  values mKrig/Krig  w/weights
+    PASSED test at tolerance  1e-08
+testing:  compare rhohat for mKrig and Krig with weights
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+testing:  test of LatticeKrig.coef c
+    PASSED test at tolerance  1e-08
+testing:  test of LatticeKrig.coef d
+    PASSED test at tolerance  1e-08
+    PASSED test at tolerance  1e-08
+Done testing LatticeKrig
+> proc.time()
+   user  system elapsed 
+ 30.612   0.595  31.196 

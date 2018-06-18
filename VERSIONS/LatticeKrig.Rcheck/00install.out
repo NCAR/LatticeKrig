@@ -1,0 +1,12 @@
+* installing *source* package ‘LatticeKrig’ ...
+** libs
+make: Nothing to be done for `all'.
+make: `symbols.rds' is up to date.
+installing to /Users/nychka/Home/Src/LatticeKrig.Rcheck/LatticeKrig/libs
+** R
+** preparing package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+* DONE (LatticeKrig)

@@ -1,0 +1,39 @@
+Package: LatticeKrig
+Version: 3.2
+Date: May 24, 2013
+Title: Multiresolution Kriging based on Markov random fields
+Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut]
+Authors@R: c( 
+            person("Douglas", "Nychka", role = c("aut", "cre"),
+               email = "nychka@ucar.edu"),
+            person("Dorit", "Hammerling", role = c("aut"),
+               email = "hammerling@samsi.info"),
+            person("Stephan", "Sain", role = "aut",
+               email = "ssain@ucar.edu"),
+            person("Nathan", "Lenssen", role = "aut",
+               email = "lenssen@ucar.edu")) 
+Maintainer: Douglas Nychka <nychka@ucar.edu>
+Description: Functions for the interpolation of large spatial
+  datasets. This package follows a "fixed rank Kriging" approach using
+  a large number of basis functions and provides spatial estimates
+  that are comparable to standard families of covariance functions.
+  Using a large number of basis functions allows for estimates that
+  can come close to interpolating the observations (a spatial model
+  with a small nugget variance.)  The covariance model for this method
+  can approximate the Matern covariance family but also allows for a
+  multi-resolution model and supports efficient computation of the
+  profile likelihood for estimating covariance parameters. This is
+  accomplished through compactly supported basis functions and a
+  Markov random field model for the basis coefficients. These features
+  lead to sparse matrices for the computations. One benefit of this
+  approach is the facilty to do unconditional and conditional
+  simulation of the field for large numbers of arbitrary points. There
+  is also the flexibility for estimating nonstationary covariances. Included are
+  generic methods for prediction, standard errors for prediction,
+  plotting of the estimated surface and conditional and unconditional
+  simulation.
+License: GPL (>= 2)
+URL: http://www.r-project.org
+Depends: R (>= 3.0.1), spam, fields (>= 6.9.1)
+Packaged: nychka
+Built: R 3.1.0; x86_64-apple-darwin10.8.0; 2014-06-07 01:04:16 UTC; unix

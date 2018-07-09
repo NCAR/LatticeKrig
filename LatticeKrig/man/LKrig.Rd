@@ -103,7 +103,7 @@ from the other, Z, covariates in the fixed component will be omitted.}
 
 \item{LKinfo}{An object whose components specify the LatticeKrig
   spatial model.  This is usually created by the function
-  \code{LKrigSetup}. If NULL, this object is created and returned as
+  \code{\link{LKrigSetup}}. If NULL, this object is created and returned as
   a component of the LKrig object.}
 
 \item{nx}{Number of grids in x for prediction grid.}

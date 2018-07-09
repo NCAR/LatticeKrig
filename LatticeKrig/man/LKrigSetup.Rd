@@ -128,7 +128,9 @@ for testing and timing sparse verses standard algorithms. }
 \item{fixedFunction}{A text string that is the name of the function
 	used to find the fixed part of the spatial model based on the
 	locations. The default is a linear (m=2) polynomial in the
-	spatial coordinates. }
+	spatial coordinates. See \code{LKrigDefaultFixedFunction} for more details.
+	Set this to NULL if you do not want to
+	include a fixed effect in the spatial model. }
 	
 \item{fixedFunctionArgs}{A list containing arguments to supply when
 	evaluating the fixed function.}

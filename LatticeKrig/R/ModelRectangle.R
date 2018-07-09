@@ -433,7 +433,8 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     dim.a.wght <- dim(a.wght)
    
     # figure out if just a single a.wght or matrix is passed
-    first.order <-  (( length(a.wght) == 1)|( length(dim.a.wght) == 2)) 
+    # OLD see above first.order <-  (( length(a.wght) == 1)|( length(dim.a.wght) == 2)) 
+    
     # order of neighbors and center
     index <- c(5, 4, 6, 2, 8, 3, 9, 1, 7)
     # dimensions of precision matrix
@@ -453,7 +454,7 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
                 ra[ , kk] <- a.wght[index[kk]]
             }
             else {
-                ra[,  kk] <- a.wght[ , index[kk]]
+                ra[ ,  kk] <- a.wght[ , index[kk]]
             }
         }
     }

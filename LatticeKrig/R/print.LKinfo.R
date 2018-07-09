@@ -79,9 +79,9 @@ print.LKinfo <- function(x, ...) {
     }
     if(!is.null( x$a.wghtObject)){ 
       cat("a.wght specified at each level by objects: ",fill=TRUE)
-      cat("Level ", "Class", fill=TRUE)
+      cat("Level ", "Class","subClass", fill=TRUE)
       for( level in 1:L){
-        cat( level, class(x$a.wghtObject[[1]]), fill=TRUE )
+        cat( level, class( x$a.wghtObject), class(x$a.wghtObject[[1]]), fill=TRUE )
       }
     }
        cat(" ", fill = TRUE)

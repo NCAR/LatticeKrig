@@ -1,6 +1,6 @@
 Package: LatticeKrig
-Version: 7.0
-Date: 2018-04-30
+Version: 7.1
+Date: 2018-07-07
 Title: Multiresolution Kriging Based on Markov Random Fields
 Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut], Colette Smirniotis [aut]
 Authors@R: c( 

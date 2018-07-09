@@ -1,7 +1,8 @@
 \name{nonstationaryModels}
 \alias{nonstationaryModels}
-\title{Specifying differne nonstationary model}
-\description{An overview of specifying nonstationary models with some specific 2-d examples showing how to vary the alpha, rho and a.wght parameters.}
+\title{Specifying nonstationary models}
+\description{An overview of specifying nonstationary 
+and anisotropic models with some specific 2-d examples showing how to vary the alpha, rho and a.wght parameters.}
 \details{
 The Lattice Krig model can be extended in a natural way to have a  nonstationary covariance that has a multiscale structure. 
 
@@ -87,12 +88,28 @@ predict function.
 ##### This is an extended example showing how to define 
 ##### spatially varying rho parameter 
 #######################################################
-# Define a useful predict function. 
+# Define some useful predict functions. 
 #######################################################
   predict.surfaceGrid<- function(object,x){
     interp.surface( object, x)
-   }
-
+    }
+    
+  predict.multivariateSurfaceGrid<- function(object,x){
+    dimZ<- dim( object$z)
+    L<- dimZ[3]
+    out<- matrix( NA, nrow= nrow(x), ncol=L)
+    for (  l in 1:L){
+     out[,l]<- interp.surface( 
+     list( x=object$x,y=object$y, z=object$z[,,l]) , x)
+     }
+     return( out)
+  }
+  
+  predict.constantValue<- function(object,x){
+   n<- length(object$values)
+   m<- nrow( x)
+   return( matrix( object$values, nrow=m, ncol=n, byrow=TRUE ) )
+    }
 
 ################################################
 ##### Nonstationary examples
@@ -224,21 +241,84 @@ sDomain<- rbind( c(-1.2,-1.2),
 ##################################################
 ######## Anisotropy in a.wght
 ##################################################
+#### stationary example
   a.wghtM2<- c( rbind( c(  0,   0, -1.5),
-                       c(-.5, 4.5,  -.5),
+                       c(-.5, 4.5,  -.25),
                        c(-1.5,  0,    0)
                    )
                    ) 
   
   LKinfo3<- LKrigSetup(sDomain, NC = 5, 
       a.wght= list( a.wghtM2), 
-              alpha = c(1,.5, .125), nlevel = 3, 
+              alpha = c(1, .5, .125), nlevel = 3, 
               a.wghtObject =  NULL, normalize=TRUE )
               
   
   set.seed(123)            
   look<- LKrig.sim( fineGrid, LKinfo3)
   image.plot( as.surface( fineGrid, look))
-                  
+
+#### Anisotropy varying over space
+#### First check that the constant model can be reproduced
+  a.wghtM2<- c( rbind( c(  0,   0, -1.5),
+                       c(-.5, 4.5,  -.5),
+                       c(-1.5,  0,    0)
+                   )
+                   )
+                   
+  a.wghtObject<- list( values=a.wghtM2)
+  class(a.wghtObject )<- "constantValue"
+ 
+  LKinfo4<- LKrigSetup(sDomain, NC = 5, 
+              alpha = c(1,.5, .125), nlevel = 3, 
+              a.wghtObject =  a.wghtObject, normalize=TRUE )
+  set.seed(123)            
+  look<- LKrig.sim( fineGrid, LKinfo4)
+  image.plot( as.surface( fineGrid, look) )            
+
+###### nonstationary anisotropy
+ a.wghtA <- c( rbind( c(    0,   0, -2),
+                       c( 0, 4.5,  0),
+                       c(-2,  0,     0)
+                   )
+                   )
+ a.wghtB <- c( rbind( c(  -2,   0,     0),
+                       c(  0, 4.5,  0),
+                       c(    0,    0, -2)
+                   )
+                   )
+# Now create multivariate prediction object.
+  gridList<-  attributes( xPoints)$grid.list
+  m1<- length(gridList$x)
+  m2<- length(gridList$y) 
+  z<- array( NA, c( m1,m2,9))
+  alpha<- (xPoints[,1] + 1 )/2
+  alpha<- ifelse( alpha <= 0, 0, alpha)
+  alpha<- ifelse( alpha >= 1, 1, alpha)
+# A for loop over the 9 pixels   
+  for(j in 1:9) {
+# linear combination of two a.wght matrices
+# 
+    zTemp<- a.wghtA[j] * (1-alpha) +  a.wghtB[j]*(alpha)
+# coerce into an image format    
+    z[,,j]<- as.surface( xPoints, zTemp)$z
+  }
+
+  a.wghtObject<- list( x= gridList$x,  y= gridList$y, z=z )
+  class( a.wghtObject)<- "multivariateSurfaceGrid"
+
+  LKinfo5<- LKrigSetup(sDomain, NC = 25, NC.buffer=0,
+              alpha = c(1,.5), 
+              nlevel = 2, 
+              a.wghtObject =  a.wghtObject )
+  set.seed(122)  
+  fineGrid<- make.surface.grid(
+                 list( x = seq(-1, 1, ,150),
+                       y = seq(-1, 1, ,180)
+                       )
+                               )
+  look<- LKrig.sim( fineGrid, LKinfo5)
+  image.plot( as.surface( fineGrid, look), col = terrain.colors(256) )
+
 }
   

@@ -26,7 +26,7 @@ Create or update the LatticeKrig model object  (LKinfo) for spatial fitting.
 \description{
 This function combines some input arguments with defaults for other
 to create a list 
-describing the LatticeKrig spatial model. 
+describing the LatticeKrig spatial model. A key to specifying the LatticeKrig spatial model is specifying the geometry, e.g. LKRectangle for a 2-d rectangular domain. Each geometry has some parameters that control the basic model setup and these are included through the \dots arguments of  this function. See the help for this argument below for some examples.
 }
 \usage{
 LKrigSetup(
@@ -228,8 +228,8 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
  	
   \item{\dots}{Specific arguments that will be included in the
   	\code{setupArgs} list and also passed to
-  	\code{LKrigSetupLattice}. For LKinfoUpdate these specify the components
-  	       of LKinfo to update.  }
+  	\code{LKrigSetupLattice}. For \code{LKinfoUpdate} these specify the components
+  	       of LKinfo to update. For example for a rectangular domain (the default) the argument \code{NC} is needed to specify the initial lattice size \code{NC.buffer} sets the number of extra points included in the lattice and defaults to 5.  \code{NC} for the LKSphere geometry  is the intital level of the icosohedral grid.   }
 }
 \details{
 	Many of the functions within LKrigSetup are overloaded to
@@ -286,9 +286,15 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
   # find the ranges of the  data, this is the same as passing
   # the entire set of observation locations and is more compact 
   sDomain<-apply( ozone2$lon.lat, 2,"range")
-  LKinfo<- LKrigSetup( sDomain, NC=10, nlevel=2, alpha=c(1,.5),
+  LKinfo0<- LKrigSetup( sDomain, NC=10, nlevel=2, alpha=c(1,.5),
                        a.wght = 5)
+  print( LKinfo0)
+  
+  #Gigantic buffer added note extra basis functions. 
+  LKinfo<- LKrigSetup( sDomain, NC=10, NC.buffer= 15, nlevel=2, 
+  alpha=c(1,.5),a.wght = 5)
   print( LKinfo)
+  
   LKinfo2<- LKinfoUpdate( LKinfo,  a.wght=4.1, NC=12)
   LKinfo3<- LKrigSetup( sDomain, NC=12, nlevel=2, alpha=c(1,.5),
                         a.wght=4.1)

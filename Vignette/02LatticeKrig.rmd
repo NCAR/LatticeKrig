@@ -1,0 +1,13 @@
+# The \texttt{LatticeKrig} Function
+
+Use \texttt{LatticeKrig} to make all your worries go away.
+
+```{r ToyLatticeKrigFit}
+set.seed(31734)
+obsX <- runif(100);
+obsY <- runif(100);
+obsXY <- cbind(obsX, obsY);
+obsZ <- sin(2*pi*obsX) * sin(2*pi*obsY) + 0.1*rnorm(100);
+kFit <- LatticeKrig(obsXY, obsZ)
+surface(kFit)
+```

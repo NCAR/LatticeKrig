@@ -1,0 +1,26 @@
+---
+title: "LatticeKrig Vignette"
+author: "Matthew Iverson"
+date: "5/21/2019"
+output: 
+  pdf_document:
+      toc: true
+      number_sections: true
+---
+<!-- This is the file that the vignette pdf is knitted from -->
+```{r setup, include=FALSE}
+library(LatticeKrig)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\pagebreak 
+<!-- Each chapter is in its own file to make editing easier -->
+```{r child = '01Introduction.rmd'}
+```
+
+```{r child = '02LatticeKrig.rmd'}
+```
+
+```{r child = '10LinearAlgebraAppendix.rmd'}
+```
+

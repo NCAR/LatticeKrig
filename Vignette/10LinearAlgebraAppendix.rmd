@@ -1,0 +1,5 @@
+# Appendix A: The Linear Algebra of Kriging
+
+Suppose we have a vector$\mathbf{y}$ of observations, where each observation $y_i$ is taken at location $\mathbf s_i$, and a covariate matrix $X$. Assuming that the observations are a linear combination of the covariates with a Gaussian process of mean 0, we have
+\[ \mathbf y = X \beta + \epsilon\]
+where $\epsilon \sim MN(\mathbf 0, \Sigma)$ for some covariance matrix $\Sigma$. We can then make assumptions to determine the form of $\Sigma$: Assuming the process is stationary, $\sigma_{ij}$ will only depend on the vector $\mathbf s_i - \mathbf s_j$; assuming the process is isotropic, $\sigma_{ij}$ will only depend on the scalar $||\mathbf s_i - \mathbf s_j||$, which also means that $\Sigma$ will be symmetric. This then allows us to establish a covariance function, $f$, such that $\sigma_{ij} = f(||\mathbf s_i - \mathbf s_j||)$. The covariance function describes how strongly correlated observations at varying distances are; as such, we would expect that $f(0) = 1$ and $\lim_{x \to \infty} f(x) = 0$.

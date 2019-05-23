@@ -1,13 +1,18 @@
-# The \texttt{LatticeKrig} Function
+# The \ttt{LatticeKrig} Function
 
-Use \texttt{LatticeKrig} to make all your worries go away.
+The \ttt{LatticeKrig} function takes in a set of locations and variable observations and returns a LKrig object that can be used to estimate the variable at other locations. It also has many optional parameters that can be used to adjust the model. In the following toy example, we take 100 samples of $\sin(2\pi x) \sin(2\pi y)$ at random locations on the unit square and add some noise onto the samples. We then use \ttt{LatticeKrig} to recover the shape of the function and predict it over the unit square. Notice that, by default, the \ttt{surface} function won't make predictions outside the boundaries of the original data, and so some parts near the corners are left blank.
 
 ```{r ToyLatticeKrigFit}
+# set the seed of the random number generator so we always get the same output
 set.seed(31734)
+# make a group of 100 random (x,y) points in the unit square
 obsX <- runif(100);
 obsY <- runif(100);
 obsXY <- cbind(obsX, obsY);
+# evaluate sin(2 pi x) * sin(2 pi y) at each location, then add some noise
 obsZ <- sin(2*pi*obsX) * sin(2*pi*obsY) + 0.1*rnorm(100);
+# use kriging to find an approximate 2D-surface fit
 kFit <- LatticeKrig(obsXY, obsZ)
-surface(kFit)
+# plot the kriging fit's predicted values on a 200x200 grid in the unit square
+surface(kFit, nx=200, ny=200)
 ```

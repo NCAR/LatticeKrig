@@ -1,6 +1,5 @@
 # Quick Start Guide
 
-
 In this section, we will lay out the bare essentials of the package to make the central features as easily accessible as possible. To fit a surface and interpolate data using \ttt{LatticeKrig}, the only required arguments are the measurement locations and measurement values. Calling the \ttt{LatticeKrig} function and passing in the locations and values will produce an \ttt{LKrig} object that contains all the information needed to calculate the model at any location. For a simple, 1-dimensional example, we will take our variable measurements to be the values of a simple function.
 
 ```{r QuickStart1D}
@@ -19,7 +18,7 @@ kFit <- LatticeKrig(locations, observations)
 xGrid <- seq(-2*pi, 2*pi, len=100)
 
 #draw the data points
-plot(locations, observations)
+plot(locations, observations, main="1-Dimensional LatticeKrig Example", xlab="Location", ylab="Measured Value")
 
 #draw the true function for comparison
 lines(xGrid, sin(xGrid), col='blue')
@@ -28,7 +27,6 @@ lines(xGrid, sin(xGrid), col='blue')
 lines(xGrid, predict(kFit, xGrid), col='red')
 
 ```
-
 
 We can see that \ttt{LatticeKrig} takes in the data points (shown above in black) and produces a prediction over the whole interval (in red) that matches the true function (in blue) rather closely. For another, more practical example, we will predict the average spring temperature for locations throughout Colorado.
 
@@ -44,12 +42,11 @@ observations <- CO.tmean.MAM.climate
 kFit <- LatticeKrig(locations, observations)
 
 # plot the predicted surface over the given latitude/longitude window
-surface(kFit)
+surface(kFit, main = "2-Dimensional LatticeKrig Example", xlab="Longitude", ylab="Latitude")
 
-# draw the USA state lines in gray, 2 pixels wide, to show where Colorado is
-US(add=TRUE, col='gray', lwd=2)
+# draw the USA state lines in black, 4 pixels wide, to show where Colorado is
+US(add=TRUE, col='black', lwd=4)
 ```
-
 
 This plot is nice, but we can do better. We can see that the coldest temperatures are in the Rocky Mountains, which is unsurprising. Thus, we might expect that we will get a more accurate fit by having \ttt{LatticeKrig} account for the elevation at each location as well. Another way we can improve the plot is by increasing its resolution - the current plot is somewhat pixelated. We can tell the \ttt{surface} function to evaluate the surface at more points by using the \ttt{nx} and \ttt{ny} arguments, which will take longer to compute but produces a nicer looking, more detailed plot. Finally, we can also have \ttt{surface} extend the computation all the way to the corners of the window by using the \ttt{extrap} argument; by default it doesn't extrapolate outside of the existing data, since the \ttt{LatticeKrig} fitting method isn't designed to extrapolate and so the expected error increases dramatically when predicting outside of the given data. However, extending the plot to the corners will make it look nicer.
 
@@ -76,8 +73,8 @@ prediction <- predictSurface(kFit, grid.list = CO.Grid, ZGrid = CO.elevGrid,
                              nx = 200, ny = 150, extrap = TRUE)
 
 # draw the predicted surface
-surface(prediction)
+surface(prediction, main = "Improved 2-Dimensional LatticeKrig Example", xlab="Longitude", ylab="Latitude")
 
-# draw the USA state lines in gray, 2 pixels wide, to show where Colorado is
-US(add=TRUE, col='gray', lwd=2)
+# draw the USA state lines in black, 4 pixels wide, to show where Colorado is
+US(add=TRUE, col='black', lwd=4)
 ```

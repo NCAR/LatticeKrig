@@ -1,43 +1,18 @@
-# The \ttt{LatticeKrig} Function
+# \ttt{LatticeKrig} Optional Arguments
 
+The only required arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a huge range of optional arguments to tweak the model that \ttt{LatticeKrig} uses. In this section we will list all of the possible optional parameters that can be passed into \ttt{LatticeKrig}.
 
-The \ttt{LatticeKrig} function takes in a set of locations and variable observations and returns a LKrig object that can be used to estimate the variable at other locations. It also has many optional parameters that can be used to adjust the model. In the following toy example, we take 100 samples of $\sin(2\pi x) \sin(2\pi y)$ at random locations on the unit square and add some noise onto the samples. We then use \ttt{LatticeKrig} to recover the shape of the function and predict it over the unit square. Notice that, by default, the \ttt{surface} function won't make predictions outside the boundaries of the original data, and so some parts near the corners are left blank.
+## \ttt{Z}
 
-```{r ToyLatticeKrigFit}
-# set the seed of the random number generator so we always get the same output
-set.seed(31734)
-# make a group of 100 random (x,y) points in the unit square
-obsX <- runif(100);
-obsY <- runif(100);
-obsXY <- cbind(obsX, obsY);
-# evaluate sin(2 pi x) * sin(2 pi y) at each location, then add some noise
-obsZ <- sin(2*pi*obsX) * sin(2*pi*obsY) + 0.1*rnorm(100);
-# use kriging to find an approximate 2D-surface fit
-kFit <- LatticeKrig(obsXY, obsZ)
-# plot the kriging fit's predicted values on a 200x200 grid in the unit square
-surface(kFit, nx=200, ny=200)
-```
+The optional parameter \ttt Z is a matrix of covariates (variables aside from location) to include in the model. Each column of this matrix must contain the value of one of the covariates at each data location, so the number of rows in \ttt Z must match the number of rows in the required parameter \ttt x, the set of locations. For an example, see the last two plots in the Quick Start section.
 
+## \ttt{nlevel}
 
-For another example, we will fit a surface to the \ttt{NorthAmericanRainfall} dataset included in the \ttt{fields} package. 
+The optional parameter \ttt{nlevel} determines the number of different lattice sizes to compute the basis function coefficients on. Each different lattice size is computed independently, and the resulting layers are each scaled by the values in the parameter \ttt{alpha} before being added together.
 
-```{r RainfallLatticeKrigFit}
-library(fields)
-data(NorthAmericanRainfall)
-obsX <- cbind(NorthAmericanRainfall$longitude, NorthAmericanRainfall$latitude)
-obsY <- NorthAmericanRainfall$precip
-kFit <- LatticeKrig(obsX, obsY)
-prediction <- predictSurface(kFit, nx = 150, ny = 150)
-image.plot(prediction)
-world(add=TRUE)
-```
+## \ttt{X}
 
+The optional parameter \ttt X (different from the required parameter \ttt x) is used for solving linear inverse problems; \ttt X is the sparse matrix that transforms the coefficients of the basis to the observations. The optional parameter \ttt U must also be specified.
 
-Note that all of the data in this dataset is taken on land (as shown below) and this model does not account for the difference between land and ocean, so the rainfall predictions this model makes over the Atlantic Ocean and Gulf of Mexico may not be accurate. 
-
-```{r}
-quilt.plot(obsX, obsY)
-world(add=TRUE)
-```
-
-## Fitting models with additional covariates
+## \ttt{U}
+The optional parameter \ttt U is used for solving linear inverse problems; \ttt U is the matrix that transforms the coefficients of the fixed part of the model to the observations. 

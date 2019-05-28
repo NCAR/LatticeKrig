@@ -1,0 +1,46 @@
+# Frequently Asked Questions
+
+## The predicted values from my Kriging fit are nowhere near the data; what's wrong?
+
+
+If your model includes covariates (the \ttt{Z} parameter of \ttt{LatticeKrig} and \ttt{LKrig}), your plot may not have included the effect of the covariate. The following code demonstrates this issue using the Colorado temperature data and how to fix it; first, we will set up the model.
+```{r FAQMissingCovariateSetup}
+# load in the data
+data(COmonthlyMet)
+
+# getting the relevant data from the dataset
+locations <- CO.loc
+observations <- CO.tmean.MAM.climate
+
+# get the elevations to include in our model
+elevations <- CO.elev
+
+# use LatticeKrig to estimate a fit for these data points
+kFit <- LatticeKrig(locations, observations, Z=cbind(elevations))
+```
+
+
+Using the \ttt{surface} function will leave out the covariate, resulting in a plot that doesn't match the original data and is smoother than we might expect.
+
+```{r FAQMissingCovariateBadPlot}
+# plot the predicted surface over the given latitude/longitude window
+surface(kFit, nx = 200, ny = 150, extrap = TRUE)
+
+#draw the USA state lines in gray, 2 pixels wide, to show where Colorado is
+US(add=TRUE, col='gray', lwd=2)
+```
+
+
+To fix this, call \ttt{surface} on a \ttt{predictSurface} object instead of on an \ttt{LKrig} object, and make sure to pass in the \ttt{grid.list} and \ttt{ZGrid} parameters  to the \ttt{predictSurface} call.
+
+```{r FAQMissingCovariateGoodPlot}
+
+# predict the surface over the given latitude/longitude window, including the covariate
+prediction <- predictSurface(kFit, grid.list = CO.Grid, ZGrid = CO.elevGrid, nx = 200, ny = 150, extrap = TRUE)
+
+#draw the predicted surface
+surface(prediction)
+
+#draw the USA state lines in gray, 2 pixels wide, to show where Colorado is
+US(add=TRUE, col='gray', lwd=2)
+```

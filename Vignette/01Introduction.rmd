@@ -1,19 +1,21 @@
 # Introduction
 
+
 In this vignette, we will briefly explain what kriging is, explore the functions in the LatticeKrig package, and show examples of how they can be used to solve problems.
 
 ## What is Kriging?
 
+
 Kriging (named for South African satistician Danie Krige) is a method for making predictions from a data set. It is designed to be used on spatial data -- that is, our data contains the observed variable and the location it was observed at, and pairs of observations taken close together have similar values. As such, it can be applied to a variety of physical data sets, from geological data to atmospheric data.
 
-The goal of kriging is to create a model, based on data from some locations, that can predict the observed variable at any location. 
+
+The goal of kriging is to create a model, based on data from some locations, that can accurately predict the observed variable at any location inside the data given. 
 
 ## Glossary of Important Functions
 
 * \ttt{LKrig}: Fits a kriging estimate to the given data.
 * \ttt{LatticeKrig}: Calls LKrig, passing in default values and estimates for the needed parameters.
+* \ttt{LKInfo}: Creates an object to store the parameters to use for a \ttt{LatticeKrig} / \ttt{LKrig} call; especially useful for examining the effect of changing one parameter on the fit.
 * \ttt{surface}: Plots a fitted surface in 2D space as a color plot and adds contour lines.
-
-\begin{itemize}
-\item hi
-\end{itemize}
+* \ttt{image.plot}: Plots a dataset or fitted surface in 2D space as a color plot without contour lines.
+* \ttt{predictSurface}: Computes the values from a Kriging fit and makes a surface, but doesn't plot it.

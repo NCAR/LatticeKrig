@@ -18,14 +18,24 @@ library(LatticeKrig)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-\pagebreak 
+\pagebreak
+
 <!-- Each chapter is in its own file to make editing easier -->
 ```{r child = '01Introduction.rmd'}
 ```
+\pagebreak
 
-```{r child = '02LatticeKrig.rmd'}
+```{r child = '02QuickStart.rmd'}
 ```
+\pagebreak
+
+```{r child = '03LatticeKrig.rmd'}
+```
+\pagebreak
+
+```{r child = '08FAQ.rmd'}
+```
+\pagebreak
 
 ```{r child = '10LinearAlgebraAppendix.rmd'}
 ```
-

@@ -1,6 +1,6 @@
 # \ttt{LatticeKrig} Optional Arguments
 
-The only required arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a huge range of optional arguments to tweak the model that \ttt{LatticeKrig} uses. In this section we will list all of the possible optional parameters that can be passed into \ttt{LatticeKrig}.
+The only required arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a huge range of optional arguments to tweak the model that \ttt{LatticeKrig} uses. In this section we will list some of the most important optional parameters that can be passed into \ttt{LatticeKrig}; for a complete list, check the \ttt{LatticeKrig} help page.
 
 ## \ttt{Z}
 
@@ -8,11 +8,11 @@ The optional parameter \ttt Z is a matrix of covariates (variables aside from lo
 
 ## \ttt{nlevel}
 
-The optional parameter \ttt{nlevel} determines the number of different lattice sizes to compute the basis function coefficients on. Each different lattice size is computed independently, and the resulting layers are each scaled by the values in the parameter \ttt{alpha} (provided in the LKInfo or automatically computed) the before being added together.
+The optional parameter \ttt{nlevel} is an integer that determines the number of different lattice sizes to compute the basis function coefficients on. Each different lattice size is computed independently, and the resulting layers are each scaled by the values in the parameter \ttt{alpha} (provided in the LKInfo or automatically computed) the before being added together.
 
 ## \ttt{alpha}
 
-The optional parameter \ttt{alpha} holds the weights that scale the basis functions on each different lattice size. Since each level is calculated independently, the sum of the weights in \ttt{alpha} should be 1 to make sure the model fits correctly.
+The optional parameter \ttt{alpha} is a vector of length \ttt{nlevel} holds the weights that scale the basis functions on each different lattice size. Since each level is calculated independently, the sum of the weights in \ttt{alpha} should be 1 to make sure the model fits correctly.
 
 ## \ttt{X}
 

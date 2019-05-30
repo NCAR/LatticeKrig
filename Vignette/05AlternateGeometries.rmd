@@ -13,7 +13,7 @@ By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or
 
 ## Working with spherical coordinates
 
-For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will create some sample data at the equator, rotate it up to near the north pole, and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. 
+For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will create some sample data at the equator, rotate it up to near the north pole, and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. Note that R expects the coordinates to be listed as (longitude, latitude) in degrees, with longitude on the interval [-180, 180] and latitude on the interval [-90, 90], with negative numbers corresponding to western longitudes and southern latitudes.
 ```{r SphereExampleDataCreation}
 #creating a 30x30 grid centered at (-5,0) and making a sinusoid over it
 length = 40
@@ -52,8 +52,9 @@ sum(kFit$residuals^2)
 
 ```{r SphereExample}
 aVec <- c(1, 0.25, 0.25*0.25)
-info <- LKrigSetup(newLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
-#kFit <- LatticeKrig(newLocations, dataValues, LKinfo=info)
+info <- LKrigSetup(newLocations, nlevel = 3, NC = 6, alpha = aVec/sum(aVec), a.wght = 5.01, LKGeometry = "LKSphere")
+kFit <- LatticeKrig(newLocations, dataValues, LKinfo=info)
+#the problem this causes comes from the file LKrigMakewX.R:29-32, called at LKrig.R:89
 #surface(kfit)
 #sum(kFit$residuals^2)
 ```

@@ -4,40 +4,29 @@
 
 If your model includes covariates (the \ttt{Z} parameter of \ttt{LatticeKrig} and \ttt{LKrig}), your plot may not have included the effect of the covariate. The following code demonstrates this issue using the Colorado temperature data and how to fix it; first, we will set up the model.
 ```{r FAQMissingCovariateSetup}
-# load in the data
 data(COmonthlyMet)
-
-# getting the relevant data from the dataset
 locations <- CO.loc
 observations <- CO.tmean.MAM.climate
-
-# get the elevations to include in our model
 elevations <- CO.elev
-
-# use LatticeKrig to estimate a fit for these data points
 kFit <- LatticeKrig(locations, observations, Z=cbind(elevations))
 ```
 
 Using the \ttt{surface} function will leave out the covariate, resulting in a plot that doesn't match the original data and is smoother than we might expect.
 
 ```{r FAQMissingCovariateBadPlot}
-# plot the predicted surface over the given latitude/longitude window
 surface(kFit, nx = 200, ny = 150, extrap = TRUE)
-
-#draw the USA state lines in gray, 2 pixels wide, to show where Colorado is
 US(add=TRUE, col='gray', lwd=2)
 ```
 
 To fix this, call \ttt{surface} on a \ttt{predictSurface} object instead of on an \ttt{LKrig} object, and make sure to pass in the \ttt{grid.list} and \ttt{ZGrid} parameters  to the \ttt{predictSurface} call.
 
 ```{r FAQMissingCovariateGoodPlot}
-
-# predict the surface over the given latitude/longitude window, including the covariate
-prediction <- predictSurface(kFit, grid.list = CO.Grid, ZGrid = CO.elevGrid, nx = 200, ny = 150, extrap = TRUE)
-
-#draw the predicted surface
+prediction <- predictSurface(kFit, grid.list = CO.Grid, 
+                  ZGrid = CO.elevGrid, nx = 200, ny = 150, extrap = TRUE)
 surface(prediction)
-
-#draw the USA state lines in gray, 2 pixels wide, to show where Colorado is
 US(add=TRUE, col='gray', lwd=2)
 ```
+
+## Why aren't the settings in my LKrigSetup object aren't being used by the kriging fit?
+
+First, make sure everything is spelled correctly; R variables are case sensitive. For example, \ttt{LatticeKrig(x, y, LKInfo = info)} will not work, because the 'i' in "LKinfo" must be lowercase. Next, make sure that every parameter is being set correctly: in particular, don't confuse \ttt{x} with \ttt{X} or \ttt{alpha} with \ttt{a.wghts}. If everything is set correctly and spelled correctly, make sure that the list from LKrigSetup is being passed in to your \ttt{LatticeKrig} or \ttt{LKrig} call.

@@ -1,0 +1,59 @@
+# Kriging in Different Geometries
+
+By default, \ttt{LatticeKrig} will interpret the location data it receives as points in $n$-dimensional Euclidean space, and calculate the distance accordingly. However, this package also supports distance measurements on a sphere, interpreting the given locations as latitude and longitude on Earth. There are also other options for non-Euclidean geometries: a cylinder, which uses 3 dimensional cylindrical coordinates, and a ring, which takes 2 dimensional polar coordinates. You can change the geometry used by passing it into the \ttt{LKGeometry} parameter of an \ttt{LKinfo} object. These are the names that \ttt{LKinfo} recognizes:
+
+* \ttt{LKInterval}: 1 dimensional Euclidean space
+* \ttt{LKRectangle}: 2 dimensional Euclidean space
+* \ttt{LKBox}: 3 dimensional Euclidean space
+* \ttt{LKSphere}: 2 dimensional spherical coordinates (longitude and latitude, with fixed radius)
+* \ttt{LKCylinder}: 3 dimensional spherical coordinates
+* \ttt{LKRing}: 2 dimensional polar coordinates
+
+By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} parameter of the \ttt{LKinfo} object - the default is \ttt{GreatCircle}, which measures the shortest distance over the surface of the sphere, but you can also set \ttt{distance.type} to \ttt{Chordal} to measure the shortest straight-line distance, going under the surface of the sphere.
+
+## Working with spherical coordinates
+
+For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will create some sample data at the equator, rotate it up to near the north pole, and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. 
+```{r SphereExampleDataCreation}
+#creating a 30x30 grid centered at (-5,0) and making a sinusoid over it
+length = 40
+n = 30
+dataRange <- seq(-length/2, length/2, len=n)
+dataCol <- matrix(dataRange, ncol = 1)
+ones <- matrix(1, nrow=n)
+dataLocations <- cbind(-5 + kronecker(dataCol, ones), kronecker(ones,dataCol))
+dataValues <- sin(2*pi/length * (5+dataLocations[,1])) *sin(2*pi/length * dataLocations[,2])
+
+#rotating the locations up 85 degrees to the north pole
+theta = 85 * (pi/180)
+cosineGrid <- directionCosines(dataLocations)
+rotationMatrix <- cbind(c(cos(theta), 0, sin(theta)), c(0,1,0), c(-sin(theta), 0, cos(theta)))
+newCosineGrid <- t(rotationMatrix %*% t(cosineGrid))
+newLocations <- toSphere(newCosineGrid)
+
+#plot the data at the equator and at the north pole in rectangular coordinates
+#note the significant distortion at the north pole
+quilt.plot(dataLocations, dataValues)
+world(add=TRUE, col="black", lwd=1)
+
+quilt.plot(newLocations, dataValues)
+world(add=TRUE, col="black", lwd=1)
+```
+
+Remember that, even though the second plot looks radically different from the first, they are both plots of the same data over equally spaced data points - the distortions in the second map are caused by the map projection failing near the pole.
+
+Now, we will use \ttt{LatticeKrig} to approximate the surface in both rectangular and spherical geometries
+
+```{r SphereExampleRectangleComparison}
+kFit <- LatticeKrig(newLocations, dataValues)
+surface(kFit)
+sum(kFit$residuals^2)
+```
+
+```{r SphereExample}
+aVec <- c(1, 0.25, 0.25*0.25)
+info <- LKrigSetup(newLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
+#kFit <- LatticeKrig(newLocations, dataValues, LKinfo=info)
+#surface(kfit)
+#sum(kFit$residuals^2)
+```

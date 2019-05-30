@@ -33,6 +33,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \pagebreak
 
+```{r child = '05AlternateGeometries.rmd'}
+```
+\pagebreak
+
 ```{r child = '08FAQ.rmd'}
 ```
 \pagebreak

@@ -14,7 +14,7 @@ kFit <- LatticeKrig(locations, observations, Z=cbind(elevations))
 Using the \ttt{surface} function will leave out the covariate, resulting in a plot that doesn't match the original data and is smoother than we might expect.
 
 ```{r FAQMissingCovariateBadPlot}
-surface(kFit, nx = 200, ny = 150, extrap = TRUE)
+surface(kFit, nx = 200, ny = 150, extrap = TRUE, main="Plot missing covariate")
 US(add=TRUE, col='gray', lwd=2)
 ```
 
@@ -23,7 +23,7 @@ To fix this, call \ttt{surface} on a \ttt{predictSurface} object instead of on a
 ```{r FAQMissingCovariateGoodPlot}
 prediction <- predictSurface(kFit, grid.list = CO.Grid, 
                   ZGrid = CO.elevGrid, nx = 200, ny = 150, extrap = TRUE)
-surface(prediction)
+surface(prediction, main="Plot with covariate")
 US(add=TRUE, col='gray', lwd=2)
 ```
 

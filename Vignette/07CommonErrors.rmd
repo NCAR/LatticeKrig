@@ -1,0 +1,41 @@
+# Common Errors
+
+## Could not find function --
+
+Make sure that the library is installed (\ttt{install.packages("LatticeKrig")}) and activated (\ttt{library(LatticeKrig)}).
+
+## mLevel[l] <- nrow(grid.all.levels[[l]]) : replacement has length zero
+
+## Error in solve.default(t(X) %*% X, c(1, 0, 0)) : system is computationally singular
+
+One potential cause for these errors is using the \ttt{LKSphere} geometry when your dataset doesn't cover the whole sphere. This causes the calculations to break down, which can produce computationally singular matrices and other issues. 
+
+```{r IncompleteSphereError, include=FALSE}
+n = 40
+badGrid <- list(x = seq(-25,15,len=n), y = seq(-20,20,len=n))
+badLocations <- make.surface.grid(badGrid)
+badValues = sin(2*pi/40 * (badLocations[,1]+5)) * sin(2*pi/40 * badLocations[,2])
+# info <- LKrigSetup(badLocations, nlevel = 2, NC = 1, alpha = c(0.8, 0.2),
+#                    a.wght = 1.01, LKGeometry = "LKSphere")
+# kFit <- LatticeKrig(newLocations, dataValues, LKinfo=info)
+# Error in solve.default(t(X) %*% X, c(1, 0, 0)) : 
+#  system is computationally singular: reciprocal condition number = 2.33152e-18
+# Timing stopped at: 0.22 0.01 0.25
+# Timing stopped at: 0.55 0.01 0.59
+```
+<!--
+  aVec <- c(1, 0.25, 0.25*0.25)
+info <- LKrigSetup(newLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
+kFit <- LatticeKrig(newLocations, dataValues, LKinfo=info)
+Error in solve.default(t(X) %*% X, c(1, 0, 0)) : 
+  Lapack routine dgesv: system is exactly singular: U[2,2] = 0
+Timing stopped at: 0.05 0 0.06
+Timing stopped at: 0.28 0 0.29 
+-->
+  
+  <!--
+  > info <- LKrigSetup(newLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
+> info <- LKrigSetup(dataLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
+Error in mLevel[l] <- nrow(grid.all.levels[[l]]) : 
+  replacement has length zero
+-->

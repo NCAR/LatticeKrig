@@ -23,3 +23,17 @@ At least one of \ttt{alpha} and \ttt{alphaObject} must be set. In most cases you
 ###\ttt{a.wght} or \ttt{a.wghtObject}
 
 At least one of \ttt{a.wght} and \ttt{a.wghtObject} must be set. In most cases you will use \ttt{a.wght}, which can be either a scalar or a vector of length \ttt{nlevel}. 
+
+## Optional parameters
+
+### \ttt{lambda}
+
+Lambda is an estimate of the measurement error in the data. If not listed, \ttt{LatticeKrig} and \ttt{LKrig} will estimate it using generalized cross-validation. 
+
+### \ttt{LKGeometry}
+
+Changing \ttt{LKGeometry} allows you to change the geometry used for kriging. For example, if the dataset covers the whole earth, it would be more appropriate to base the kriging on a sphere than a rectangle. This is covered in more depth in the next section.
+
+### \ttt{distance.type}
+
+When using a different \ttt{LKGeometry} than default, you may also need to change the \ttt{distance.type}. This is also covered in more depth in the next section.

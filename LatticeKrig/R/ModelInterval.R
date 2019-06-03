@@ -33,6 +33,9 @@
 setDefaultsLKinfo.LKInterval <- function(object, ...) {
   object$distance.type <- "Euclidean"
   object$floorAwght<- 2
+  if( is.null( object$NC.buffer)){
+      object$NC.buffer <- 5
+    }  
   return(object)
 }
 
@@ -40,8 +43,10 @@ setDefaultsLKinfo.LKInterval <- function(object, ...) {
 ## multiresolution. These one grids are also the "lattices"
 
 LKrigSetupLattice.LKInterval <- function(object, verbose,
-                                       NC, NC.buffer=5,  ...){
+                                        ...){
 #object is of class LKinfo
+   NC<- object$NC
+   NC.buffer <- object$NC.buffer
   range.x<- rangeLocations<-  range(object$x)
   if( ncol( object$x) !=1) {
        stop( "x is not 1-d !")

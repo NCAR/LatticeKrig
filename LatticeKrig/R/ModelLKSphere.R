@@ -71,11 +71,11 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
 # lon/lat in degrees with lon being [-180,180] to 
 # be consistent with R maps package
  LKrigSetupLattice.LKSphere<- function(object, x=NULL, verbose,                                         
-                                      NC=1, 
                                       ... ){
   if( is.null(x)){
     x<- object$x
   }
+  startingLevel<- object$setupArgs$startingLevel
   ###### some common setup opertations to all geometries
   LKinfo<- object
   if(  class( LKinfo)[1] != "LKinfo") {
@@ -84,24 +84,24 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
   
   rangeLocations<- apply( x,2, "range")
   nlevel<- LKinfo$nlevel
-  ###### end common operations  
-  # if x not passed then  assume full Sphere
+###### end common operations  
+# if x not passed then  assume full Sphere
   if( is.null(x)){
     x<- cbind( c(-90,90), c( -180,180))
   }
-  if (is.null(NC)) {
-    stop("Need to specify NC initial geodesic grid level")
+  if (is.null(startingLevel)) {
+    stop("Need to specify startingLevel initial geodesic grid level")
   }
-# Here NC is used as setting the initial or coarsest resolution geodesic grid. We may want to change the
+# Here startingLevel is used as setting the initial or coarsest resolution geodesic grid. We may want to change the
 # Right now, only allow use of
 # up to 7th resolution grid due to memory issues
-# if NC=3 and nlevel =5 then centers at resolutions 3,4, and 5 will
+# if startingLevel=3 and nlevel =5 then centers at resolutions 3,4, and 5 will
 # be generated
-  if (NC+nlevel-1 > 8){
-    stop("NC+nlevel-1 cannot exceed 8")
+  if (startingLevel+nlevel-1 > 8){
+    stop("startingLevel+nlevel-1 cannot exceed 8")
   }else{
     ##This vector allows us to subset the full list of grids and just keep the ones we need.
-    R<- seq(NC,NC+nlevel-1,1) 
+    R<- seq(startingLevel,startingLevel+nlevel-1,1) 
     Rmax<- max(R)
   }
 # delta cutoffs found empirically ...
@@ -110,7 +110,7 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
   delta<- 1.408/ 2^( 0:(Rmax-1) )
   delta.save<- delta[R]
   
-##Build and subset geodesic grid up to level NC+nlevel-1; 
+##Build and subset geodesic grid up to level startingLevel+nlevel-1; 
 ## returns each level in a list but in 
 # 3-d coordinates (a.k.a. direction cosines)
   MultiGrid<- IcosohedronGrid(Rmax) ##Get full list of geodesic grids stopping at level Rmax
@@ -119,7 +119,7 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
   mLevel<- rep(NA,nlevel)
   for(l in (1:nlevel) ){
     # to Sphere converts to lon/lat coordinates
-    grid3d<- MultiGrid[[ l + (NC -1) ]]
+    grid3d<- MultiGrid[[ l + (startingLevel -1) ]]
     gridTemp<- toSphere( grid3d )
       # trim to range of locations (in lon/lat coordinates)
     ind<-  gridTemp[,1] >= rangeLocations[1,1] &
@@ -128,11 +128,19 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
            gridTemp[,2] <= rangeLocations[2,2] 
     ind2<-  (1:length( ind)) <= 12
 # first 12 coordinates are always the initial isocosohedron points    
-      grid.all.levels[[l]]<-  gridTemp[ ind, ] 
+    grid.all.levels[[l]]<-  gridTemp[ ind, ] 
     grid3d.all.levels[[l]]<-    grid3d[ ind, ]
-# logical attribute indicates which are initial vertices  
+    numberNodes<- sum( ind)
+    if( numberNodes <= 3){
+      stop("must have at least 4 nodes at lowest 
+            resolution in the  spatial domain.
+            Try increasing startLevels or increasing the 
+           boundaries of the spatial domain.")
+       }
+# A possible logical attribute to indicate which are the
+# initial vertices icosohedral
 # within the subset determined by ranges     
-    attr(grid.all.levels[[l]],"pentagon")<- ind2[ind]
+#    attr(grid.all.levels[[l]],"pentagon")<- ind2[ind]
     mLevel[l]<- nrow( grid.all.levels[[l]] )             
   }
   m<- sum(mLevel)
@@ -143,7 +151,7 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
               delta=delta.save, 
               rangeLocations=rangeLocations,
 # specific arguments for LKSphere              
-              NC=NC,
+              startingLevel=startingLevel,
               grid=grid.all.levels,
             grid3d= grid3d.all.levels)
   return(out)
@@ -184,12 +192,11 @@ LKrigSAR.LKSphere = function(object, Level, ...) {
     for (I in 1:n ){
 # find positions in matrix entries that correspond to the Ith node point
 # and is not the diagonal one.
-   
       indNeighbors <- (ind1 == I) & !Diagonal 
 # indices of nearest neighbors    
       J<- ind2[ indNeighbors ]
       nJ<- length(J) 
-      # this better be either 5 or 6  nearest neighbors for the full sphere
+      # this should be either 5 or 6  nearest neighbors for the full sphere
       # but may  be less if the region is a lon/lat rectangle bounding the data.
       x1<- grid3d[J,]
       x0<- grid3d[I,]
@@ -199,9 +206,14 @@ LKrigSAR.LKSphere = function(object, Level, ...) {
       X<- cbind( rep( 1,nJ), u )
     # find weights to predict a linear function
     # at node from the nearest neighbors. 
+      if( nJ>=3){
       c2<- c( (X)%*%(solve( t(X)%*%X, c( 1,0,0) )  ))
     #   NOTE: c2 sum to 1 by properties of unbiasedness
     #   for constant function.
+      }
+      else{
+        c2<- 1/nJ
+      }
       raTemp[ indNeighbors ]<- -1*c2
     }
 #    

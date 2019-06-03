@@ -23,7 +23,7 @@ grep Warning LatticeKrig.Rcheck/fields-Ex*.Rout
 cd LatticeKrig.Rcheck 
 sed -e "s/##D/ /" LatticeKrig-ex.R > temp.R
 sed -e "s/library('LatticeKrig')/library('LatticeKrig', lib.loc='.')/" temp.R > all-ex.R 
-R --save < all-ex.R > all-ex.Rout
+R CMD BATCH --save  all-ex.R   all-ex.Rout
 
 
 #################

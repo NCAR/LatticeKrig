@@ -24,13 +24,12 @@
 setDefaultsLKinfo.LKCylinder <- function(object, ...) {
 	# object == LKinfo
   object$floorAwght<- 6
+  if( is.null( object$NC.buffer)){
+    object$NC.buffer <- 5
+  }
 	# hard wire the fixed part to just fit a constant function
 	# to the first dimension 
     object$fixedFunction <- "LKrigPeriodicFixedFunction"
-	if (is.null(object$setArgs$NC)) {
-		object$setupArgs$NC <- 5
-		object$setupArgs$NC.buffer <- 2
-	}
 	#lazy default set alpha to 1 if only one level.
 	if (object$nlevel == 1 & is.na(object$alpha[1])) {
 		object$alpha <- list(1)
@@ -106,13 +105,14 @@ attr(gridl, "periodic") <- c(TRUE, FALSE, FALSE)
 }
 
 
-LKrigSetupLattice.LKCylinder <- function(object,  verbose, 
-	NC, NC.buffer = 5, ...) {
+LKrigSetupLattice.LKCylinder <- function(object,  verbose,  ...) {
 
 	# some checks		
 	if (ncol(object$x) != 3) {
 		stop("x is not 3-d !")
 	}
+  NC <-  object$NC
+  NC.buffer <- object$NC.buffer
 	#object is usually of class LKinfo
 	rangeLocations <- apply(object$x, 2, "range")
 	# range in transformed scale

@@ -45,7 +45,7 @@
 		the basis function centers and how the spatial autoregression is constructed from these
 		node
 		locations. Here the centers are generated according to a multiresolution based on the
-		triangles from an Icsohedron. \code{\link{IcosohedronGrid}} creates a grid by taking the
+		triangles from an icosohedron. \code{\link{IcosohedronGrid}} creates a grid by taking the
 		first
 		level as the 12 points from a regular icsohedron. The subsequent levels generate a finer
 		set
@@ -53,26 +53,58 @@
 		points
 		from the subdivision are added to the previous nodes to give the new level of resolution.
 		The
-		triangles tend to roughly  equilateral and so the nodes will tend to be roughly equally
-		spaced
-		. 
-		\strong{NOTE:} Because the distances between nodes are not perfectly equally spaced  and nearest neighbors
+		triangles tend to roughly equilateral and so the nodes will tend to be roughly equally
+		spaced. This regularly improves for the finer generations of triangles, however,
+		the 12 original nodes from the icosohedron will have 5 nearest neighbors rather than 6. 
+		
+	  The setup argument \code{startingLevel} specifies the first level of the lattice and \code{nlevel} the
+	  total number. 
+	  
+		\strong{NOTE:} Because the distances between nodes are not perfectly equally spaced
+		and nearest neighbors
 		can be either 5 or 6 some adjustment is made to the
 		weights when forming the SAR matrix. The net result is that it makes more sense to have the off
-		diagonal rows sum to 1 and so the a.wght must be greater than 1.0 for a stationary model. 
+		diagonal rows sum to 1 and so 
+		\strong{ a.wght must be greater than 1.0 } for a stationary model.                
 		
 		See the help file on 
 		\code{link{IcosohedronFaces}} for code on visualzing these. The first 12 centers will
 		have 5
-		close neighbors and remaining centers will have 6. Currently the SAR weights are equal
+		close neighbors and remaining centers will have 6. Currently the SAR weights are
+		roughly equal
 		among
-		all the neighbors and the \code{a.wght} parameter is adjusted by 
-		\code{a.wght <- (a.wght - 6) + 5} for these locations. The basis functions have their 
+		all the neighbors but are adjusted so that a locally linear function will be in the
+		"null" space of these weights. For each node the neighbors are projected onto the tangent
+		plane to the sphere at this node location. Now consider a linear function on the coordinates
+		in this tangent plane. The idea is to find  weights applied to the neighbors that will give
+		a perfect linear prediction for the value at the node. The negatives of these values are
+		used as the SAR weights. Specifically let \eqn{w_k} be the weights and \eqn{Y_k} the values of the
+		field at the these locations, and \eqn{Y_0} the value at the node.  Then by construction
+\deqn{ Y_0 - sum w_k Y_k  = 0 }
+                for any field that is linear in the tangent plane to the node. Specifically in the function
+		\code{LKrigSAR.LKSphere} the weights follow the code fragment
+		
+		\preformatted{
+		   x1<- grid3d[J,]
+       x0<- grid3d[I,]
+       u<- projectionSphere( x0,x1) 
+    # u are local 2 d coordinates on tangent plane to sphere at x0
+    # x0 projects to (0,0)
+      X<- cbind( rep( 1,nJ), u )
+    # find weights to predict a linear function
+    # at node from the nearest neighbors. 
+      W<- c( (X)%*%(solve( t(X)%*%X, c( 1,0,0) )  ))
+    }
+		 \code{I} is the index of the node at lattice point \code{x0},
+		 \code{J} is the index of the neighbors at lattice points \code{x1},
+		 and \code{-W} the weights used in the SAR.
+		 
+		
+		The basis functions have their 
 		default as using great circle distance to determine the values between the center and
 		other
 		points. Because the distances between centers are not equal some adjustment is made to the
-		\code{delta} parameter for the basis function support. The \code{NC} parameter in this
-		geometry is the beginning resolution level. Currently the number of basis functions in
+		\code{delta} parameter for the basis function support. Currently the number of basis functions in
 		each level are  
 		\tabular{lrrrrrrrr}{
 	  Level \tab   1 \tab     2   \tab   3  \tab    4  \tab    5  \tab
@@ -80,8 +112,8 @@
     Number Basis functions \tab  12 \tab    42 \tab   162 \tab   642 \tab 
     2562 \tab 10242  \tab 40962 \tab 163842 \cr
       }
-So if \code{NC=2} and \code{nlevel=3} there will be a total of \code{42 + 162 + 642 = 846}
-basis functions in the model. 
+So if \code{startingLevel=2} and \code{nlevel=3} there will be a total of \code{42 + 162 + 642 = 846}
+basis functions in the model if the spatial domain includes the entire sphere. 
 		
 		\bold{\code{LKRing}}
 		This model follows the Mercator projection for a sphere where 
@@ -140,33 +172,44 @@ basis functions in the model.
 \examples{
 # 	
 # fit the CO2 satellite data with a fixed lambda
-# (use a very small and unrealistic number of basis functions and levels so example
+# (but use a very small, unrealistic number of basis functions and levels so example
 #  runs quickly)
  data(CO2)
 # to look at raw data: quilt.plot(CO2$lon.lat, CO2$y, nx=288, ny=165)
-# NOTE: NC=1 is related to how grid for sphere is set up.
-  LKinfo0<- LKrigSetup( CO2$lon.lat, NC=1 ,nlevel=2,
-                       a.wght=6.1, alpha=c(1,.25),
-                       LKGeometry="LKSphere" )                                         
-  # Use MLE for lambda found below 
-  obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.01068)
+# Use two levels starting at the second genertation of lattice points from the triangularization
+  LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=2 ,nlevel=2,
+                       a.wght=1.1, alpha=c(1,.25),
+                       LKGeometry="LKSphere" )
+# Take a look at Model summary
+  print( LKinfo0)
+  
+# Use arbitrary  lambda 
+  obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.01)
   surface(obj0, nx=288, ny=165)
   world( add=TRUE)
 \dontrun{
-# estimate lambda ( should be 0.01068)
-obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
+data(CO2)
+# estimate lambda ( should be 0.003
+# NOTE: lambda values will tend to be sensitive to the model choice
+  LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=2 ,nlevel=2,
+                       a.wght=1.1, alpha=c(1,.25),
+                       LKGeometry="LKSphere") 
+  obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 # a more serious model this uses about 3300 basis functions
-LKinfo0<- LKrigSetup( CO2$lon.lat, NC=3 ,nlevel=3,
-                       a.wght=6.1, alpha=c(1, .5, .25),
+LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=3, ,nlevel=3,
+                       a.wght=1.1, alpha=c(1, .5, .25),
                        LKGeometry="LKSphere" )
                        
 obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 # takes about 1 minute on a macbook air
 # setting findAwght = TRUE  takes about 8 minutes with 
-# lambda = 1.737 and a.wght = 15.8 (independence among basis coefficients)
+# lambda = 1.737 and a.wght = 15.8
 } 
-# a more serious model 
+#####################################
+# The ring geometry
+#####################################
 \dontrun{
+  data(CO2)
   LKinfo1<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1, lambda=.2,
                        a.wght=5, alpha=1, 
                        LKGeometry="LKRing" )                                         
@@ -175,40 +218,42 @@ obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
 surface( obj1)
 world( add=TRUE) 
 }
-# compare to fitting without wrapping
-#  LKinfo2<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1,
-#                   lambda=.2, a.wght=5, alpha=1 )                                         
-#  obj2<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo2)	
-# not periodic in longitude:
-# surface(obj2)  
+# compare to fitting without wrapping:
+\dontrun{
+  LKinfo2<- LKrigSetup(CO2$lon.lat, NC=8 ,nlevel=1,
+                   lambda=.2, a.wght=5, alpha=1 )                                         
+  obj2<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo2)	
+ # NOTE: not periodic in longitude:
+ surface(obj2)  
+}
 
 # a synthetic example and larger example
 \dontrun{
  set.seed(124)
  N<- 1e4
- NC<- 3
   x0<- matrix( rnorm(3*N), ncol=3)
   x0<- x0/ sqrt( rowSums( x0^2))
   
   x<-  toSphere( x0 )
   
-  # the true function for testing -- a bump at the direction alpha
+# the true function for testing -- a bump at the direction alpha
   fun<- function(X){
-    alpha<-  c( .4,.2,1)
+    alpha<-  c( .1,.1,1)
     alpha<- alpha/ sqrt( sum( alpha^2))
     4*( 1 + c(( X)\%*\%alpha) )^2 
   }
   
   ytrue <- fun(x0)
   y<- ytrue + .05*rnorm( length(ytrue))
-  xr=cbind( c(-180, 180), c(-90,90))
-  # this defines about 3300 basis functions
-  LKinfo1<- LKrigSetup( xr,
-                        NC=NC, LKGeometry="LKSphere", a.wght=1.01,
+# this defines about 3300 basis functions
+  LKinfo1<- LKrigSetup( x,
+                        startingLevel=3,
+                        LKGeometry="LKSphere",
+                        a.wght=1.01,
                         nlevel=3, alpha = c(1.0,.5,.25)^2,
                         choleskyMemory=list(nnzR= 20E6),
-                        normalize=FALSE)
-  out<- LatticeKrig( x,y, LKinfo=LKinfo1)                      
+                        normalize=TRUE)
+  out<- LatticeKrig( x,y, LKinfo=LKinfo1, lambda=.01)                      
 surface( out)                        
 }
 

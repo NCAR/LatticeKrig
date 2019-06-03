@@ -6,19 +6,19 @@ In this vignette, we will briefly explain what kriging is, explore the functions
 
 Kriging (named for South African satistician Danie Krige) is a method for making predictions from a data set. It is designed to be used on spatial data -- that is, our data contains the observed variable and the location it was observed at, and pairs of observations taken close together have similar values. As such, it can be applied to a variety of physical data sets, from geological data to atmospheric data.
 
-The goal of kriging is to create a model, based on data from some locations, that can accurately predict the observed variable at any location inside the data given. 
+The goal of kriging is to create a model, based on data from some locations, that can accurately predict the observed variable at any location inside the given data. 
 
 ## The LatticeKrig Model
 
 In the LatticeKrig package, we model the given data as the sum of a linear polynomial in the locations (and covariates, if provided) and a spatial process with mean 0. We fit the linear polynomial using generalized least squares, so the linear polynomial will be as close as possible to all of the data. To approximate the spatial process, we then fit a collection of radial basis functions to the residuals from the linear model. In terms of linear algebra, the model is $\mathbf y = Z \mathbf d + \Phi \mathbf c + \mathbf e$, where $Z$ is the matrix of locations and covariates, $\mathbf d$ is the vector of coefficients for the linear model, $\Phi$ is the matrix of basis functions evaluated at the data points, $\mathbf c$ is the vector of coefficients for each basis function, and $\mathbf e$ is the measurement error. 
 
-The package is named LatticeKrig because of the placement of the basis functions: they are equally spaced in all dimensions on a lattice. We can also consider multiple different lattice sizes simultaneously to better capture different effect sizes; each additional level has half as much space between the basis functions.
+The package is named LatticeKrig because of the placement of the basis functions: they are equally spaced in all dimensions on a lattice. We can also consider multiple different lattice sizes simultaneously to better capture different effect sizes; each additional level has half as much space between the basis functions in each dimension.
 
 ## Glossary of Important Functions
 
 * \ttt{LatticeKrig}: Calls LKrig, passing in default values and estimates for the needed parameters.
 * \ttt{LKrig}: Fits a kriging estimate to the given data.
-* \ttt{LKInfo}: Creates an object to store the parameters to use for a \ttt{LatticeKrig} / \ttt{LKrig} call; especially useful for examining the effect of changing one parameter on the fit.
+* \ttt{LKrigSetup}: Creates an object to store the parameters to use for a \ttt{LatticeKrig} / \ttt{LKrig} call; especially useful for examining the effect of changing one parameter on the fit.
 * \ttt{surface}: Plots a fitted surface in 2D space as a color plot and adds contour lines.
 * \ttt{image.plot}: Plots a dataset or fitted surface in 2D space as a color plot without contour lines.
 * \ttt{predictSurface}: Computes the values from a Kriging fit and makes a surface, but doesn't plot it.

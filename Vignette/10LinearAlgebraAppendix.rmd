@@ -26,3 +26,7 @@ Z_2 \bld d + \Phi_2 \bld c &= Z_2 \bld d + \Sigma_{21} \Sigma_{11}^{-1} (\bld y_
 \bld c &= \Sigma_{11}^{-1} (\bld y_1 - \mu_1)
 \end{align*}
 This gives the best coefficient vector if each basis function is centered at a data point. Since our basis functions are instead centered on a lattice, we need $\hat{\bld c} = P \Phi^T \bld c$, where $P$ is the covariance matrix for the centers of the basis functions and $\Phi$ is the basis function matrix. Thus, our final estimate for $\bld c$ is $\hat{\bld c} = P \Phi^T \Sigma_{11}^{-1}(\bld y - Z \bld d)$. 
+
+<!-- ## Sparse Matrix Algorithms
+
+As mentioned earlier, the LatticeKrig package is able to handle large data sets because the inverse of the covariance matrix is sparse. This means that we can compute $\hat{\bld c}$ efficiently as the solution to the sparse matrix equation $P^{-1} \hat{\bld c} = \Phi^T \Sigma_{11}^{-1} (\bld y - Z \bld d)$. -->

@@ -9,7 +9,7 @@ By default, \ttt{LatticeKrig} will interpret the location data it receives as po
 * \ttt{LKCylinder}: 3 dimensional cylindrical coordinates
 * \ttt{LKRing}: 2 dimensional cylindrical coordinates
 
-By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} parameter of the \ttt{LKinfo} object - you can use \ttt{GreatCircle}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{Chordal} to measure the shortest straight-line distance, going under the surface of the sphere. You need to specify which one to use or the default (\ttt{Euclidean}) will be used, which can lead to a badly-conditioned system.
+By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} parameter of the \ttt{LKinfo} object - the default is \ttt{GreatCircle}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{Chordal} to measure the shortest straight-line distance, going under the surface of the sphere. You need to specify which one to use or the default (\ttt{Euclidean}) will be used, which can lead to a badly-conditioned system.
 
 ## Working with spherical coordinates
 
@@ -32,8 +32,6 @@ cosineGrid <- directionCosines(dataLocations)
 rotationMatrix <- cbind(c(cos(theta), 0, sin(theta)), c(0,1,0), c(-sin(theta), 0, cos(theta)))
 newCosineGrid <- t(rotationMatrix %*% t(cosineGrid))
 newLocations <- toSphere(newCosineGrid)
-#newValues <- cos(4*acos(cosineGrid %*% rotationMatrix %*% #c(sqrt(0.98), 0.1, 0.1)))
-#image.plot(as.surface(dataLocations, newValues))
 quilt.plot(newLocations, dataValues, main="Given Data Points")
 world(add=TRUE)
 ```

@@ -1,0 +1,39 @@
+# \ttt{LKrigSetup}
+
+The \ttt{LKrigSetup} function is a convenient (and, in some cases, the only) way to pass in a large group of parameters to \ttt{LatticeKrig} or \ttt{LKrig}. We will cover the required parameters and some of the more important optional parameters here; for full descriptions, check the \ttt{LKrigSetup} help page.
+
+##Required Parameters
+
+###\ttt{x}
+
+The parameter \ttt{x} is the matrix of observation locations, which is needed for making the covariance matrix, basis function matrix, and basis function lattice.
+
+###\ttt{nlevel} 
+
+The parameter \ttt{nlevel} is an integer that determines the number of different lattice sizes the computation should run on. This is set to 3 by default in \ttt{LatticeKrig}, so it is recommended to set \ttt{nlevel = 3} here as well unless there is a reason to change it. However, note that increasing \ttt{nlevel} will increase the computation time significantly.
+
+###\ttt{NC}
+
+The parameter \ttt{NC} is an integer that determines the number of basis functions to put along the largest dimension at the first level. Note that the actual number of basis functions will be different because there are 5 additional basis functions (this can be changed with the optional \ttt{NC.buffer} parameter) added outside the domain on the each end of longest side. For example, if the domain for the data locations is a rectangle whose length is double its width and \ttt{NC = 6}, the first level of basis functions will contain 16x13 basis functions (6x3 inside the domain with 5 extended from each edge).
+
+###\ttt{alpha} or \ttt{alphaObject}
+
+At least one of \ttt{alpha} and \ttt{alphaObject} must be set. In most cases you will use \ttt{alpha}, which is the same as the \ttt{alpha} described in the previous section. 
+
+###\ttt{a.wght} or \ttt{a.wghtObject}
+
+At least one of \ttt{a.wght} and \ttt{a.wghtObject} must be set. In most cases you will use \ttt{a.wght}, which can be either a scalar or a vector of length \ttt{nlevel}. 
+
+## Optional parameters
+
+### \ttt{lambda}
+
+Lambda is an estimate of the measurement error in the data. If not listed, \ttt{LatticeKrig} and \ttt{LKrig} will estimate it using generalized cross-validation. 
+
+### \ttt{LKGeometry}
+
+Changing \ttt{LKGeometry} allows you to change the geometry used for kriging. For example, if the dataset covers the whole earth, it would be more appropriate to base the kriging on a sphere than a rectangle. This is covered in more depth in the next section.
+
+### \ttt{distance.type}
+
+When using a different \ttt{LKGeometry} than default, you may also need to change the \ttt{distance.type}. This is also covered in more depth in the next section.

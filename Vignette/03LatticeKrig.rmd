@@ -1,0 +1,26 @@
+# \ttt{LatticeKrig} Optional Arguments
+
+The only required arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a huge range of optional arguments to tweak the model that \ttt{LatticeKrig} uses. In this section we will list some of the most important optional parameters that can be passed into \ttt{LatticeKrig}; for a complete list, check the \ttt{LatticeKrig} help page.
+
+## \ttt{Z}
+
+The optional parameter \ttt Z is a matrix of covariates (variables aside from location) to include in the model. Each column of this matrix must contain the value of one of the covariates at each data location, so the number of rows in \ttt Z must match the number of rows in the required parameter \ttt x, the set of locations. For an example, see the last two plots in the Quick Start section.
+
+## \ttt{nlevel}
+
+The optional parameter \ttt{nlevel} is an integer that determines the number of different lattice sizes to compute the basis function coefficients on. Each different lattice size is computed independently, and the resulting layers are each scaled by the values in the parameter \ttt{alpha} (provided in the LKInfo or automatically computed) the before being added together.
+
+## \ttt{alpha}
+
+The optional parameter \ttt{alpha} is a vector of length \ttt{nlevel} holds the weights that scale the basis functions on each different lattice size. Since each level is calculated independently, the sum of the weights in \ttt{alpha} should be 1 to make sure the model fits correctly.
+
+## \ttt{X}
+
+The optional parameter \ttt X (different from the required parameter \ttt x) is used for solving linear inverse problems; \ttt X is the sparse matrix that transforms the coefficients of the basis to the observations. The optional parameter \ttt U must also be specified.
+
+## \ttt{U}
+The optional parameter \ttt U is used for solving linear inverse problems; \ttt U is the matrix that transforms the coefficients of the fixed part of the model to the observations. 
+
+## \ttt{LKinfo}
+
+The optional parameter \ttt{LKinfo} holds many other parameter values, expanded on in the next section.

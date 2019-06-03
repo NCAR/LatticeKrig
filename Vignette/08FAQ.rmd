@@ -1,0 +1,50 @@
+# Frequently Asked Questions
+
+## The predicted values from my Kriging fit are nowhere near the data; what's wrong?
+
+If your model includes covariates (the \ttt{Z} parameter of \ttt{LatticeKrig} and \ttt{LKrig}), your plot may not have included the effect of the covariate. The following code demonstrates this issue using the Colorado temperature data and how to fix it; first, we will set up the model.
+```{r FAQMissingCovariateSetup}
+data(COmonthlyMet)
+locations <- CO.loc
+observations <- CO.tmean.MAM.climate
+elevations <- CO.elev
+kFit <- LatticeKrig(locations, observations, Z=cbind(elevations))
+```
+
+Using the \ttt{surface} function will leave out the covariate, resulting in a plot that doesn't match the original data and is smoother than we might expect.
+
+```{r FAQMissingCovariateBadPlot}
+surface(kFit, nx = 200, ny = 150, extrap = TRUE, main="Plot missing covariate")
+US(add=TRUE, col='gray', lwd=2)
+```
+
+To fix this, call \ttt{surface} on a \ttt{predictSurface} object instead of on an \ttt{LKrig} object, and make sure to pass in the \ttt{grid.list} and \ttt{ZGrid} parameters  to the \ttt{predictSurface} call.
+
+```{r FAQMissingCovariateGoodPlot}
+prediction <- predictSurface(kFit, grid.list = CO.Grid, 
+                  ZGrid = CO.elevGrid, nx = 200, ny = 150, extrap = TRUE)
+surface(prediction, main="Plot with covariate")
+US(add=TRUE, col='gray', lwd=2)
+```
+
+## Why aren't the settings in my LKrigSetup object aren't being used by the kriging fit?
+
+First, make sure everything is spelled correctly; R variables are case sensitive. For example, \ttt{LatticeKrig(x, y, LKInfo = info)} will not work, because the 'i' in "LKinfo" must be lowercase. Next, make sure that every parameter is being set correctly: in particular, don't confuse \ttt{x} with \ttt{X} or \ttt{alpha} with \ttt{a.wghts}. Also make sure that parameters that need to be passed as strings are in quotes, e.g. \ttt{LKGeometry = "LKSphere", distance.type="GreatCircle"}. If everything is set correctly and spelled correctly, make sure that the list from LKrigSetup is being passed in to your \ttt{LatticeKrig} or \ttt{LKrig} call.
+
+
+<!--
+aVec <- c(1, 0.25, 0.25*0.25)
+ info <- LKrigSetup(newLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
+ kFit <- LatticeKrig(newLocations, dataValues, LKinfo=info)
+Error in solve.default(t(X) %*% X, c(1, 0, 0)) : 
+  Lapack routine dgesv: system is exactly singular: U[2,2] = 0
+Timing stopped at: 0.05 0 0.06
+Timing stopped at: 0.28 0 0.29 
+-->
+
+<!--
+> info <- LKrigSetup(newLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
+> info <- LKrigSetup(dataLocations, nlevel = 3, alpha = aVec/sum(aVec), LKGeometry = "LKSphere")
+Error in mLevel[l] <- nrow(grid.all.levels[[l]]) : 
+  replacement has length zero
+-->

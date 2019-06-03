@@ -37,40 +37,25 @@
 \usage{
 LKrigSetupLattice(object, ...)
 \method{LKrigSetupLattice}{default}(object, ...)
-\method{LKrigSetupLattice}{LKBox}(object, verbose, NC,
- NC.buffer = 5, ...) 
-\method{LKrigSetupLattice}{LKRectangle}(object, verbose, NC,
- NC.buffer = 5, ...)
-\method{LKrigSetupLattice}{LKInterval}(object, verbose, NC,
- NC.buffer = 5, ...)
- \method{LKrigSetupLattice}{LKRing}(object, verbose, NC,
- NC.buffer = 5, ...)
-\method{LKrigSetupLattice}{LKCylinder}(object, verbose, NC,
- NC.buffer = 5, ...)
- \method{LKrigSetupLattice}{LKSphere}(object, x = NULL, verbose, NC = 1, 
-    ...)
 
+\method{LKrigSetupLattice}{LKBox}(object, verbose,...)
+ 
+\method{LKrigSetupLattice}{LKRectangle}(object, verbose,...)
+
+\method{LKrigSetupLattice}{LKInterval}(object, verbose,...)
+
+ \method{LKrigSetupLattice}{LKRing}(object, verbose,...)
+ 
+\method{LKrigSetupLattice}{LKCylinder}(object, verbose,...)
+
+ \method{LKrigSetupLattice}{LKSphere}(object, x = NULL, verbose,...)
+    
 }
 
 \arguments{
 %\item{grid.info}{}
   \item{object}{ A list that is an LKinfo object.}
-  
-  \item{NC}{For cartesian geometries a parameter to specify to number of the
-  	 grid points in the largest dimension of the spatial domain and for the 
-  	 coarsest lattice.
-	 For \code{LKInterval} this is just of lattice points at the coarsest level.
-	 For LKRectangle and LKBox if the spatial domain has the same size in all 
-	 dimensions then the number of lattice points within the spatial domain are
-	  NC^2 and NC^3 respectively. Note that the total number of lattice points
-	   at a given level is also effected the size of NC.buffer (see below). 
-}
 
-  \item{NC.buffer}{The number of lattice points to add to the margins beyond the
-  	 spatial domain. Thus in the largest spatial dimension there are a total of 
-		NC + NC.buffer*2 grid points. This is the number of lattice points for 
-		LKInterval.
-}
 
 \item{verbose}{If TRUE print out intermediate information for debugging.
 }
@@ -93,7 +78,25 @@ are in lon/lat degrees.}
  
  Because the lattice must depend on the geometry the default method just
  prints out an error message.
-%%  ~~ If necessary, more details than the description above ~~
+ 
+   
+  \strong{NC  and  NC.buffer} 
+  for cartesian geometries (e.g. \code{LKInterval, LKRectangle, LKBox, 
+  LKRing}) are parameters to specify to number of the
+  	 grid points in the largest dimension of the spatial domain and for the 
+  	 coarsest lattice. These should alrady be a component in the LKinfo object,
+  	 object specified in the usage. 
+  	 
+	 For \code{LKInterval} this is just of lattice points at the coarsest level.
+	 For LKRectangle and LKBox if the spatial domain has the same size in all 
+	 dimensions then the number of lattice points within the spatial domain are
+	  NC^2 and NC^3 respectively. Note that the total number of lattice points
+	   at a given level is also effected the size of NC.buffer (see below). 
+
+  The number of lattice points to add to the margins beyond the
+  	 spatial domain is controlled by \code{NC.buffer}. Thus in the largest spatial dimension there are a total of 
+		NC + NC.buffer*2 grid points. This is the number of lattice points for 
+		LKInterval.
 }
 \value{
 	For the \code{LKInterval, LKRectangle, LKBox} geometries.

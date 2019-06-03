@@ -28,10 +28,12 @@ setDefaultsLKinfo.LKRing <- function(object, ...) {
   
   object$floorAwght<- 4
   
-	if (is.null(object$setupArgs$NC)) {
-		object$setupArgs$NC <- 5
-		object$setupArgs$NC.buffer <- 5
+	if (is.null(object$NC)) {
+		object$NC <- 5
 	}
+  if (is.null(object$NC.buffer)) {
+    object$NC.buffer <- 5
+  }
 	#lazy default: set alpha to 1 if only one level.
 	if (object$nlevel == 1 & is.na(object$alpha[1])) {
 		object$alpha <- list(1)
@@ -118,12 +120,13 @@ LKrigLatticeCenters.LKRing <- function(object, Level=1, physicalCoordinates=FALS
 }
 
 
-LKrigSetupLattice.LKRing <- function(object, verbose, NC,
-   NC.buffer = 5, ...) {		
+LKrigSetupLattice.LKRing <- function(object, verbose,  ...) {		
 # some checks		
 	if (ncol(object$x) != 2) {
 		stop("LKinfo$x is not 2-d !")
 	}
+  NC<- object$NC
+  NC.buffer<- object$NC.buffer
 	#object is usually of class LKinfo
 	rangeLocations <- apply( object$x, 2, "range")
 	# range in transformed scale

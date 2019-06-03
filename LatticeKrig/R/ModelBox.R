@@ -25,9 +25,8 @@ setDefaultsLKinfo.LKBox <- function(object, ...) {
 	# object == LKinfo
   object$floorAwght<- 6
   
-	if (is.null(object$setArgs$NC)) {
-		object$setupArgs$NC <- 5
-		object$setupArgs$NC.buffer <- 2
+	if (is.null(object$NC.buffer)) {
+		object$NC.buffer <- 2
 	}
 	#a lazy default: Set alpha to 1 if only one level.
 	if (object$nlevel == 1 & is.na(object$alpha[1])) {
@@ -71,10 +70,11 @@ LKrigLatticeCenters.LKBox <- function(object, Level, ...) {
 }
 
 
-LKrigSetupLattice.LKBox <- function(object, verbose, NC, NC.buffer = 5, 
+LKrigSetupLattice.LKBox <- function(object, verbose,  
 	...) {
 	#object is usually of class LKinfo
-	
+  NC <-  object$NC
+  NC.buffer <- object$NC.buffer
 	rangeLocations <- apply( object$x, 2, "range")
 	# find range of scaled locations
 	if (is.null(object$basisInfo$V[1])) {

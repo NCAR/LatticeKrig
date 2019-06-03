@@ -20,12 +20,23 @@
 # or see http://www.r-project.org/Licenses/GPL-2
 
 LKrigSetup <- function(x = NULL,
-                       nlevel=NULL, alpha=NA, alphaObject=NULL, nu = NULL,
-                       a.wght = NA, a.wghtObject=NULL, 
+                       nlevel=NULL,
+# the following attributes of the covariance models can 
+# vary in their class depending on the geometry and if they are
+# stationary or not. 
+                       alpha=NA, alphaObject=NULL, nu = NULL,
+                       a.wght = NA, a.wghtObject=NULL,
+# arguments that set the initial lattice size
+# for a square rectangle domain there are NCxNC lattice points
+# with NC.buffer added on the 4 edges.
+# NC must be specified 
+# defaults for NC.buffer are set in setDefaultsLKinfo
+                       NC = NULL, NC.buffer=NULL,
                        normalize=TRUE,
                        lambda = NA, sigma = NA, rho = NA, rho.object = NULL,
                        latticeInfo=NULL, basisInfo=NULL, 
-# default geometry is a rectangular domain with Euclidean distance                       
+# default geometry is a rectangular domain with Euclidean distance 
+# (see NC above)
                        LKGeometry="LKRectangle",
 # even if the geometry is different than rectangle many of the following defaults
 # still are appropriate                       
@@ -51,14 +62,16 @@ LKrigSetup <- function(x = NULL,
 #
 # create initial shell of LKinfo object with classes and common parameters
    setupArgs<- list( ...)
-   
-  	
+# the initial LKinfo object list that will be modified and added to 
+# below
    LKinfo<-  list(      x = x,
                    nlevel = nlevel,
                     alpha = alpha,
               alphaObject = alphaObject,
                    a.wght = a.wght,
              a.wghtObject = a.wghtObject,
+                       NC = NC,
+                NC.buffer = NC.buffer,
                        nu = nu,
                 normalize = normalize,
                    lambda = lambda,

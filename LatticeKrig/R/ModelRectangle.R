@@ -23,6 +23,9 @@
 setDefaultsLKinfo.LKRectangle <- function(object, ...) {
 # object ==  LKinfo intital list passed to the LKrigSetup function 
   object$floorAwght<- 4
+  if( is.null( object$NC.buffer)){
+    object$NC.buffer <- 5
+  }
 # logic for V happens in lattice setup  	
         if( is.null(object$lonlatModel) ){
           object$lonlatModel<- object$distance.type=="Chordal" |
@@ -104,9 +107,8 @@ LKinfoCheck.LKRectangle<- function( object, ...){
      } # end for loop over levels       
 }        
           
-        
-LKrigSetupLattice.LKRectangle <- function(object,  verbose, NC = NULL, 
-	NC.buffer = 5, ...) {
+LKrigSetupLattice.LKRectangle <- function(object, verbose, 
+	 ...) {
 	###### some common setup operations to all geometries
 	LKinfo <- object
 	if (class(LKinfo)[1] != "LKinfo") {
@@ -114,10 +116,14 @@ LKrigSetupLattice.LKRectangle <- function(object,  verbose, NC = NULL,
 	}
 	rangeLocations <- apply(object$x, 2, "range")
 	nlevel <- LKinfo$nlevel
+	NC <-  LKinfo$NC
+	NC.buffer <- LKinfo$NC.buffer
 	###### end common operations  
-	
 	if (is.null(NC)) {
 		stop("Need to specify NC for grid size")
+	}
+	if (is.null(NC.buffer)) {
+	  stop("Need to specify NC.buffer for lattice buffer region")
 	}
 	#  if ( LKinfo$distance.type!= "Euclidean" ) {
 	#        stop("distance type is not supported (or is misspelled!).")        

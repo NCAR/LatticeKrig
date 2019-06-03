@@ -257,6 +257,8 @@ sDomain<- rbind( c(-1.2,-1.2),
   set.seed(123)            
   look<- LKrig.sim( fineGrid, LKinfo3)
   image.plot( as.surface( fineGrid, look))
+  
+\dontrun{
 
 #### Anisotropy varying over space
 #### First check that the constant model can be reproduced
@@ -319,6 +321,7 @@ sDomain<- rbind( c(-1.2,-1.2),
                                )
   look<- LKrig.sim( fineGrid, LKinfo5)
   image.plot( as.surface( fineGrid, look), col = terrain.colors(256) )
+}
 
 }
   

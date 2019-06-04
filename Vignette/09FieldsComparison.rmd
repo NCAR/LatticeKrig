@@ -20,7 +20,7 @@ obj1 <- LKrig(x, y, lambda=lambda, iseed=122, LKinfo = testInfo)
 # this call to mKrig should be identical to the LKrig results
 # because it uses the LKrig.cov covariance with all the right parameters.
 obj2 <- mKrig(x, y, lambda=lambda, m=2, cov.function="LKrig.cov",
-              cov.args=list( LKinfo=LKinfo.test), iseed=122)
+              cov.args=list( LKinfo=testInfo), iseed=122)
 # compare the two results this is also an
 # example of how tests are automated in fields
 # set flag to have tests print results

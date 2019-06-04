@@ -9,31 +9,34 @@ By default, \ttt{LatticeKrig} will interpret the location data it receives as po
 * \ttt{LKCylinder}: 3 dimensional cylindrical coordinates
 * \ttt{LKRing}: 2 dimensional cylindrical coordinates
 
-By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} parameter of the \ttt{LKinfo} object - the default is \ttt{GreatCircle}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{Chordal} to measure the shortest straight-line distance, going under the surface of the sphere. You need to specify which one to use or the default (\ttt{Euclidean}) will be used, which can lead to a badly-conditioned system.
+By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} parameter of the \ttt{LKinfo} object - the default is \ttt{GreatCircle}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{Chordal} to measure the shortest straight-line distance, going under the surface of the sphere.
 
 ## Working with spherical coordinates
 
-<!-- For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will create some sample data at the equator, rotate it up to near the north pole, and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. -->
-For an example of fitting data taken on the globe using spherical geometry, we create a sample data set over the whole globe and run the kriging with the default (rectangular) geometry and the spherical geometry. Note that R expects the coordinates to be listed as (longitude, latitude) in degrees, with longitude on the interval [-180, 180] and latitude on the interval [-90, 90], with negative numbers corresponding to western longitudes and southern latitudes.
+For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will create some sample data at the equator, rotate it up to near the north pole, and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. We compute a kriging fit for the original data and the rotated data using the rectangular geometry and the spherical geometry, and print out the sum of squared errors as a measurement of how accurately the different fits match the data.
 
-When using spherical kriging, it's important to make sure that the data covers the whole globe. If there are large portions of missing data, the computations can fail.
+<!-- For an example of fitting data taken on the globe using spherical geometry, we create a sample data set over the whole globe and run the kriging with the default (rectangular) geometry and the spherical geometry. Note that R expects the coordinates to be listed as (longitude, latitude) in degrees, with longitude on the interval [-180, 180] and latitude on the interval [-90, 90], with negative numbers corresponding to western longitudes and southern latitudes. -->
+
 ```{r SphereExampleDataCreation}
-n = 40
-grid <- list(x = seq(-179,179,len=n), y = seq(-89, 89, len=n/2));
+length = 30
+gridAngle = 40
+grid <- list(x = seq(-gridAngle/2, gridAngle/2, len=length)-5,
+             y = seq(-gridAngle/4, gridAngle/4, len=length/2));
 dataLocations <- make.surface.grid(grid)
-dataValues <- cos(4*acos(directionCosines(dataLocations) %*% rbind(sqrt(0.98), 0.1, 0.1)))
-#image.plot(as.surface(dataLocations, dataValues))
-#quilt.plot(dataLocations, dataValues)
-#world(add=TRUE)
+dataValues <- sin(2*pi/gridAngle * (5+dataLocations[,1])) *sin(2*pi/gridAngle * dataLocations[,2])
 
-#rotating the locations up 70 degrees to the north pole
-theta = 70 * (pi/180)
+#rotating the locations up 85 degrees to the north pole
+theta = 85 * (pi/180)
 cosineGrid <- directionCosines(dataLocations)
 rotationMatrix <- cbind(c(cos(theta), 0, sin(theta)), c(0,1,0), c(-sin(theta), 0, cos(theta)))
 newCosineGrid <- t(rotationMatrix %*% t(cosineGrid))
 newLocations <- toSphere(newCosineGrid)
-quilt.plot(newLocations, dataValues, main="Given Data Points")
-world(add=TRUE)
+#plot the data at the equator and at the north pole in rectangular coordinates
+#note the significant distortion at the north pole
+quilt.plot(dataLocations, dataValues)
+world(add=TRUE, col="black", lwd=1)
+quilt.plot(newLocations, dataValues)
+world(add=TRUE, col="black", lwd=1)
 ```
 
 <!-- Remember that, even though the second plot looks radically different from the first, they are both plots of the same data over equally spaced data points - the distortions in the second map are caused by the map projection failing near the pole. -->
@@ -41,21 +44,27 @@ world(add=TRUE)
 Now, we will use \ttt{LatticeKrig} to approximate the surface in both rectangular and spherical geometries.
 
 ```{r SphereExampleRectangleComparison}
-#kFit <- LatticeKrig(dataLocations, dataValues)
-#surface(kFit)
+kFit1 <- LatticeKrig(dataLocations, dataValues)
+surface(kFit1, main="Surface Prediction Using Rectangular Kriging")
+sum(kFit1$residuals^2)
 
-kFit <- LatticeKrig(newLocations, dataValues)
-surface(kFit, main="Surface Prediction Using Rectangular Kriging")
+kFit2 <- LatticeKrig(newLocations, dataValues)
+surface(kFit2, main="Surface Prediction Using Rectangular Kriging")
+sum(kFit2$residuals^2)
 ```
 
 ```{r SphereExample}
-#info <- LKrigSetup(dataLocations, nlevel = 2, NC = 3, alpha = c(0.8, 0.2)
-#                   , a.wght = 6.01, LKGeometry = "LKSphere")
-#kFit <- LatticeKrig(dataLocations, dataValues, LKinfo=info)
-#surface(kFit)
-info <- LKrigSetup(newLocations, nlevel = 2, NC = 3, alpha = c(0.8, 0.2)
-                   , a.wght = 6.01, LKGeometry = "LKSphere")
-kFit <- LatticeKrig(newLocations, dataValues, LKinfo=info)
-surface(kFit, main="Surface Prediction Using Spherical Kriging")
-#sum(kFit$residuals^2)
+info1 <- LKrigSetup(dataLocations, nlevel = 2, startingLevel = 6, alpha = c(0.8, 0.2)
+                   , a.wght = 1.01, LKGeometry = "LKSphere")
+kFit1 <- LatticeKrig(dataLocations, dataValues, LKinfo = info1)
+surface(kFit1, main="Surface Prediction Using Rectangular Kriging")
+sum(kFit1$residuals^2)
+
+info2 <- LKrigSetup(newLocations, nlevel = 2, startingLevel = 6, alpha = c(0.8, 0.2)
+                   , a.wght = 1.01, LKGeometry = "LKSphere")
+kFit2 <- LatticeKrig(newLocations, dataValues, LKinfo = info2)
+surface(kFit2, main="Surface Prediction Using Rectangular Kriging")
+sum(kFit2$residuals^2)
 ```
+
+As we can see, the rectangular fit fails badly on the data that has been rotated up to the north pole, while the corresponding spherical model matches the data best out of all four models we calculated.

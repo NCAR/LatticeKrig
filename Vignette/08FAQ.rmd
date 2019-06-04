@@ -14,7 +14,8 @@ kFit <- LatticeKrig(locations, observations, Z=cbind(elevations))
 Using the \ttt{surface} function will leave out the covariate, resulting in a plot that doesn't match the original data and is smoother than we might expect.
 
 ```{r FAQMissingCovariateBadPlot}
-surface(kFit, nx = 200, ny = 150, extrap = TRUE, main="Plot missing covariate")
+surface(kFit, nx = 200, ny = 150, extrap = TRUE, main="Plot missing covariate",
+        xlab = "Longitude", ylab="Latitude")
 US(add=TRUE, col='gray', lwd=2)
 ```
 

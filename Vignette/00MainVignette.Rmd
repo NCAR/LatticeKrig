@@ -15,6 +15,7 @@ knit: (function(inputFile, encoding) {
 <!-- This is the file that the vignette pdf is knitted from -->
 ```{r setup, include=FALSE}
 library(LatticeKrig)
+library(fields)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 

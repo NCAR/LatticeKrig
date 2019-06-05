@@ -46,9 +46,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \pagebreak
 
-```{r child = '09FieldsComparison.rmd'}
+```{r child = '10LinearAlgebraAppendix.rmd'}
 ```
 \pagebreak
 
-```{r child = '10LinearAlgebraAppendix.rmd'}
+```{r child = '11FieldsComparisonAppendix.rmd'}
 ```

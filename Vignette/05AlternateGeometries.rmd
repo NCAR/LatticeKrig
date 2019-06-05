@@ -15,8 +15,6 @@ By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or
 
 For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will create some sample data at the equator, rotate it up to near the north pole, and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. We compute a kriging fit for the original data and the rotated data using the rectangular geometry and the spherical geometry, and print out the sum of squared errors as a measurement of how accurately the different fits match the data.
 
-<!-- For an example of fitting data taken on the globe using spherical geometry, we create a sample data set over the whole globe and run the kriging with the default (rectangular) geometry and the spherical geometry. Note that R expects the coordinates to be listed as (longitude, latitude) in degrees, with longitude on the interval [-180, 180] and latitude on the interval [-90, 90], with negative numbers corresponding to western longitudes and southern latitudes. -->
-
 ```{r SphereExampleDataCreation}
 length = 30
 gridAngle = 40
@@ -45,11 +43,11 @@ Now, we will use \ttt{LatticeKrig} to approximate the surface in both rectangula
 
 ```{r SphereExampleRectangleComparison}
 kFit1 <- LatticeKrig(dataLocations, dataValues)
-surface(kFit1, main="Surface Prediction Using Rectangular Kriging")
+surface(kFit1, main="Equator Surface Prediction Using Rectangular Kriging")
 sum(kFit1$residuals^2)
 
 kFit2 <- LatticeKrig(newLocations, dataValues)
-surface(kFit2, main="Surface Prediction Using Rectangular Kriging")
+surface(kFit2, main="Polar Surface Prediction Using Rectangular Kriging")
 sum(kFit2$residuals^2)
 ```
 
@@ -57,14 +55,14 @@ sum(kFit2$residuals^2)
 info1 <- LKrigSetup(dataLocations, nlevel = 2, startingLevel = 6, alpha = c(0.8, 0.2)
                    , a.wght = 1.01, LKGeometry = "LKSphere")
 kFit1 <- LatticeKrig(dataLocations, dataValues, LKinfo = info1)
-surface(kFit1, main="Surface Prediction Using Rectangular Kriging")
+surface(kFit1, main="Equator Surface Prediction Using Spherical Kriging")
 sum(kFit1$residuals^2)
 
 info2 <- LKrigSetup(newLocations, nlevel = 2, startingLevel = 6, alpha = c(0.8, 0.2)
                    , a.wght = 1.01, LKGeometry = "LKSphere")
 kFit2 <- LatticeKrig(newLocations, dataValues, LKinfo = info2)
-surface(kFit2, main="Surface Prediction Using Rectangular Kriging")
+surface(kFit2, main="Polar Surface Prediction Using Spherical Kriging")
 sum(kFit2$residuals^2)
 ```
 
-As we can see, the rectangular fit fails badly on the data that has been rotated up to the north pole, while the corresponding spherical model matches the data best out of all four models we calculated.
+As we can see, the rectangular fit fails badly on the data that has been rotated up to the north pole, while the corresponding spherical model matches the data very well.

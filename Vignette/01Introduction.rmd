@@ -4,7 +4,7 @@ In this vignette, we will briefly explain what kriging is, explore the functions
 
 ## What is Kriging?
 
-Kriging (named for South African satistician Danie Krige) is a method for making predictions from a data set. It is designed to be used on spatial data -- that is, our data contains the observed variable and the location it was observed at, and pairs of observations taken close together have similar values. As such, it can be applied to a variety of physical data sets, from geological data to atmospheric data.
+Kriging (named for South African satistician Danie Krige) is a method for making predictions from a data set. It is designed to be used on spatial data -- the data contains the observed variable and the location it was observed at, and pairs of observations taken close together have similar values. For example, the current temperature in cities would be spatial data. As such, kriging can be applied to a variety of important data sets, from geological data to atmospheric data.
 
 The goal of kriging is to create a model, based on data from some locations, that can accurately predict the observed variable at any location inside the given data. 
 

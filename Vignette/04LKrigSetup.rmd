@@ -1,6 +1,6 @@
 # \ttt{LKrigSetup}
 
-The \ttt{LKrigSetup} function is a convenient (and, in some cases, the only) way to pass in a large group of parameters to \ttt{LatticeKrig} or \ttt{LKrig}. We will cover the required parameters and some of the more important optional parameters here; for full descriptions, check the \ttt{LKrigSetup} help page.
+The \ttt{LKrigSetup} function is a convenient (and, in some cases, the only) way to pass in a group of parameters to \ttt{LatticeKrig} or \ttt{LKrig}. We will cover the required parameters and some of the more important optional parameters here; for full descriptions, check the \ttt{LKrigSetup} help page.
 
 ##Required Parameters
 

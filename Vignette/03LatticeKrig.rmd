@@ -12,7 +12,7 @@ The optional parameter \ttt{nlevel} is an integer that determines the number of 
 
 ## \ttt{alpha}
 
-The optional parameter \ttt{alpha} is a vector of length \ttt{nlevel} holds the weights that scale the basis functions on each different lattice size. Since each level is calculated independently, the sum of the weights in \ttt{alpha} should be 1 to make sure the model fits correctly.
+The optional parameter \ttt{alpha} is a vector of length \ttt{nlevel} that holds the weights that scale the basis functions on each different lattice size. Since each level is calculated independently, the sum of the weights in \ttt{alpha} should be 1 to make sure the model fits correctly.
 
 ## \ttt{LKinfo}
 

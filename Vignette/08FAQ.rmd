@@ -32,7 +32,7 @@ surface(prediction, main="Plot with covariate")
 US(add=TRUE, col='black', lwd=4)
 ```
 
-## Why aren't the settings in my LKrigSetup object aren't being used by the kriging fit?
+## Why aren't the settings in my LKrigSetup object being used by the kriging fit?
 
 First, make sure everything is spelled correctly; R variables are case sensitive. For example, \ttt{LatticeKrig(x, y, LKInfo = info)} will not work, because the 'i' in "LKinfo" must be lowercase. Next, make sure that every parameter is being set correctly: in particular, don't confuse \ttt{x} with \ttt{X} or \ttt{alpha} with \ttt{a.wghts}. Also make sure that parameters that need to be passed as strings are in quotes, e.g. \ttt{LKGeometry = "LKSphere", distance.type="GreatCircle"}. If everything is set correctly and spelled correctly, make sure that the list from LKrigSetup is being passed in to your \ttt{LatticeKrig} or \ttt{LKrig} call.
 

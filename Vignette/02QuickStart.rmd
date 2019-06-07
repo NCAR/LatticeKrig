@@ -6,19 +6,29 @@ In this section, we will lay out the bare essentials of the package as a quick i
 set.seed(223)
 locations <- runif(50, min=-6, max=6)
 observations <- sin(locations) + rnorm(50, sd = 1e-2)
-kFit <- LatticeKrig(locations, observations)
-kFit
+kFit1D <- LatticeKrig(locations, observations)
+kFit1D
 ```
+This list features the data's estimated covariance scale \ttt{rho} and estimated standard measurement error \ttt{sigma}, and many basis function settings: the type of basis function, how distance is measured, and the number and spacing of basis functions. In this example, all of this information is determined by \ttt{LatticeKrig} from the defaults, but can be changed with optional parameters.
+
 Now, we'll make a plot of the original 50 data points and the true function ($\sin(x)$) and the \ttt{LatticeKrig} fit at 200 equally spaced points to compare them.
 ```{r QuickStart1DPlot}
-xGrid <- seq(-2*pi, 2*pi, len=200)
+xGrid <- seq(-2*pi, 2*pi, len=2000)
 plot(locations, observations, main="1-Dimensional LatticeKrig Example", 
      xlab="Location", ylab="Measured Value")
 lines(xGrid, sin(xGrid), col='blue')
-lines(xGrid, predict(kFit, xGrid), col='red')
+lines(xGrid, predict(kFit1D, xGrid), col='red')
 ```
 
-We can see that \ttt{LatticeKrig} takes in the data points (shown above in black) and produces a prediction over the whole interval (in red) that matches the true function (in blue) rather closely. For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, and use the \ttt{US} function to draw in the USA state borders to show where Colorado is. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
+For this example, the fitted curve (in red) matches the true function (in blue) rather closely. This next plot shows the error in the fitted curve; note that the error gets larger where there aren't many data points, and especially at the edges of the region.
+
+```{r QuickStart1DResidualPlot}
+plot(xGrid, abs(sin(xGrid) - predict(kFit1D, xGrid)), col='red', type="l",
+     main="1-Dimensional LatticeKrig Errors", xlab="Location", ylab="Error")
+points(locations, rep(1e-3, 50))
+```
+
+For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, and use the \ttt{US} function to draw in the USA state borders to show where Colorado is. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
 
 ```{r QuickStart2D}
 data(COmonthlyMet)
@@ -30,7 +40,7 @@ surface(kFit, main = "2-Dimensional LatticeKrig Example",
 US(add=TRUE, col='black', lwd=4)
 ```
 
-This plot is nice, but we can do better. We can see that the coldest temperatures are in the Rocky Mountains, which is unsurprising. Thus, we might expect that we will get a more accurate fit by having \ttt{LatticeKrig} account for the elevation at each location as well. Another way we can improve the plot is by increasing its resolution - the current plot is somewhat pixelated. We can tell the \ttt{surface} function to evaluate the surface at more points by using the \ttt{nx} and \ttt{ny} arguments, which will take longer to compute but produces a nicer looking, more detailed plot. Finally, we can also have \ttt{surface} extend the computation all the way to the corners of the window by using the \ttt{extrap} argument; by default it doesn't extrapolate outside of the existing data, since the \ttt{LatticeKrig} fitting method isn't designed to extrapolate and so the expected error increases dramatically when predicting outside of the given data. However, extending the plot to the corners will make it look nicer.
+This plot is useful, but we can do better. We can see that the coldest temperatures are in the Rocky Mountains, which is unsurprising. Thus, we might expect that we will get a more accurate fit by having \ttt{LatticeKrig} account for the elevation at each location as well. Another way we can improve the plot is by increasing its resolution - the current plot is somewhat pixelated. We can tell the \ttt{surface} function to evaluate the surface at more points by using the \ttt{nx} and \ttt{ny} arguments, which will take longer to compute but produces a nicer looking, more detailed plot. Finally, we can also have \ttt{surface} extend the computation all the way to the corners of the window by using the \ttt{extrap} argument; by default it doesn't extrapolate outside of the existing data, since the \ttt{LatticeKrig} fitting method isn't designed to extrapolate and so the expected error increases dramatically when predicting outside of the given data. However, extending the plot to the corners will make it look nicer.
 
 ```{r QuickStart2DImproved}
 data(COmonthlyMet)
@@ -38,6 +48,7 @@ locations <- CO.loc
 observations <- CO.tmean.MAM.climate
 elevations <- CO.elev
 kFit <- LatticeKrig(locations, observations, Z=cbind(elevations))
+# look at the help file in fields for information on the grid.list format
 prediction <- predictSurface(kFit, grid.list = CO.Grid, ZGrid = CO.elevGrid,
                              nx = 200, ny = 150, extrap = TRUE)
 surface(prediction, main = "Improved 2-Dimensional LatticeKrig Example", 

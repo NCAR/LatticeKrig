@@ -1,10 +1,11 @@
 # Quick Start Guide
 
-In this section, we will lay out the bare essentials of the package to make the central features as easily accessible as possible. To fit a surface and interpolate data using \ttt{LatticeKrig}, the required arguments are the measurement locations (formatted in a matrix where each row is one location) and measurement values. Calling the \ttt{LatticeKrig} function and passing in the locations and values will produce an \ttt{LKrig} object that contains all the information needed to predict the variable at any location. For a simple, 1-dimensional example, we will take our locations to be 50 equally spaced points on the interval $[-6, 6]$, and our variable measurements to be the values of $\sin(x)$ at these locations. 
+In this section, we will lay out the bare essentials of the package as a quick introduction. To fit a surface and interpolate data using \ttt{LatticeKrig}, the minimum required arguments are the measurement locations (formatted in a matrix where each row is one location) and measurement values. However, we highly recommend using some of the optional parameters to customize the model to your specific data problem. hCalling the \ttt{LatticeKrig} function and passing in the locations and values will produce an \ttt{LKrig} object that contains all the information needed to predict the variable at any location. For a simple, 1-dimensional example, we will take our locations to be 50 randomly spaced points on the interval $[-6, 6]$, and our variable measurements to be the values of $\sin(x)$ at these locations. 
 
 ```{r QuickStart1D}
-locations <- seq(-6,6, len=50)
-observations <- sin(locations)
+set.seed(223)
+locations <- runif(50, min=-6, max=6)
+observations <- sin(locations) + rnorm(50, sd = 1e-2)
 kFit <- LatticeKrig(locations, observations)
 kFit
 ```

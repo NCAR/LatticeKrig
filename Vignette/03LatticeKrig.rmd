@@ -2,34 +2,103 @@
 
 The computations inside of \ttt{LatticeKrig} and \ttt{LKrig} can be hard to understand, so here we will work through the 1 dimensional example in the quick start guide, showing all of the linear algebra used. Some of the variable names will be changed from the code in the previous section so that they match the names in the linear algebra appendix.
 
-```{r CalculationsSetup}
-set.seed(223)
+## First Example: One level, no normalization
 
-lambda = kFit1D$LKinfo$lambda
-rho = kFit1D$rho.MLE
+First, we create the data, create the basis/covariance function \ttt{phi}, and call \ttt{LKrig} to compare our calculations against.
+
+```{r Calculations1Setup}
+library(LatticeKrig)
+set.seed(47377)
+lambda = 0.05
+overlap = 2.5
 phi <- function(d) {
   return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
 }
-overlap = 2.5
 
-x <- runif(50, min=-6, max=6)
-y <- sin(locations) + rnorm(50, sd = 1e-2)
-dx <- dist(x)
+x <- as.matrix(runif(50, min=0, max=1))
+y <- sin(4*pi*x) + rnorm(50, sd = 1e-2)
+
+info <- LKrigSetup(x, NC = 6, nlevel = 1, a.wght = 2.01, alpha = 1, lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
+krigFit <- LKrig(x, y, LKinfo = info)
 ```
 
+Next, we create the lattice; since we only have 1 level in 1 dimension, this is relatively easy.
 
+```{r Calculations1Lattice}
+nc = 6
+ncBuffer = 5
+#finding the spacing for the lattice
+xMin = min(x)
+xMax = max(x)
+xRange = xMax - xMin
+LGap = xRange / (nc-1)
+#adding the buffer lattice points outside the interval
+L1Inside = seq(xMin, xMax, LGap)
+L1Before = (-5:-1)*LGap + xMin
+L1After = (1:5)*LGap + xMax
+L1 = c(L1Before, L1Inside, L1After)
+s1 = length(L1)
+```
 
-## Making the Lattice
+Now we create the covariance matrix for the observations, $M_\lambda$, and the covariance matrix for the basis functions, $P$.
 
-In the example, we have \ttt{NC = 7} lattice points in the interval at the highest level, with \ttt{NC.buffer} = 5 lattice points over each edge of the interval. 
+```{r Calculations1Covariance}
+tridiag <- function(entries, size) {
+  mat <- diag(entries[2], size)
+  mat[col(mat) - row(mat) == -1] = entries[1]
+  mat[col(mat) - row(mat) == 1] = entries[3]
+  return(mat)
+}
+Phi <- phi(rdist(x, L1) / (overlap*LGap))
+B <- tridiag(c(-1, 2.01, -1), s1)
+Q <- t(B) %*% B
+P = solve(Q)
+#compare predict to model evaluations
+#with/without normalization
+```
+
+Finally, we can calculate our estimates for $\mathbf c$ and $\mathbf d$: \ttt{cHat} and \ttt{dHat}, respectively.
+
+```{r Calculations1Fixed}
+ones <- rep(1, length(x))
+Z <- cbind(ones, x)
+#making covariance matrix and comparing it to the LKrig one
+cov <- Phi %*% P %*% t(Phi)
+targetCov <- LKrig.cov(x, x, info)
+test.for.zero(cov, targetCov)
+M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
+Mi <- solve(M)
+dHat <- solve(t(Z) %*% Mi %*% Z, t(Z) %*% Mi %*% y)
+G <- t(Phi)  %*% Phi + lambda*Q
+cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
+test.for.zero(dHat, krigFit$d.coef)
+test.for.zero(cHat, krigFit$c.coef)
+```
+
+## Second Example: Three levels, no normalization
+
+The setup in this example is almost the same as in the first one; the only differences are the different random seed and the different values of \ttt{nlevel} and \ttt{alpha} in the \ttt{LKinfo} object. The value of \ttt{alpha} is chosen so that each level has half as much weight as the previous and the sum of all the weights is 1.
+```{r CalculationsSetup}
+set.seed(87961)
+lambda = 0.05
+overlap = 2.5
+phi <- function(d) {
+  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
+}
+x <- as.matrix(runif(50, min=0, max=1))
+y <- sin(4*pi*x) + rnorm(50, sd = 1e-2)
+info <- LKrigSetup(x, NC = 6, nlevel = 3, a.wght = 2.01, alpha = c(4,2,1)/7, lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
+krigFit <- LKrig(x, y, LKinfo = info)
+```
+
+Making the lattice is now more complicated, since we need to create three different levels. However, note that the first level is the same as before, and the new levels just have lattice points 2x and 4x closer together.
 
 ```{r CalculationsLattice}
-nc = 7
+nc = 6
 ncBuffer = 5
 xMin = min(x)
 xMax = max(x)
 xRange = xMax - xMin
-
 LGap = xRange / (nc-1)
 L1Inside = seq(xMin, xMax, LGap)
 L1Before = (-5:-1)*LGap + xMin
@@ -49,7 +118,10 @@ L3 = c(L3Before, L3Inside, L3After)
 s1 = length(L1)
 s2 = length(L2)
 s3 = length(L3)
+c(s1, s2, s3)
 ```
+
+Note that the values of \ttt{s1, s2, s3} don't follow a strict 1:2 ratio as we might expect; this is because of the lattice points outside the region, and because of the boundaries. Specifically, \ttt{s1 = 16} because there are \ttt{nc = 6} lattice points covering the interval, with 5 gaps between them, and an additional 5 lattice points on each side of the interval. At the second level, the gaps are half as wide, so the 5 gaps become 10; there are now 11 lattice points in the interval and 5 on each side, giving the total \ttt{s2 = 21}. Similarly, at the third level the 10 gaps become 20, making 21 lattice points in the interval and 5 on either side, so we have \ttt{s3 = 31}.
 
 ## Creating the Covariance Matrices $P$ and $M_\lambda$
 
@@ -60,7 +132,7 @@ tridiag <- function(entries, size) {
   mat[col(mat) - row(mat) == 1] = entries[3]
   return(mat)
 }
-
+#add single-level calculations first
 alpha <- c(16, 4, 1)/21
 Phi1 <- phi(rdist(x, L1) / (overlap*LGap))
 Phi2 <- phi(rdist(x, L2) / (overlap*LGap/2))
@@ -79,8 +151,11 @@ Q <- matrix(0, nrow = s1+s2+s3, ncol = s1+s2+s3)
 Q[1:s1, 1:s1] <- Q1
 Q[(s1+1):(s1+s2), (s1+1):(s1+s2)] <- Q2
 Q[(s1+s2+1):(s1+s2+s3), (s1+s2+1):(s1+s2+s3)] <- Q3
-#P = solve(Q)
-M <- t(Phi)  %*% Phi + lambda*Q
+P = solve(Q)
+G <- t(Phi)  %*% Phi + lambda*Q
+#LKrig.basis
+#compare predict to model evaluations
+#with/without normalizeation
 ```
 
 ## Finding the Fixed Component
@@ -88,7 +163,13 @@ M <- t(Phi)  %*% Phi + lambda*Q
 ```{r CalculationsFixed}
 ones <- rep(1, length(x))
 Z <- cbind(ones, x)
+cov <- Phi %*% P %*% t(Phi)
+targetCov <- LKrig.cov(x, x, info)
+test.for.zero(cov, targetCov)
 M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
-d <- solve(t(Z) %*% solve(M) %*% Z) %*% t(Z) %*% solve(M) %*% y
-test.for.zero(d, kFit1D$d.coef)
+Mi <- solve(M)
+dHat2 <- solve(t(Z) %*% Mi %*% Z, t(Z) %*% Mi %*% y)
+cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
+test.for.zero(dHat, krigFit$d.coef)
+test.for.zero(cHat, krigFit$c.coef)
 ```

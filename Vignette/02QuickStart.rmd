@@ -5,6 +5,7 @@ In this section, we will lay out the bare essentials of the package as a quick i
 ```{r QuickStart1D}
 set.seed(223)
 locations <- runif(50, min=-6, max=6)
+locations <- as.matrix(locations)
 observations <- sin(locations) + rnorm(50, sd = 1e-2)
 kFit1D <- LatticeKrig(locations, observations)
 kFit1D

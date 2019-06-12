@@ -1,5 +1,11 @@
 LKDiag <- function(entries, nrow, diags = NA, ncol = nrow) {
-  nEntries = length(entries)
+  
+  entries = as.double(entries)
+  nEntries = as.integer(length(entries))
+  nrow = as.integer(nrow)
+  ncol = as.integer(ncol)
+  mat <- as.double(matrix(0, nrow=nrow, ncol=ncol))
+  
   if (is.na(diags)) {
     if (nEntries %% 2 == 0) {
       diags = c((-nEntries/2) : -1, 1 : (nEntries/2))
@@ -7,7 +13,11 @@ LKDiag <- function(entries, nrow, diags = NA, ncol = nrow) {
       diags = (-(nEntries-1)/2) : ((nEntries-1)/2)
     }
   }
-  mat <- matrix(0, nrow=nrow, ncol=ncol)
-  out <- .Fortran("LKDiag", entries = entries, nEntries = nEntries, diags = diags, nRow = nrow, nCol = ncol, matrix = mat)
-  return(out$matrix)
+  diags = as.integer(diags)
+  if (length(entries) != length(diags)) {
+    stop("The length of entries and length of diagonals don't match")
+  }
+  out <- .Fortran("LKDiag", entries = entries, nEntries = nEntries,
+                  diags = diags, nRow = nrow, nCol = ncol, matrix = mat)
+  return(matrix(out$matrix, nrow = nrow, ncol = ncol))
 }

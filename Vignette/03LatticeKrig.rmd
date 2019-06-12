@@ -8,6 +8,7 @@ First, we create the data, create the basis/covariance function \ttt{basis}, and
 
 ```{r Calculations1Setup}
 library(LatticeKrig)
+
 set.seed(47377)
 lambda = 0.05
 overlap = 2.5
@@ -16,7 +17,7 @@ basis <- function(d) {
 }
 
 #x has 50 values in [0, 1], with the endpoints 0 and 1 added explicitly
-x <- as.matrix(runif(50, min=0, max=1))
+x <- as.matrix(runif(48, min=0, max=1))
 trueValues <- 9*x*(1-x)^3
 errors <- rnorm(50, sd = 1e-2)
 y <- trueValues + errors

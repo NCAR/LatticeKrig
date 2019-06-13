@@ -32,10 +32,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \pagebreak
 
-```{r child = '03LatticeKrig.rmd'}
-```
-\pagebreak
-
 ```{r child = '04LKrigSetup.rmd'}
 ```
 \pagebreak
@@ -58,3 +54,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r child = '11FieldsComparisonAppendix.rmd'}
 ```
+\pagebreak
+
+```{r child = '12SampleKriging.rmd'}
+```
+\pagebreak

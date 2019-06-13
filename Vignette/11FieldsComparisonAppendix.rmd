@@ -8,7 +8,7 @@ x <- ozone2$lon.lat
 y <- ozone2$y[16,]
 # Find location that are not 'NA'.
 # (LKrig is not set up to handle missing observations.)
-good <- !is.na( y)
+good <- !is.na(y)
 x<- x[good,]
 y<- y[good]
 lambda <-  1.5

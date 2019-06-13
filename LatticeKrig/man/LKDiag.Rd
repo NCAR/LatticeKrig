@@ -1,4 +1,5 @@
 \name{LKDiag}
+\alias{LKDiag}
 \title{
 Create a matrix with given entries on the given diagonals
 }

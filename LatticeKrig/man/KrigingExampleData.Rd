@@ -1,4 +1,5 @@
 \name{KrigingExampleData}
+\alias{KrigingExampleData}
 \docType{data}
 \title{Synthetic data for kriging examples}
 \description{

@@ -1,4 +1,5 @@
 subroutine LKDiag(entries, nEntries, diags, nRow, nCol, matrix)
+  implicit none
   integer nEntries, nRow, nCol, diags(nEntries)
   double precision entries(nEntries), matrix(nRow, nCol)
   double precision currentEntry

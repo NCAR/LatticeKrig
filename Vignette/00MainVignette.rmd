@@ -2,8 +2,6 @@
 title: "LatticeKrig Vignette"
 author: "Matthew Iverson"
 date: "5/21/2019"
-fig_width: 6
-fig_height: 4
 output: 
   pdf_document:
       toc: true

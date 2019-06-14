@@ -13,3 +13,7 @@ Make sure that the library is installed (\ttt{install.packages("LatticeKrig")}) 
 ## Missing value where TRUE/FALSE needed
 
 All of these errors can be caused by using \ttt{LKrig} instead of \ttt{LatticeKrig}. The \ttt{LatticeKrig} function has ways to either supply defaults or estimate all of the optional parameters that \ttt{LKrig} doesn't, so \ttt{LKrig} will produce errors like the ones above while \ttt{LatticeKrig} will work correctly. 
+
+## Error in mLevel[l] <- nrow(grid.all.levels[[l]]) : replacement has length zero
+
+This error can occur when using the \ttt{LKSphere} kriging geometry if your data only covers part of the sphere. This error occurs when not enough of the grid points on the sphere fall inside the range of the given data locations. To fix this problem, you can increase the value of \ttt{startingLevel} in the \ttt{LKinfo} object, or (if possible) take data over a larger section of the sphere. If neither of these options fixes the problem, then your dataset is likely small enough that it can be well approximated by the default \ttt{LKRectangle} geometry, unless it is very close to one of the poles. If it is, consider rotating it to near the equator (similar to in the spherical kriging example in this vignette) and then using \ttt{LKRectangle} geometry.

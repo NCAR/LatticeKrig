@@ -38,6 +38,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \pagebreak
 
+```{r child = '06KrigingFunctions.rmd'}
+```
+\pagebreak
+
 ```{r child = '07CommonErrors.rmd'}
 ```
 \pagebreak

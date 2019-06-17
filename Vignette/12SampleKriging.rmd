@@ -7,6 +7,7 @@ The computations inside of \ttt{LatticeKrig} and \ttt{LKrig} can be hard to unde
 First, we create the data, create the basis/covariance function \ttt{basis}, and call \ttt{LKrig} to fit the data.
 
 ```{r Calculations1Setup}
+library(LatticeKrig)
 #clear x and y to make sure our data doesn't get overwritten
 rm(x, y)
 lambda = 0.05
@@ -159,6 +160,83 @@ targetCov <- LKrig.cov(x, x, info)
 test.for.zero(testCov, targetCov)
 test.for.zero(dHat, krigFit$d.coef)
 test.for.zero(cHat, krigFit$c.coef)
+```
+
+## Third example: One level with normalization
+
+The bulk of this example is identical to the first one: the only differences appear after we have the basis function matrix, \ttt{Phi}. All the code in the following block is identical to the code from the first example (except that the \ttt{LKinfo} object no longer sets \ttt{normalize=FALSE}).
+
+```{r Calculations3Start}
+rm(x, y)
+lambda = 0.05
+overlap = 2.5
+basis <- function(d) {
+  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
+}
+data(KrigingExampleData)
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 2.01, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
+krigFit <- LKrig(x, y, LKinfo = info)
+
+nc <- 6
+ncBuffer <- 5
+
+#finding the spacing for the lattice
+LGap <- 1/(nc-1)
+latInside <- seq(from=0, to=1, by=LGap)
+
+#adding the buffer lattice points outside the interval
+latBefore <- seq(to=0-LGap, by=LGap, length.out = ncBuffer)
+latAfter <- seq(from=1+LGap, by=LGap, length.out = ncBuffer)
+lattice <- c(latBefore, latInside, latAfter)
+s <- length(lattice)
+Phi <- basis(rdist(x, lattice) / (overlap*LGap))
+B <- LKDiag(c(-1, 2.01, -1), s)
+Q <- t(B) %*% B
+P <- solve(Q)
+Phi[5:10, 5:10]
+```
+
+Now we normalize \ttt{Phi} so that the basis functions have covariance 1 at each data point. We also print out the diagonal of the covariance matrix, $\Phi P \Phi^T$ - note that it is all ones.
+```{r Calculations3New}
+D <- Phi %*% P %*% t(Phi)
+#discarding the off-diagonal elements of D
+DS <- diag(diag(D)^(-1/2))
+Phi <- DS %*% Phi
+diag(Phi %*% P %*% t(Phi))
+```
+
+The rest of the calculations proceed in the same way as without normalization.
+
+```{r Calculations3Finish}
+M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
+Minverse <- solve(M)
+
+ones <- rep(1, length(x))
+Z <- cbind(ones, x)
+dHat <- solve(t(Z) %*% Minverse %*% Z, t(Z) %*% Minverse %*% y)
+G <- t(Phi)  %*% Phi + lambda*Q
+cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
+
+#making covariance matrix and comparing it to the LKrig one
+testCov <- Phi %*% P %*% t(Phi)
+targetCov <- LKrig.cov(x, x, info)
+test.for.zero(testCov, targetCov)
+test.for.zero(dHat, krigFit$d.coef)
+test.for.zero(cHat, krigFit$c.coef)
+
+#compare kriging prediction with calculated prediction
+xGrid <- seq(0,1,length = 200)
+krigPredictions <- predict(krigFit, xGrid)
+PhiPredict <- basis(rdist(xGrid, lattice) / (overlap*LGap))
+#normalizing PhiPredict too
+DPredict <- PhiPredict %*% P %*% t(PhiPredict)
+#discarding the off-diagonal elements of D
+DPredictS <- diag(diag(DPredict)^(-1/2))
+PhiPredict <- DPredictS %*% PhiPredict
+
+ZPredict <- cbind(rep(1, length(x)), xGrid)
+predictions <- ZPredict %*% dHat + PhiPredict %*% cHat
+test.for.zero(krigPredictions, predictions)
 ```
 
 ## Using the kriging equations directly

@@ -4,7 +4,6 @@ subroutine LKDiag(entries, nEntries, diags, nRow, nCol, matrix)
   double precision entries(nEntries), matrix(nRow, nCol)
   double precision currentEntry
   integer idx, currentDiag, diagLength, diagElement
-  print *, nEntries
 
   do idx = 1, nEntries
      currentEntry = entries(idx)

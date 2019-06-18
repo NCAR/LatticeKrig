@@ -1,0 +1,54 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> # simulation example for estimating covariance
+> # LatticeKrig
+> # Copyright 2004-2016, Institute for Mathematics Applied Geosciences
+> # University Corporation for Atmospheric Research
+> # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+> 
+> suppressMessages(library(LatticeKrig))
+> options(echo = FALSE)
+       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
+   1.510e+01    8.142e+03    1.527e+01    9.682e-02    1.196e+00    7.836e-03 
+  a.wght.MLE       lnLike functionEval gradientEval    totalEval 
+   4.265e+00           NA    3.000e+00    3.000e+00    1.600e+01 
+       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
+   1.823e+01    8.142e+03    1.999e+01    9.683e-02    1.196e+00    7.837e-03 
+  a.wght.MLE       lnLike functionEval gradientEval    totalEval 
+   4.265e+00           NA    3.000e+00    3.000e+00    1.600e+01 
+       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
+   1.739e+01    1.132e+04    1.839e+01    9.873e-02    5.846e+00    1.667e-03 
+  a.wght.MLE       lnLike functionEval gradientEval    totalEval 
+   8.482e+00           NA    1.000e+01    1.000e+01    5.100e+01 
+       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
+    17.47000   8178.00000     19.21000      0.09951      1.09300      0.00906 
+ llambda.MLE       lnLike counts value         grad 
+    -4.70400           NA     11.00000           NA 
+[1] 0.00906
+Testing:   log Like lambda MLE
+PASSED test at tolerance  0.005
+       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
+   2.332e+01    1.084e+04    3.237e-01    4.981e-02    9.975e-01    2.487e-03 
+  a.wght.MLE       lnLike functionEval gradientEval    totalEval 
+   4.249e+00           NA    5.000e+00    5.000e+00    2.600e+01 
+PASSED test at tolerance  0.02
+PASSED test at tolerance  0.01
+> proc.time()
+    user   system  elapsed 
+  37.805    0.308 1249.230 

@@ -1,0 +1,60 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # LatticeKrig
+> # Copyright 2004-2011, Institute for Mathematics Applied Geosciences
+> # University Corporation for Atmospheric Research
+> # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+> 
+> 
+> # test of radial basis function based on Wendland
+> # and using sparse formats
+> # Important check is of the FORTRAN function dfind2d
+> # that does pairwise distances among points within a specified range.
+> 
+> suppressMessages(library(LatticeKrig))
+> options( echo=FALSE)
+PASSED test at tolerance  1e-08
+PASSED test at tolerance  1e-08
+Testing:  agreement (ind) between calls with matrix and gridList
+PASSED test at tolerance  1e-08
+Testing:  agreement (ra) between calls with matrix and gridList
+PASSED test at tolerance  5e-07
+Testing:  agreement (ra) between calls with rdist and gridList
+PASSED test at tolerance  5e-07
+Testing:  agreement (inf) between calls with matrix and gridList
+PASSED test at tolerance  1e-08
+Testing:  agreement (ra) between calls with matrix and gridList
+PASSED test at tolerance  5e-07
+Testing:  Chordal distance
+PASSED test at tolerance  1e-08
+Testing:  Great Circle
+PASSED test at tolerance  1e-08
+Testing:  Radial.basis verses rdist
+PASSED test at tolerance  1e-08
+Testing:  check basis functions with Euclidean distance compare to rdist
+PASSED test at tolerance  4e-06
+Testing:  check basis functions Euclidean distance
+PASSED test at tolerance  1e-08
+PASSED test at tolerance  1e-08
+Testing:  marginal variance
+PASSED test at tolerance  1e-08
+Done with testing LKrig basis
+> 
+> proc.time()
+   user  system elapsed 
+  1.016   0.060   1.062 

@@ -32,14 +32,14 @@ lines(xGrid, sin(xGrid), col='blue')
 lines(xGrid, prediction, col='red', lty=2, lwd=2)
 ```
 
-For this example, the fitted curve (in red) matches the true function (in blue) rather closely. This next plot shows the error in the fitted curve; note that the error gets larger where there aren't many data points, and especially at the edges of the region.
+For this example, the fitted curve (in red) matches the true function (in blue) rather closely. This next plot adds a collection of simulations based on the fitted curve; the simulations get farther apart, meaning the standard error gets larger, where there aren't many data points and especially at the edges of the region. These simulations are easier to compute than the standard error, so they are used to estimate the standard error of a model in LatticeKrig.
 
 ```{r QuickStart1DResidualPlot}
-#uncertainty <- LKrig.sim.conditional(kFit1D)
-plot(xGrid, abs(sin(xGrid) - predict(kFit1D, xGrid)), col='red', type="l",
-     main="1-Dimensional LatticeKrig Errors", xlab="Location", ylab="Error")
-#plot(uncertainty)
-points(locations, rep(1e-3, 50))
+uncertainty <- LKrig.sim.conditional(kFit1D, x.grid = as.matrix(xGrid), M=5)
+matplot(uncertainty$g.draw, type="l", x = seq(-6,6, length.out = 200),
+        main = "Simulated Curves", xlab = "Location", ylab = "Measured Value")
+lines(xGrid, sin(xGrid), col='blue', lwd = 3)
+lines(xGrid, prediction, col='red', lty=2, lwd=3)
 ```
 
 For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, and use the \ttt{US} function to draw in the USA state borders to show where Colorado is. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
@@ -54,7 +54,7 @@ surface(kFit, main = "2-Dimensional LatticeKrig Example",
 US(add=TRUE, col='black', lwd=4)
 ```
 
-This plot is useful, but we can do better. We can see that the coldest temperatures are in the Rocky Mountains, which is not surprising. Thus, we might expect that we will get a more accurate fit by having \ttt{LatticeKrig} account for the elevation at each location as well. Another way we can improve the plot is by increasing its resolution - the current image is somewhat pixelated. The \ttt{surface} function will evaluate the surface at more points if we increase the \ttt{nx} and \ttt{ny} arguments: setting \ttt{nx=200, ny=150} will produce a , which will take longer to compute but produces a nicer looking, more detailed plot. Finally, we can also have \ttt{surface} extend the calculation all the way to the corners of the window by using the \ttt{extrap} argument; by default it doesn't extrapolate outside of the existing data, since the error often increases dramatically when predicting outside of the given data. However, extending the plot to the corners will make it look nicer. For the sake of example, we will also change the color scale in the image by setting the \ttt{col} parameter.
+This plot is useful, but we can do better. We can see that the coldest temperatures are in the Rocky Mountains, which is not surprising. Thus, we might expect that we will get a more accurate fit by having \ttt{LatticeKrig} account for the elevation at each location as well. Another way we can improve the plot is by increasing its resolution - the current image is somewhat pixelated. The \ttt{surface} function will evaluate the surface at more points if we increase the \ttt{nx} and \ttt{ny} arguments: setting \ttt{nx=200, ny=150} will produce a grid of 30,000 points, which will take longer to compute but produces a nicer looking, more detailed plot. Finally, we can also have \ttt{surface} extend the evaluation all the way to the corners of the window by using the \ttt{extrap} argument; by default it doesn't extrapolate outside of the existing data, since the error often increases dramatically when predicting outside of the given data. However, extending the plot to the corners will make it look nicer. For the sake of example, we will also change the color scale in the image by setting the \ttt{col} parameter.
 
 ```{r QuickStart2DImproved}
 data(COmonthlyMet)

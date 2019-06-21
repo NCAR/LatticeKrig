@@ -1,24 +1,27 @@
 # \ttt{LKrigSetup}
 
-The only required arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a variety of optional arguments to tweak the model that \ttt{LatticeKrig} uses. In this section we will list some of the most important optional parameters that can be passed into \ttt{LatticeKrig}; for a complete list, check the \ttt{LatticeKrig} help page. The \ttt{LKrigSetup} function is a convenient (and, in some cases, the only) way to pass in a group of parameters to \ttt{LatticeKrig} or \ttt{LKrig}. We will cover the required parameters and some of the more important optional parameters here; for full descriptions, check the help pages for \ttt{LatticeKrig} and \ttt{LKrigSetup}.
+The only \textit{required} arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a variety of optional arguments to adapt the model to be more realistic. In this section we will list some of the most important optional parameters that can be passed into \ttt{LatticeKrig}; for a complete list, check the \ttt{LatticeKrig} help page. The \ttt{LKrigSetup} function is a convenient (and, in some cases, the only) way to pass in a group of parameters to \ttt{LatticeKrig} or \ttt{LKrig}. We will cover the required parameters and some of the more important optional parameters here; for full descriptions, check the help pages for \ttt{LatticeKrig} and \ttt{LKrigSetup}. For context, this is the printout of the \ttt{LKinfo} object created by \ttt{LatticeKrig} in the quick start guide's one-dimensional example.
+```{r LKInfo}
+print(kFit1D$LKinfo)
+```
 
 ##Required Parameters for \ttt{LKrigSetup}
 
 * \ttt{x}
 
-The parameter \ttt{x} is the matrix of observation locations, which is needed for making the covariance matrix, basis function matrix, and basis function lattice.
+The parameter \ttt{x} is used to find the range of the data locations in each dimension for the lattice. As such, it is often easiest to pass in the matrix of observation locations, but you can also just pass in the range directly.
 
 * \ttt{nlevel} 
 
-The parameter \ttt{nlevel} is an integer that determines the number of different lattice sizes the computation should run on. This is set to 3 by default in \ttt{LatticeKrig}, so it is recommended to set \ttt{nlevel = 3} here as well unless there is a reason to change it. However, note that increasing \ttt{nlevel} will increase the computation time significantly. The coefficients at each different lattice size is computed independently, and the resulting coefficients are scaled by the weights in \ttt{alpha}.
+The parameter \ttt{nlevel} is an integer that determines the number of different lattice sizes the computation should run on. This is set to 3 by default in \ttt{LatticeKrig}. Increasing \ttt{nlevel} will increase the potential detail of the fitted surface, and will increase the computation time significantly. The coefficients at each different lattice size is computed independently, and the resulting coefficients are scaled by the weights in \ttt{alpha}.
 
 * \ttt{NC}
 
-The parameter \ttt{NC} is an integer that determines the number of basis functions to put along the largest dimension at the first level. Note that the actual number of basis functions will be different because there are 5 additional basis functions (this can be changed with the optional \ttt{NC.buffer} parameter) added outside the domain on the each end of longest side. For example, if the domain for the data locations is a rectangle whose length is double its width and \ttt{NC = 6}, the first level of basis functions will contain 16x13 basis functions (6x3 inside the domain with 5 extended from each edge).
+The parameter \ttt{NC} is an integer that determines the number of basis functions to put along the largest dimension at the first level. Recall that each basis function is centered on a lattice point, so \ttt{NC} equivalently controls the number of lattice points to set across the region in the longest dimension. Note that the actual number of basis functions will be different because there are 5 additional basis functions (this can be changed with the optional \ttt{NC.buffer} parameter) added outside the domain on the each end of longest side. For example, if the domain for the data locations is a rectangle whose length is double its width and \ttt{NC = 6}, the first level of basis functions will contain 16x13 basis functions (6x3 inside the domain with 5 extended from each edge).
 
-* \ttt{alpha} or \ttt{alphaObject}
+* \ttt{alpha} or \ttt{alphaObject} or \ttt{nu}
 
-At least one of \ttt{alpha} and \ttt{alphaObject} must be set. In most cases you will use \ttt{alpha}, which should be a vector of length \ttt{nlevel} that holds the weights that scale the basis functions on each different lattice size. Since each level is calculated independently, the sum of the weights in \ttt{alpha} should be 1 to make sure the model fits correctly.
+At least one of \ttt{alpha}, \ttt{alphaObject}, and \ttt{nu} must be set. In most cases you will use \ttt{alpha} or \ttt{nu}. The parameter \ttt{alpha} should be a vector of length \ttt{nlevel} that holds the weights that scale the basis functions on each different lattice size; \ttt{nu} is a scalar that controls how quickly the values in \ttt{alpha} decay. When \ttt{nu} is set, \ttt{alpha} will be filled by setting \ttt{alpha[i] = 2\^(-2 * i * nu)}, then scaling so the sum of the weights in \ttt{alpha} is 1. This scaling should always be done before passing in \ttt{alpha} to make sure the model fits correctly.
 
 * \ttt{a.wght} or \ttt{a.wghtObject}
 
@@ -41,3 +44,22 @@ When using a different \ttt{LKGeometry} than default, you may also need to chang
 * \ttt{NC.buffer}
 
 This parameter determines how many lattice points to add outside the range of the data in each direction. The effect of changing this parameter is relatively minor compared to the effect of changing \ttt{NC}, and it can only affect the prediction near the edges of the data.
+
+* \ttt{normalize}
+
+This parameter determines whether or not to normalize the basis functions after computing them, making the variance 1. This is set to \ttt{TRUE} by default, sacrificing some computing time to reduce edge artifacts created by the model that aren't present in the real data. 
+
+* \ttt{nu}
+
+## Effects on covariance function
+
+The following plots show how different values of \ttt{NC}, \ttt{a.wght}, \ttt{alpha}, and \ttt{nu} affect the covariance function. These plots are all one dimensional for ease of viewing; recall that the covariance function is radially symmetric in higher dimensions.
+
+```{r NCCovariance, echo=FALSE}
+basis <- function(d) {
+  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
+}
+xGrid = seq(-5,5, length.out = 400)
+NCplot = cbind(basis(abs(xGrid/2.5)), basis(abs(xGrid/5)), basis(abs(xGrid/1)))
+matplot(NCplot, type="l", lty=1, x = xGrid)
+```

@@ -38,15 +38,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \pagebreak
 
-```{r child = '06KrigingFunctions.rmd'}
+```{r child = '06SparseMatrices.rmd'}
 ```
 \pagebreak
 
-```{r child = '07CommonErrors.rmd'}
+```{r child = '07KrigingFunctions.rmd'}
 ```
 \pagebreak
 
-```{r child = '08FAQ.rmd'}
+```{r child = '08CommonErrors.rmd'}
+```
+\pagebreak
+
+```{r child = '09FAQ.rmd'}
 ```
 \pagebreak
 

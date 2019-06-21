@@ -17,3 +17,11 @@ All of these errors can be caused by using \ttt{LKrig} instead of \ttt{LatticeKr
 ## Error in mLevel[l] <- nrow(grid.all.levels[[l]]) : replacement has length zero
 
 This error can occur when using the \ttt{LKSphere} kriging geometry if your data only covers part of the sphere. This error occurs when not enough of the grid points on the sphere fall inside the range of the given data locations. To fix this problem, you can increase the value of \ttt{startingLevel} in the \ttt{LKinfo} object, or (if possible) take data over a larger section of the sphere. If neither of these options fixes the problem, then your dataset is likely small enough that it can be well approximated by the default \ttt{LKRectangle} geometry, unless it is very close to one of the poles. If it is, consider rotating it to near the equator (similar to in the spherical kriging example in this vignette) and then using \ttt{LKRectangle} geometry.
+
+## Error in object$x %*% t(Vinv) : non-conformable arguments
+
+This error can occur when using \ttt{LKrigSetup} (or \ttt{LatticeKrig}, by extension) on a 1-dimensional problem if you don't explicitly set \ttt{LKGeometry = "LKInterval"} for \ttt{LKrigSetup}.
+
+## Error in if (ncol(object$x) != 1) { : argument is of length zero
+
+This error most commonly occurs when using \ttt{LKrigSetup} in one dimension and passing in the range of the data explicitly. For example, \ttt{LKrigSetup(c(0,1), ...)} will cause this error (assuming the other arguments are provided correctly). The issue is that the \ttt{c} function doesn't format the input as a matrix, which is the format \ttt{LKrigSetup} expects. To fix this, just call \ttt{as.matrix} on the first parameter you give to \ttt{LKrigSetup} - so we would correct the example above to \ttt{LKrigSetup(as.matrix(c(0,1)), ...)}.

@@ -167,7 +167,6 @@ test.for.zero(cHat, krigFit$c.coef)
 The bulk of this example is identical to the first one: the only differences appear after we have the basis function matrix, \ttt{Phi}. All the code in the following block is identical to the code from the first example (except that the \ttt{LKinfo} object no longer sets \ttt{normalize=FALSE}).
 
 ```{r Calculations3Start}
-rm(x, y)
 lambda = 0.05
 overlap = 2.5
 basis <- function(d) {
@@ -193,7 +192,6 @@ Phi <- basis(rdist(x, lattice) / (overlap*LGap))
 B <- LKDiag(c(-1, 2.01, -1), s)
 Q <- t(B) %*% B
 P <- solve(Q)
-Phi[5:10, 5:10]
 ```
 
 Now we normalize \ttt{Phi} so that the basis functions have covariance 1 at each data point. We also print out the diagonal of the covariance matrix, $\Phi P \Phi^T$ - note that it is all ones.
@@ -241,9 +239,39 @@ test.for.zero(krigPredictions, predictions)
 
 ## Using the kriging equations directly
 
-Recall the equations for $\hat{\bld c}$ and $\hat{bld d}$ in Appendix A:
+Recall the standard kriging equations for $\hat{\bld c}$ and $\hat{\bld d}$ in Appendix A:
 \begin{align*}
 \hat{\bld d} &= (Z^T \Sigma^{-1} Z)^{-1} Z^T \Sigma^{-1} \\
 \hat{\bld c} &= P \Phi^T \Sigma_{11}^{-1}(\bld y - Z \bld d)
 \end{align*}
-In this appendix, we will compute the estimates directly using these equations to show that the computations in LatticeKrig match them.
+In this section, we will compute the estimates directly using these equations to show that the computations in LatticeKrig match them. For brevity, we will only consider the case with one level and no normalization; adjustments for more levels and normalization can be made in the same way as in the previous section. 
+
+```{r KrigingEquations}
+data(KrigingExampleData)
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 3, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
+krigFit <- LKrig(x, y, LKinfo = info)
+nc <- 6
+ncBuffer <- 5
+lambda = 0.05
+LGap <- 1/(nc-1)
+latInside <- seq(from=0, to=1, by=LGap)
+latBefore <- seq(to=0-LGap, by=LGap, length.out = ncBuffer)
+latAfter <- seq(from=1+LGap, by=LGap, length.out = ncBuffer)
+lattice <- c(latBefore, latInside, latAfter)
+overlap <- 2.5
+
+cov <- function(d) {
+  s <- d/(overlap*LGap)
+  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
+}
+Sigma <- cov(rdist(x, x)) + lambda*diag(1, length(x))
+SigmaInv <- solve(Sigma)
+Phi <- cov(rdist(x, lattice))
+P <- cov(rdist(lattice, lattice))
+ones <- rep(1, length(x))
+Z <- cbind(ones, x)
+dHat <- solve(t(Z) %*% SigmaInv %*% Z) %*% t(Z) %*% SigmaInv
+cHat <- P %*% t(Phi) %*% SigmaInv %*% (y - Z %*% dHat)
+test.for.zero(dHat, krigFit$d.coef)
+test.for.zero(cHat, krigFit$c.coef)
+```

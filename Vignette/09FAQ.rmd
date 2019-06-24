@@ -1,8 +1,8 @@
 # Frequently Asked Questions
 
-## Does the order the parameters are listed in matter?
+## Does the order of the parameters matter?
 
-The order of the parameters only matters when you pass them in without specifying their names: for example \ttt{LatticeKrig(locations, values)} works, but \ttt{LatticeKrig(values, locations)} doesn't. However, if the names are specified, either order will work correctly: both \ttt{LatticeKrig(x = locations, y = values)} and \ttt{LatticeKrig(y = values, x = locations)} work as intended. The optional parameters can also be listed without their names, but then they would need to be in the correct order and every single one would need to be specified, so it is highly recommended to include the names alongside each optional parameter. 
+The order of the parameters only matters when you pass them in without specifying their names: for example \ttt{LatticeKrig(locations, values)} works, but \ttt{LatticeKrig(values, locations)} doesn't. However, if the names are specified, either order will work correctly: both \ttt{LatticeKrig(x = locations, y = values)} and \ttt{LatticeKrig(y = values, x = locations)} work as intended. The optional parameters can also be listed without their names, but then they would need to be in the correct order and every single one would need to be specified, so it is highly recommended to include the names alongside each optional parameter. For this reason, it is best practice to use the names of the parameters while passing them in, except in cases where it is obvious.
 
 ## The predicted values from my Kriging fit are nowhere near the data; what's wrong?
 

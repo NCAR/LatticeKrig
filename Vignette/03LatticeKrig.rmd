@@ -1,15 +1,12 @@
-# Appendix C: Sample \ttt{LatticeKrig} calculation
+# Sample \ttt{LatticeKrig} calculation
 
-The computations inside of \ttt{LatticeKrig} and \ttt{LKrig} can be hard to understand, so here we will work through several examples, showing all of the linear algebra used. Some of the variable names will be changed from the code in the previous section so that they match the names in the linear algebra appendix and in the JCGS article.
+The computations inside of \ttt{LatticeKrig} and \ttt{LKrig} can be hard to understand, so here we will work through several examples, showing all of the linear algebra used. Some of the variable names will be changed from the code in the previous section so that they match the names in the linear algebra appendix and in the paper.
 
 ## First Example: One level, no normalization
 
 First, we create the data, create the basis/covariance function \ttt{basis}, and call \ttt{LKrig} to fit the data.
 
 ```{r Calculations1Setup}
-library(LatticeKrig)
-#clear x and y to make sure our data doesn't get overwritten
-rm(x, y)
 lambda = 0.05
 overlap = 2.5
 basis <- function(d) {
@@ -78,12 +75,14 @@ test.for.zero(krigPredictions, predictions)
 The setup in this example is almost the same as in the first one; the only differences are the different random seed and the different values of \ttt{nlevel} and \ttt{alpha} in the \ttt{LKinfo} object. The value of \ttt{alpha} is chosen so that each level has half as much weight as the previous and the sum of all the weights is 1.
 
 ```{r Calculations2Setup}
+set.seed(87961)
 lambda <- 0.05
 overlap <- 2.5
 basis <- function(d) {
   return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
 }
-data(KrigingExampleData)
+x <- as.matrix(runif(50, min=0, max=1))
+y <- sin(4*pi*x) + rnorm(50, sd = 1e-2)
 info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, nlevel = 3, a.wght = 2.01, alpha = c(4,2,1)/7, lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
 krigFit <- LKrig(x, y, LKinfo = info)
 ```
@@ -158,120 +157,6 @@ cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
 testCov <- Phi %*% P %*% t(Phi)
 targetCov <- LKrig.cov(x, x, info)
 test.for.zero(testCov, targetCov)
-test.for.zero(dHat, krigFit$d.coef)
-test.for.zero(cHat, krigFit$c.coef)
-```
-
-## Third example: One level with normalization
-
-The bulk of this example is identical to the first one: the only differences appear after we have the basis function matrix, \ttt{Phi}. All the code in the following block is identical to the code from the first example (except that the \ttt{LKinfo} object no longer sets \ttt{normalize=FALSE}).
-
-```{r Calculations3Start}
-lambda = 0.05
-overlap = 2.5
-basis <- function(d) {
-  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
-}
-data(KrigingExampleData)
-info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 2.01, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
-krigFit <- LKrig(x, y, LKinfo = info)
-
-nc <- 6
-ncBuffer <- 5
-
-#finding the spacing for the lattice
-LGap <- 1/(nc-1)
-latInside <- seq(from=0, to=1, by=LGap)
-
-#adding the buffer lattice points outside the interval
-latBefore <- seq(to=0-LGap, by=LGap, length.out = ncBuffer)
-latAfter <- seq(from=1+LGap, by=LGap, length.out = ncBuffer)
-lattice <- c(latBefore, latInside, latAfter)
-s <- length(lattice)
-Phi <- basis(rdist(x, lattice) / (overlap*LGap))
-B <- LKDiag(c(-1, 2.01, -1), s)
-Q <- t(B) %*% B
-P <- solve(Q)
-```
-
-Now we normalize \ttt{Phi} so that the basis functions have covariance 1 at each data point. We also print out the diagonal of the covariance matrix, $\Phi P \Phi^T$ - note that it is all ones.
-```{r Calculations3New}
-D <- Phi %*% P %*% t(Phi)
-#discarding the off-diagonal elements of D
-DS <- diag(diag(D)^(-1/2))
-Phi <- DS %*% Phi
-diag(Phi %*% P %*% t(Phi))
-```
-
-The rest of the calculations proceed in the same way as without normalization.
-
-```{r Calculations3Finish}
-M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
-Minverse <- solve(M)
-
-ones <- rep(1, length(x))
-Z <- cbind(ones, x)
-dHat <- solve(t(Z) %*% Minverse %*% Z, t(Z) %*% Minverse %*% y)
-G <- t(Phi)  %*% Phi + lambda*Q
-cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
-
-#making covariance matrix and comparing it to the LKrig one
-testCov <- Phi %*% P %*% t(Phi)
-targetCov <- LKrig.cov(x, x, info)
-test.for.zero(testCov, targetCov)
-test.for.zero(dHat, krigFit$d.coef)
-test.for.zero(cHat, krigFit$c.coef)
-
-#compare kriging prediction with calculated prediction
-xGrid <- seq(0,1,length = 200)
-krigPredictions <- predict(krigFit, xGrid)
-PhiPredict <- basis(rdist(xGrid, lattice) / (overlap*LGap))
-#normalizing PhiPredict too
-DPredict <- PhiPredict %*% P %*% t(PhiPredict)
-#discarding the off-diagonal elements of D
-DPredictS <- diag(diag(DPredict)^(-1/2))
-PhiPredict <- DPredictS %*% PhiPredict
-
-ZPredict <- cbind(rep(1, length(x)), xGrid)
-predictions <- ZPredict %*% dHat + PhiPredict %*% cHat
-test.for.zero(krigPredictions, predictions)
-```
-
-## Using the kriging equations directly
-
-Recall the standard kriging equations for $\hat{\bld c}$ and $\hat{\bld d}$ in Appendix A:
-\begin{align*}
-\hat{\bld d} &= (Z^T \Sigma^{-1} Z)^{-1} Z^T \Sigma^{-1} \\
-\hat{\bld c} &= P \Phi^T \Sigma_{11}^{-1}(\bld y - Z \bld d)
-\end{align*}
-In this section, we will compute the estimates directly using these equations to show that the computations in LatticeKrig match them. For brevity, we will only consider the case with one level and no normalization; adjustments for more levels and normalization can be made in the same way as in the previous section. 
-
-```{r KrigingEquations}
-data(KrigingExampleData)
-info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 3, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
-krigFit <- LKrig(x, y, LKinfo = info)
-nc <- 6
-ncBuffer <- 5
-lambda = 0.05
-LGap <- 1/(nc-1)
-latInside <- seq(from=0, to=1, by=LGap)
-latBefore <- seq(to=0-LGap, by=LGap, length.out = ncBuffer)
-latAfter <- seq(from=1+LGap, by=LGap, length.out = ncBuffer)
-lattice <- c(latBefore, latInside, latAfter)
-overlap <- 2.5
-
-cov <- function(d) {
-  s <- d/(overlap*LGap)
-  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
-}
-Sigma <- cov(rdist(x, x)) + lambda*diag(1, length(x))
-SigmaInv <- solve(Sigma)
-Phi <- cov(rdist(x, lattice))
-P <- cov(rdist(lattice, lattice))
-ones <- rep(1, length(x))
-Z <- cbind(ones, x)
-dHat <- solve(t(Z) %*% SigmaInv %*% Z) %*% t(Z) %*% SigmaInv
-cHat <- P %*% t(Phi) %*% SigmaInv %*% (y - Z %*% dHat)
 test.for.zero(dHat, krigFit$d.coef)
 test.for.zero(cHat, krigFit$c.coef)
 ```

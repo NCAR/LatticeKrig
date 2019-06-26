@@ -48,8 +48,8 @@ For another, more practical example, we will predict the average spring temperat
 data(COmonthlyMet)
 locations <- CO.loc
 observations <- CO.tmean.MAM.climate
-kFit <- LatticeKrig(locations, observations)
-surface(kFit, main = "2-Dimensional LatticeKrig Example",
+kFitWeather <- LatticeKrig(locations, observations)
+surface(kFitWeather, main = "2-Dimensional LatticeKrig Example",
         xlab="Longitude", ylab="Latitude")
 US(add=TRUE, col='black', lwd=4)
 ```
@@ -61,9 +61,9 @@ data(COmonthlyMet)
 locations <- CO.loc
 observations <- CO.tmean.MAM.climate
 elevations <- CO.elev
-kFit <- LatticeKrig(locations, observations, Z=cbind(elevations))
+kFitWeather <- LatticeKrig(locations, observations, Z=cbind(elevations))
 # look at the help file in fields for information on the grid.list format
-prediction <- predictSurface(kFit, grid.list = CO.Grid, ZGrid = CO.elevGrid,
+prediction <- predictSurface(kFitWeather, grid.list = CO.Grid, ZGrid = CO.elevGrid,
                              nx = 200, ny = 150, extrap = TRUE)
 surface(prediction, main = "Improved 2-Dimensional LatticeKrig Example", 
         xlab="Longitude", ylab="Latitude", col=larry.colors())

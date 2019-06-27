@@ -3,7 +3,6 @@ output:
   pdf_document: default
   html_document: default
 ---
-\newcommand{\ttt}{\texttt}
 # How this package works
 
 This package is designed to be modular and separate the steps of computation, prediction and simulation. It also uses R's function overloading with S3 and S4 objects to simplify the coding. This strategy is especially helpful for different geometries and distance functions. 

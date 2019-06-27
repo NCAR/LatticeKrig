@@ -1,6 +1,6 @@
 ---
 title: "LatticeKrig Vignette"
-author: "Matthew Iverson"
+author: "Matthew Iverson, Doug Nychka"
 date: "5/21/2019"
 output: 
   pdf_document:
@@ -30,38 +30,38 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \pagebreak
 
-```{r child = '04LKrigSetup.rmd'}
+```{r child = '03LKrigSetup.rmd'}
 ```
 \pagebreak
 
-```{r child = '05AlternateGeometries.rmd'}
+```{r child = '04AlternateGeometries.rmd'}
 ```
 \pagebreak
 
-```{r child = '06SparseMatrices.rmd'}
+```{r child = '05SparseMatrices.rmd'}
 ```
 \pagebreak
 
-```{r child = '07KrigingFunctions.rmd'}
+```{r child = '06KrigingFunctions.rmd'}
 ```
 \pagebreak
 
-```{r child = '08CommonErrors.rmd'}
+```{r child = '07CommonErrors.rmd'}
 ```
 \pagebreak
 
-```{r child = '09FAQ.rmd'}
+```{r child = '08FAQ.rmd'}
 ```
 \pagebreak
 
-```{r child = '10LinearAlgebraAppendix.rmd'}
+```{r child = '09LinearAlgebraAppendix.rmd'}
 ```
 \pagebreak
 
-```{r child = '11FieldsComparisonAppendix.rmd'}
+```{r child = '10FieldsComparisonAppendix.rmd'}
 ```
 \pagebreak
 
-```{r child = '12SampleKriging.rmd'}
+```{r child = '11SampleKriging.rmd'}
 ```
 \pagebreak

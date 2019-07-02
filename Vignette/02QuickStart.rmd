@@ -48,11 +48,10 @@ upperBound <- prediction + gamma*sdVec
 lowerBound <- prediction - gamma*sdVec
 plot(xGrid, upperBound, type="l", ylim = c(min(lowerBound), max(upperBound)),
      main = "Simulated Curves with Confidence ", xlab = "Location", ylab = "Measured Value")
-envelopePlot(xGrid, lowerBound, xGrid, upperBound)
-lines(uncertainty$x.grid, uncertainty$g.draw[,1], lwd = 2)
-lines(uncertainty$x.grid, uncertainty$g.draw[,2], lwd = 2, col="green")
-lines(uncertainty$x.grid, uncertainty$g.draw[,3], lwd = 2, col="orange")
-lines(uncertainty$x.grid, uncertainty$g.draw[,4], lwd = 2, col="cyan")
+EnvelopePlot(xGrid, lowerBound, xGrid, upperBound)
+for(i in 1:10) {
+  lines(uncertainty$x.grid, uncertainty$g.draw[,i], col="gray")
+}
 
 ```
 
@@ -89,3 +88,56 @@ US(add=TRUE, col='black', lwd=4)
 This surface is so rough because it accounts for elevation; we can see that the plot is fairly smooth in the eastern half of the state, and extremely rough in the mountains. 
 
 Finally, it is important to note some potential issues that \ttt{LatticeKrig} calculations won't catch. Because \ttt{LatticeKrig} estimates some parameters of the data, the model could be a poor fit if the estimates aren't reasonable. The \ttt{LatticeKrig} model also approximates a thin plate spline by default, which may not be a good fit for a given problem. Finally, as with other curve fitting techniques, you should examine the residuals of the model for any patterns or features that may indicate a poor fit.
+
+## Simulating a process from the LatticeKrig model
+ 
+As a final topic we describe how to generate realizations from the Gaussian model in this package. The \ttt{LKinfo} object has a full description of the model and so simulation is easy. In the two examples of this section this object was set up from the top level function \ttt{LatticeKrig} and is the LKinfo component of the returned results. For more control over the model, however,  we recommend that this object be created separately. (See Section 3)
+
+For 
+\ttt{kFit1D} from Section 2.1 note that a listing of the full model is shown from.
+```{r }
+print( kFit1D$LKinfo)
+```
+
+Here we simulate 4 sample curves from this model and evaluate them on a finer grid of points than the observations. The random seed is set to reproduce these particular psuedo random draws. 
+
+```{r }
+set.seed(123)
+gSim<- LKrig.sim( xGrid, kFit1D$LKinfo, M=4)
+matplot( xGrid, gSim, type="l", lty=1, xlab="x", ylab="g(x)")
+title("Simulated using model in 1D example")
+```
+Note that in actually fitting the data a linear function is also included but since this is not a random component it is not part of the simulated process. Also the variance of the process is set to one. 
+
+These simulated curves are referred to as *unconditional* because they are
+unrelated to the actual data except in terms of the range of the x values.
+Another form of simulation is to generate the process conditional on
+the observed data. This technique turns out to be very useful for quantifying the uncertianty in the curve estimate. The example below creates 25 draws from fitting the 1D example and to highlight the variability in these draws the plot is restricted to just a subset of the range of the data. This function returns several different parts of the estimate and so a list format is used. Note the use of the predict function to recover the estimated curve and also that the data is part of the fitted object. Within the range of the data all the conditional curves tend to track the estimate and the data, however, as one might expect beyond on the range of the observations there is much more variability among the simulated curves.   
+
+```{r }
+set.seed(123)
+gCondSim<- LKrig.sim.conditional(  kFit1D, M=25, x.grid=as.matrix(xGrid) )
+matplot( xGrid, gCondSim$g.draw, type="l", lty=1, xlab="x", ylab="y",
+         col="grey", lwd=.5)
+lines(xGrid,predict( kFit1D, xGrid), col="red")
+points( kFit1D$x,kFit1D$y, pch=16, col="black")
+```
+
+## Extra Credit 
+
+Here is a final example illustrating the power of deteriming the unceratinty by Monte Carlo. We generate a larger conditional sample over the subinterval [-3,0], find the minimum of each realization and plot the minimum and its location. This two dimensional distribution of minima and their locations is a valid approach to approximate the uncertainty of the estimated minimum of the true curve in this range. Moreover, it would be difficult to derive an analytic formula for this distribution. 
+
+```{r }
+xGrid2<- as.matrix( seq(-3,0,length.out=100) )
+set.seed(333)
+gCondSim<- LKrig.sim.conditional(  kFit1D, x.grid=xGrid2, M = 75 )
+# index of where minimum occurs in each draw
+minXIndex<- apply( gCondSim$g.draw, 2, which.min)
+XMin<- xGrid2[minXIndex]
+YMin<- apply( gCondSim$g.draw, 2, min)
+matplot(xGrid2, gCondSim$g.draw, type="l", lty=1, xlab="x", ylab="y",
+         col="grey", ylim=c()) 
+points( XMin, YMin, col="red4", cex=.5)         
+lines(xGrid2, predict( kFit1D, xGrid2), col="red")
+points( kFit1D$x,kFit1D$y, pch=16, col="black")        
+```

@@ -9,7 +9,14 @@ By default, \ttt{LatticeKrig} will interpret the location data it receives as po
 * \ttt{"LKCylinder"}: 3 dimensional cylindrical coordinates
 * \ttt{"LKRing"}: 2 dimensional cylindrical coordinates
 
-By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. However, if you aren't using \ttt{LKRectangle}, it is best to set \ttt{LKGeometry} explicitly; failing to do so can cause errors. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} argument of the \ttt{LKinfo} object - the default is \ttt{"GreatCircle"}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{"Chordal"} to measure the straight-line distance, treating the coordinates as 3-dimensional Euclidean locations. Finally, when using the spherical geometry, you need to set \ttt{startingLevel}, which serves a similar role to \ttt{NC} from the Euclidean space. The \ttt{startingLevel} parameter controls how fine of a grid to use at the lowest level of the fit in spherical coordinates; for more information, check the \ttt{LKSphere} help page.
+By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. However, if you aren't using \ttt{LKRectangle}, it is best to set \ttt{LKGeometry} explicitly; failing to do so can cause errors. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} argument of the \ttt{LKinfo} object - the default is \ttt{"GreatCircle"}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{"Chordal"} to measure the straight-line distance, treating the coordinates as 3-dimensional Euclidean locations. Finally, when using the spherical geometry, you need to set \ttt{startingLevel}, which serves a similar role to \ttt{NC} from the Euclidean space. The \ttt{startingLevel} parameter controls how fine of a grid to use at the lowest level of the fit in spherical coordinates. The following plot shows the centers of the basis functions at \ttt{startingLevel = 1}, where they are at the vertices of an icosohedron inscribed in the sphere; for more information, check the \ttt{LKSphere} help page.
+
+```{r SphereLatticePlot, echo=FALSE}
+range = cbind(c(-180, 180), c(-90, 90))
+info <- LKrigSetup(range, startingLevel = 1, nlevel = 1, LKGeometry = "LKSphere")
+centers <- LKrigLatticeCenters(info, Level = 1)
+plot(centers[,1], centers[,2], cex=0.5, pch=18)
+```
 
 ## Working with spherical coordinates
 

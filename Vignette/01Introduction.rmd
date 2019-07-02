@@ -4,7 +4,7 @@ In this vignette, we will explore the functions in the LatticeKrig package and s
 
 ## What is Kriging?
 
-Kriging (named for South African satistician Danie Krige) is a method for making predictions from a spatial data set. A spatial data set means the data contains the observed variable and its location, and pairs of observations taken close together have similar values. For example, the current temperature in cities would be spatial data. As such, kriging can be applied to a variety of important data sets, from geological data to atmospheric data.
+Kriging (named for South African statistician Danie Krige) is a method for making predictions from a spatial data set. A spatial data set means the data contains the observed variable and its location, and pairs of observations taken close together have similar values. For example, the current temperature in cities would be spatial data. As such, kriging can be applied to a variety of important data sets, from geological data to atmospheric data.
 
 The standard spatial model for Kriging relates the observation to a sum of three components: A polynomial function of the locations (and covariates, if provided), a spatial process, and measurement error.
 

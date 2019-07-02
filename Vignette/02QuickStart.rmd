@@ -42,6 +42,8 @@ lines(xGrid, sin(xGrid), col='blue', lwd = 3)
 lines(xGrid, prediction, col='red', lty=2, lwd=3)
 ```
 
+## Fitting the model in two dimensions
+
 For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, and use the \ttt{US} function to draw in the USA state borders to show where Colorado is. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
 
 ```{r QuickStart2D}

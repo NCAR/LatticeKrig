@@ -40,13 +40,20 @@ This next plot adds a collection of simulations based on the fitted curve; the s
 
 ```{r QuickStart1DResidualPlot}
 uncertainty <- LKrig.sim.conditional(kFit1D, x.grid = as.matrix(xGrid), M=50)
-norm <- (uncertainty$g.draw - as.vector(prediction)) / apply(uncertainty$g.draw, 1, sd)
+sdVec <- apply(uncertainty$g.draw, 1, sd)
+norm <- (uncertainty$g.draw - as.vector(prediction)) / sdVec
 gammas <- apply(abs(norm), 2, max)
 gamma <- quantile(gammas, 0.95)
-matplot(uncertainty$g.draw, type="l", x = seq(-6,6, length.out = 200),
-        main = "Simulated Curves", xlab = "Location", ylab = "Measured Value")
-lines(xGrid, sin(xGrid), col='blue', lwd = 3)
-lines(xGrid, prediction, col='red', lty=2, lwd=3)
+upperBound <- prediction + gamma*sdVec
+lowerBound <- prediction - gamma*sdVec
+plot(xGrid, upperBound, type="l", ylim = c(min(lowerBound), max(upperBound)),
+     main = "Simulated Curves with Confidence ", xlab = "Location", ylab = "Measured Value")
+envelopePlot(xGrid, lowerBound, xGrid, upperBound)
+lines(uncertainty$x.grid, uncertainty$g.draw[,1], lwd = 2)
+lines(uncertainty$x.grid, uncertainty$g.draw[,2], lwd = 2, col="green")
+lines(uncertainty$x.grid, uncertainty$g.draw[,3], lwd = 2, col="orange")
+lines(uncertainty$x.grid, uncertainty$g.draw[,4], lwd = 2, col="cyan")
+
 ```
 
 ## Fitting the model in two dimensions

@@ -43,32 +43,37 @@ Now, we will use \ttt{LatticeKrig} to approximate the surfaces in both rectangul
 ```{r SphereExampleComparison, fig.height=6, fig.width=8, fig.align='center'}
 par(mfrow = c(2,2))
 
-rectangleEquatorInfo <- LKrigSetup(equatorLocations, nlevel = 2, NC = 13, NC.buffer = 2, alpha = c(0.8, 0.2), a.wght = 4.01)
-rectangleEquatorFit <- LatticeKrig(equatorLocations, equatorValues, LKinfo = rectangleEquatorInfo)
-surface(rectangleEquatorFit, main="Equator Surface Prediction \nUsing Rectangular Kriging",
+rectEqInfo <- LKrigSetup(equatorLocations, nlevel = 2, NC = 13,
+                         NC.buffer = 2, alpha = c(0.8, 0.2), a.wght = 4.01)
+rectEqFit <- LatticeKrig(equatorLocations, equatorValues,
+                         LKinfo = rectEqInfo)
+surface(rectEqFit, main="Equator Surface Prediction \nUsing Rectangular Kriging",
         xlab="Longitude", ylab="Latitude")
 #world(add=TRUE)
-sqrt(sum(rectangleEquatorFit$residuals^2) / nrow(equatorLocations))
+sqrt(sum(rectEqFit$residuals^2) / nrow(equatorLocations))
 
-rectanglePolarInfo <- LKrigSetup(polarLocations, nlevel = 2, NC = 13, NC.buffer = 2, alpha = c(0.8, 0.2), a.wght = 4.01)
-rectanglePolarFit <- LatticeKrig(polarLocations, polarValues, LKinfo = rectanglePolarInfo)
-surface(rectanglePolarFit, main="Polar Surface Prediction \nUsing Rectangular Kriging",
+rectPoleInfo <- LKrigSetup(polarLocations, nlevel = 2, NC = 13,
+                           NC.buffer = 2, alpha = c(0.8, 0.2), a.wght = 4.01)
+rectPoleFit <- LatticeKrig(polarLocations, polarValues, LKinfo = rectPoleInfo)
+surface(rectPoleFit, main="Polar Surface Prediction \nUsing Rectangular Kriging",
         xlab="Longitude", ylab="Latitude")
 #world(add=TRUE)
-sqrt(sum(rectanglePolarFit$residuals^2) / nrow(polarLocations))
+sqrt(sum(rectPoleFit$residuals^2) / nrow(polarLocations))
 
-info1 <- LKrigSetup(equatorLocations, nlevel = 2, startingLevel = 6, alpha = c(0.8, 0.2)
-                   , a.wght = 1.01, LKGeometry = "LKSphere")
+info1 <- LKrigSetup(equatorLocations, nlevel = 2, startingLevel = 6,
+                    alpha = c(0.8, 0.2), a.wght = 1.01, LKGeometry = "LKSphere")
 sphereEquatorFit <- LatticeKrig(equatorLocations, equatorValues, LKinfo = info1)
-surface(sphereEquatorFit, main="Equator Surface Prediction \nUsing Spherical Kriging", xlab="Longitude", ylab="Latitude")
+surface(sphereEquatorFit, main="Equator Surface Prediction \nUsing Spherical Kriging",
+        xlab="Longitude", ylab="Latitude")
 #world(add=TRUE)
 sqrt(sum(sphereEquatorFit$residuals^2) / nrow(equatorLocations))
 
-info2 <- LKrigSetup(polarLocations, nlevel = 2, startingLevel = 6, alpha = c(0.8, 0.2)
-                   , a.wght = 1.01, LKGeometry = "LKSphere")
+info2 <- LKrigSetup(polarLocations, nlevel = 2, startingLevel = 6,
+                    alpha = c(0.8, 0.2), a.wght = 1.01, LKGeometry = "LKSphere")
 spherePolarFit <- LatticeKrig(polarLocations, polarValues, LKinfo = info2)
 sqrt(sum(spherePolarFit$residuals^2) / nrow(polarLocations))
-surface(spherePolarFit, main="Polar Surface Prediction \nUsing Spherical Kriging", xlab="Longitude", ylab="Latitude")
+surface(spherePolarFit, main="Polar Surface Prediction \nUsing Spherical Kriging",
+        xlab="Longitude", ylab="Latitude")
 #world(add=TRUE)
 ```
 

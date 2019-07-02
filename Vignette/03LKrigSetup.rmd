@@ -21,7 +21,7 @@ The parameter \ttt{NC} is an integer that determines the number of basis functio
 
 * \ttt{alpha} or \ttt{alphaObject} or \ttt{nu}
 
-At least one of \ttt{alpha}, \ttt{alphaObject}, and \ttt{nu} must be set. In most cases you will use \ttt{alpha} or \ttt{nu}. The parameter \ttt{alpha} should be a vector of length \ttt{nlevel} that holds the weights that scale the basis functions on each different lattice size; \ttt{nu} is a scalar that controls how quickly the values in \ttt{alpha} decay. When \ttt{nu} is set, \ttt{alpha} will be filled by setting \ttt{alpha[i] = 2\^(-2 * i * nu)}, then scaling so the sum of the weights in \ttt{alpha} is 1. This scaling should always be done before passing in \ttt{alpha} to make sure the model fits correctly.
+At least one of \ttt{alpha}, \ttt{alphaObject}, and \ttt{nu} must be set. In most cases you will use \ttt{alpha} or \ttt{nu}. The parameter \ttt{alpha} should be a vector of length \ttt{nlevel} that holds the weights that scale the basis functions on each different lattice size; \ttt{nu} is a scalar that controls how quickly the values in \ttt{alpha} decay. When \ttt{nu} is set, \ttt{alpha} will be filled by setting \ttt{alpha[i] = 2\^(-2 * i * nu)}, then scaling so the sum of the weights in \ttt{alpha} is 1. This scaling should always be done before passing in \ttt{alpha} to make sure the model fits correctly. The \ttt{alphaObject} and \ttt{a.wghtObject} below can be used for nonstationary models, which are not discussed in this vignette.
 
 * \ttt{a.wght} or \ttt{a.wghtObject}
 

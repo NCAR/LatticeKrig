@@ -119,7 +119,7 @@ Moreover, one might want to evaluate these on a grid to make it easier to plot t
 
 ## Simulation 
 
-A feature of the LatticeKrig model is that it is efficient to simulate realizations of the process. This operation referred to *unconditional simulation* can be then used to generate conditional simulations to determine approximate prediction standard errors and quantify the estimate's uncertainty. 
+A feature of the LatticeKrig model is that it is efficient to simulate realizations of the process. This operation, called *unconditional simulation*, can be then used to generate conditional simulations (conditioned on the data points) to determine approximate prediction standard errors and quantify the estimate's uncertainty. 
 
 The LKinfo object contains all the model attributes needed to simulate a realization of the process. In general if
 \ttt{MyLKinfo} is the model specification and \ttt{x1} are the locations for evaluating the process,

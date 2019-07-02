@@ -32,10 +32,17 @@ lines(xGrid, sin(xGrid), col='blue')
 lines(xGrid, prediction, col='red', lty=2, lwd=2)
 ```
 
-For this example, the fitted curve (in red) matches the true function (in blue) rather closely. This next plot adds a collection of simulations based on the fitted curve; the simulations get farther apart, meaning the standard error gets larger, where there aren't many data points and especially at the edges of the region. These simulations are easier to compute than the standard error, so they are used to estimate the standard error of a model in LatticeKrig.
+For this example, the fitted curve (in red) matches the true function (in blue) rather closely. 
+
+## Inference and Error Analysis
+
+This next plot adds a collection of simulations based on the fitted curve; the simulations get farther apart, meaning the standard error gets larger, where there aren't many data points and especially at the edges of the region. These simulations are easier to compute than the standard error, so they are used to estimate the standard error of a model in LatticeKrig.
 
 ```{r QuickStart1DResidualPlot}
-uncertainty <- LKrig.sim.conditional(kFit1D, x.grid = as.matrix(xGrid), M=5)
+uncertainty <- LKrig.sim.conditional(kFit1D, x.grid = as.matrix(xGrid), M=50)
+norm <- (uncertainty$g.draw - as.vector(prediction)) / apply(uncertainty$g.draw, 1, sd)
+gammas <- apply(abs(norm), 2, max)
+gamma <- quantile(gammas, 0.95)
 matplot(uncertainty$g.draw, type="l", x = seq(-6,6, length.out = 200),
         main = "Simulated Curves", xlab = "Location", ylab = "Measured Value")
 lines(xGrid, sin(xGrid), col='blue', lwd = 3)

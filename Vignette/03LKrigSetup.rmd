@@ -57,24 +57,19 @@ The following plots show how different values of \ttt{NC}, \ttt{a.wght}, \ttt{al
 basis <- function(d) {
   return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
 }
-xGrid = seq(-5,5, length.out = 400)
-NCPlot = cbind(basis(abs(xGrid/1.25)), basis(abs(xGrid/2.5)), basis(abs(xGrid/5)))
+xGrid = seq(0,5, length.out = 400)
+NCPlot = cbind(basis(abs(xGrid/5)), basis(abs(xGrid/2.5)), basis(abs(xGrid/1.25)))
 matplot(NCPlot, type="l", lty=1, x = xGrid, xlab = "Location", ylab = "Covariance",
         main="Effect of NC on covariance function")
-legend("topright", c("NC = 5", "NC = 10", "NC = 20"))
+legend("topright", c("NC = 5", "NC = 10", "NC = 20"), col=c("black", "red", "green"), lty=1)
 
 AWPlot = cbind(basis(abs(xGrid/10)), basis(abs(xGrid/2)), basis(abs(xGrid/1)))
-matplot(NCPlot, type="l", lty=1, x = xGrid, xlab = "Location", ylab = "Covariance",
+matplot(AWPlot, type="l", lty=1, x = xGrid, xlab = "Location", ylab = "Covariance",
         main="Effect of a.wght on covariance function")
-legend("topright", c("a.wght = 2.1", "a.wght = 2.5", "a.wght = 3"))
+legend("topright", c("a.wght = 2.1", "a.wght = 2.5", "a.wght = 3"), col=c("black", "red", "green"), lty = 1)
 
-ALPlot = cbind(basis(abs(xGrid/2.5)), 0.5 * basis(abs(xGrid/2.5)), 0.25 * basis(abs(xGrid/2.5)))
-matplot(NCPlot, type="l", lty=1, x = xGrid, xlab = "Location", ylab = "Covariance",
-        main="Effect of alpha on covariance function")
-legend("topright", c("alpha = 1", "alpha = 0.5", "alpha = 0.25"))
-
-NuPlot = cbind(1/3 * basis(abs(xGrid/10)), 1/7 * basis(abs(xGrid/10)), 1/21 * basis(abs(xGrid/10)))
+NuPlot = cbind(1/3 * basis(abs(xGrid/1.25)), 1/7 * basis(abs(xGrid/1.25)), 1/21 * basis(abs(xGrid/1.25)))
 matplot(NuPlot, type="l", lty=1, x = xGrid, xlab = "Location", ylab = "Covariance",
-        main="Effect of nu on covariance function (3rd level)")
-legend("topright", c("nu = 0", "nu = 0.5", "nu = 1"))
+        main="Effect of nu on covariance function (shown at 3rd level)")
+legend("topright", c("nu = 0", "nu = 0.5", "nu = 1"), col=c("black", "red", "green"), lty = 1)
 ```

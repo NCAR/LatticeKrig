@@ -28,13 +28,15 @@ LKrig.sim.conditional <- function(LKrigObj, M = 1, x.grid = NULL,
         }
         x.grid <- make.surface.grid(grid.list)
     }
+    # coerce x.grid to a matrix.  
+    x.grid<- as.matrix( x.grid)
     if( verbose){
     	cat("LKrig.sim.conditional: x.grid")
     	print( x.grid)
     }
-    # NOTE: the name x.grid may be misleading because it just needs to a column matrix of
-    # locations. It need not follow any regular pattern.
-    # now generate the error surfaces
+    # NOTE: the name x.grid may be misleading because it just needs to a  matrix with rows
+    # indexing th locations and need not follow any regular pattern.
+    # Now generate the error surfaces
     # begin block
     # create vector of seeds if needed
     if( length(seed)==1){
@@ -62,7 +64,7 @@ LKrig.sim.conditional <- function(LKrigObj, M = 1, x.grid = NULL,
    	}
    	ghat<- predict( LKrigObj, x= x.grid, Z = Z.grid )
     for (k in 1:M) {
-        cat(k, " ")
+        cat(k, " ") # numbers to entertain ...
         out<- simConditionalDraw( k, LKrigObj, ghat, x.grid, Z.grid,  PHIGrid,
                                  seeds, ..., verbose=verbose)
         if( !is.null(LKrigObj$LKinfo$fixedFunction) ){
@@ -70,6 +72,7 @@ LKrig.sim.conditional <- function(LKrigObj, M = 1, x.grid = NULL,
         }
         g.conditional.draw[, k] <- out$g.conditional
     }
+   	cat(k, " ", fill=TRUE)
     # sample standard deviation across ensemble members
    	SE<-  apply(g.conditional.draw, 1, FUN=sd)
     return(list(x.grid = x.grid, ghat = ghat, g.draw = g.conditional.draw,

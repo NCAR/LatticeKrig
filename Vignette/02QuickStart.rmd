@@ -36,7 +36,7 @@ For this example, the fitted curve (in red) matches the true function (in blue) 
 
 ## Inference and Error Analysis
 
-This next plot adds a collection of simulations based on the fitted curve; the simulations get farther apart, meaning the standard error gets larger, where there aren't many data points and especially at the edges of the region. These simulations are easier to compute than the standard error, so they are used to estimate the standard error of a model in LatticeKrig.
+This next plot adds a collection of simulations based on the fitted curve and the 95\% confidence envelope for the fitted curve; the simulations get farther apart, meaning the confidence envelope gets wider, where there aren't many data points and especially at the edges of the region. These simulations are easier to compute than the standard error, so they are used to estimate the standard error of a model in LatticeKrig.
 
 ```{r QuickStart1DResidualPlot}
 uncertainty <- LKrig.sim.conditional(kFit1D, x.grid = as.matrix(xGrid), M=50)
@@ -47,7 +47,7 @@ gamma <- quantile(gammas, 0.95)
 upperBound <- prediction + gamma*sdVec
 lowerBound <- prediction - gamma*sdVec
 plot(xGrid, upperBound, type="l", ylim = c(min(lowerBound), max(upperBound)),
-     main = "Simulated Curves with Confidence ", xlab = "Location", ylab = "Measured Value")
+     main = "Simulated Curves with Confidence Envelope", xlab = "Location", ylab = "Measured Value")
 EnvelopePlot(xGrid, lowerBound, xGrid, upperBound)
 for(i in 1:10) {
   lines(uncertainty$x.grid, uncertainty$g.draw[,i], col="gray")
@@ -57,7 +57,7 @@ for(i in 1:10) {
 
 ## Fitting the model in two dimensions
 
-For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, and use the \ttt{US} function to draw in the USA state borders to show where Colorado is. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
+For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, use the \ttt{US} function to draw in the USA state borders to show where Colorado is, and draw the points where data was recorded as well. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
 
 ```{r QuickStart2D}
 data(COmonthlyMet)
@@ -66,6 +66,7 @@ observations <- CO.tmean.MAM.climate
 kFitWeather <- LatticeKrig(locations, observations)
 surface(kFitWeather, main = "2-Dimensional LatticeKrig Example",
         xlab="Longitude", ylab="Latitude")
+points(locations, pch = '*')
 US(add=TRUE, col='black', lwd=4)
 ```
 
@@ -87,7 +88,7 @@ US(add=TRUE, col='black', lwd=4)
 
 This surface is so rough because it accounts for elevation; we can see that the plot is fairly smooth in the eastern half of the state, and extremely rough in the mountains. 
 
-Finally, it is important to note some potential issues that \ttt{LatticeKrig} calculations won't catch. Because \ttt{LatticeKrig} estimates some parameters of the data, the model could be a poor fit if the estimates aren't reasonable. The \ttt{LatticeKrig} model also approximates a thin plate spline by default, which may not be a good fit for a given problem. Finally, as with other curve fitting techniques, you should examine the residuals of the model for any patterns or features that may indicate a poor fit.
+Finally, it is important to note some potential issues that \ttt{LatticeKrig} calculations won't catch. Because \ttt{LatticeKrig} estimates some parameters of the data, the model could be a poor fit if the estimates aren't reasonable. See section 6.4 for more details on this. The \ttt{LatticeKrig} model also approximates a thin plate spline by default, which may not be a good fit for a given problem. Finally, as with other curve fitting techniques, you should examine the residuals of the model for any patterns or features that may indicate a poor fit.
 
 ## Simulating a process from the LatticeKrig model
  

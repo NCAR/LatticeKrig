@@ -1,6 +1,6 @@
 # Appendix C: Sample \ttt{LatticeKrig} calculation
 
-The computations inside of \ttt{LatticeKrig} and \ttt{LKrig} can be hard to understand, so here we will work through several examples, showing all of the linear algebra used. Some of the variable names will be changed from the code in the previous section so that they match the names in the linear algebra appendix and in the JCGS article.
+The computations inside of \ttt{LatticeKrig} and \ttt{LKrig} can be hard to understand, so here we will work through several examples showing all of the linear algebra used. Some of the variable names will be changed from the code in the previous section so that they match the names in the linear algebra appendix and in the JCGS article.
 
 ## First Example: One level, no normalization
 

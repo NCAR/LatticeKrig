@@ -51,7 +51,7 @@ This parameter determines whether or not to normalize the basis functions after 
 
 ## Effects on covariance function
 
-The following plots show how different values of \ttt{NC}, \ttt{a.wght}, \ttt{alpha}, and \ttt{nu} affect the covariance function. These plots are all one dimensional for ease of viewing; recall that the covariance function is radially symmetric in higher dimensions.
+The following plots show how different values of \ttt{NC}, \ttt{a.wght}, \ttt{alpha}, and \ttt{nu} affect the covariance function. These plots are all one dimensional for ease of viewing; the covariance function is radially symmetric in higher dimensions so these plots can easily be extended to higher dimensions.
 
 ```{r CovarianceSamples, fig.height=3.5, fig.width=6, echo=FALSE}
 basis <- function(d) {

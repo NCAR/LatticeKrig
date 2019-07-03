@@ -51,7 +51,7 @@ The model computation is controlled by the \ttt{LKinfo} object.
 This is a list of class \ttt{LKinfo} that has all the information needed to specify the spatial model. One could build this list directly including all the necessary information although is it is easier to use the function 
 \ttt{LKrigSetup} to make sure all the details are filled in correctly. This function will also makes some checks on the passed arguments and will fill in some with defaults if not specified. 
 LatticeKrig provides a print method for this object class and that creates the summary of the model when this object is printed. Printing this as a raw list would usually be a big mess of output and not very helpful! See the source code for \ttt{print.LKinfo} to see how this is done. 
-The \ttt{LKinfo} object also has a second class that is the geometry. This controls how other components in this object are filled in. In particular what is in the component \ttt{LatticeInfo} will change reflecting different lattices based on the geometries. See \ttt{help(LKGeometry)} for more details on what needs to done for a given geometry. 
+The \ttt{LKinfo} object also has a second class that is the geometry. This controls how other components in this object are filled in. In particular the component \ttt{LatticeInfo} will change, reflecting different lattices based on the geometries. See \ttt{help(LKGeometry)} for more details on what needs to done for a given geometry. 
 
 As a specific example here is how these steps fill in the lattice information for the LKInterval geometry, the 1-D model. 
 
@@ -80,7 +80,7 @@ This line in \ttt{LKrig}
 ```{r eval=FALSE}
 G <- t(wX) %*% wX + LKinfo$lambda * (Q)
 ```
-assembles the G matrix from the precision matrix, the value of \ttt{lambda} and the weighted basis function matrix. Although these matrices are in sparse format, note that the \ttt{\%*\%} operator is used because the spam package has provided methods for addition and multiplication using the typical operators.
+assembles the G matrix (a key part of the intermediate calculations mentioned earlier) from the precision matrix, the value of \ttt{lambda} and the weighted basis function matrix. Although these matrices are in sparse format, note that the \ttt{\%*\%} operator is used because the spam package has provided methods for addition and multiplication using the typical operators.
 Creating the different components of the model in LatticeKrig is also an example of overloading where the class is the value of LKgeometry.
 
 One advantage of this structure is that new features can be added to the LatticeKrig models without having to change the basic \ttt{LKrig} function and its computational steps. It also results in many key steps only happening one place. For example, the Cholesky decomposition of the G matrix created above is done only in one place in this package. Moreover, the subsequent steps of finding the basis coefficients (\ttt{LKrig.coef}), computing the predicted values, evaluating the likelihood (\ttt{LKrig.lnPlike}), and finding the approximate model degrees of freedom (\ttt{LKrig.traceA}) are the same for any model. That is, they are unique functions that work for any geometry or configuration of the lattice and SAR weights. Of course the advantage here is that the code base needs to changed in only one place if any of these basic steps are modified or corrected.  

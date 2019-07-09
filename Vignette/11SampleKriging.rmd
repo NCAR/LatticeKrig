@@ -55,7 +55,8 @@ dHat <- solve(t(Z) %*% Minverse %*% Z, t(Z) %*% Minverse %*% y)
 G <- t(Phi)  %*% Phi + lambda*Q
 cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
 
-info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 2.01, alpha = 1, lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 2.01,
+                   alpha = 1, lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
 krigFit <- LKrig(x, y, LKinfo = info)
 
 #compare kriging prediction with calculated prediction
@@ -108,7 +109,8 @@ G <- t(Phi)  %*% Phi + lambda*Q
 cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
 predictions <- ZPredict %*% dHat + PhiPredict %*% cHat
 
-info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 2.01, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1,
+                   a.wght = 2.01, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
 krigFit <- LKrig(x, y, LKinfo = info)
 krigPredictions <- predict(krigFit, xGrid)
 
@@ -199,7 +201,8 @@ dHat <- solve(t(Z) %*% Minverse %*% Z, t(Z) %*% Minverse %*% y)
 G <- t(Phi)  %*% Phi + lambda*Q
 cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
 
-info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, nlevel = 3, a.wght = 2.01, alpha = c(4,2,1)/7, lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, nlevel = 3, a.wght = 2.01, alpha = c(4,2,1)/7,
+                   lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
 krigFit <- LKrig(x, y, LKinfo = info)
 
 #making covariance matrix and comparing it to the LKrig one
@@ -223,7 +226,8 @@ In this section, we will compute the estimates directly using these equations to
 
 ```{r KrigingEquations}
 data(KrigingExampleData)
-info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1, a.wght = 3, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1,
+                   a.wght = 3, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
 krigFit <- LKrig(x, y, LKinfo = info)
 nc <- 6
 ncBuffer <- 5

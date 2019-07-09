@@ -20,9 +20,9 @@ plot(centers[,1], centers[,2], cex=0.5, pch=18)
 
 ## Working with spherical coordinates
 
-For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will create some sample data at the equator, rotate it up to near the north pole, and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. We compute a kriging fit for the original data and the rotated data using the rectangular geometry and the spherical geometry, and print out the sum of squared errors as a measurement of how accurately the different fits match the data. We will expect to see very similar results for the two spherical models and noticeably different results for the two rectangular models. 
+For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will load 2 copies of the same sample data -- one near the equator, one near the north pole -- and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. We compute a kriging fit for the original data and the rotated data using the rectangular geometry and the spherical geometry, and print out the sum of squared errors as a measurement of how accurately the different fits match the data. We will expect to see very similar results for the two spherical models and noticeably different results for the two rectangular models. 
 
-```{r SphereExampleDataCreation, fig.height=3.5, fig.width=8, fig.align='center'}
+```{r SphereExampleDataCreation, fig.height=3.5, fig.width=7.75, fig.align='center'}
 library(LatticeKrig)
 data(EquatorData)
 data(PolarData)
@@ -30,9 +30,11 @@ data(PolarData)
 #plot the data at the equator and at the north pole in rectangular coordinates
 #note the significant distortion at the north pole
 par(mfrow = c(1,2))
-quilt.plot(equatorGrid, equatorGridValues, main="Equator Data", xlab="Longitude", ylab="Latitude")
+quilt.plot(equatorGrid, equatorGridValues, main="Equator Data",
+           xlab="Longitude", ylab="Latitude")
 world(add=TRUE)
-quilt.plot(polarGrid, polarGridValues, main="Polar Data", xlab="Longitude", ylab="Latitude")
+quilt.plot(polarGrid, polarGridValues, main="Polar Data",
+           xlab="Longitude", ylab="Latitude")
 world(add=TRUE)
 ```
 
@@ -77,4 +79,4 @@ surface(spherePolarFit, main="Polar Surface Prediction \nUsing Spherical Kriging
 #world(add=TRUE)
 ```
 
-As we can see, the rectangular fit fails badly on the data that has been rotated up to the north pole, with approximately 15 times the root mean square error of the corresponding spherical model.
+As we can see, the rectangular fit fails badly on the data that has been rotated up to the north pole, with approximately 15 times the root mean square error of the corresponding spherical model. While the rectangular fit does perform slightly better than the spherical fit at the equator, this is an artifact of how we created the data rather than an indication that the spherical kriging is any worse at the equator than at the poles. 

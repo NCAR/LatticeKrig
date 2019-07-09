@@ -57,7 +57,7 @@ for(i in 1:10) {
 
 ## Fitting the model in two dimensions
 
-For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, use the \ttt{US} function to draw in the USA state borders to show where Colorado is, and draw the points where data was recorded as well. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
+For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, use the \ttt{US} function to draw in the USA state borders to show where Colorado is, and draw the points where data was recorded. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
 
 ```{r QuickStart2D}
 data(COmonthlyMet)
@@ -97,15 +97,15 @@ As a final topic we describe how to generate realizations from the Gaussian mode
 For 
 \ttt{kFit1D} from Section 2.1 note that a listing of the full model is shown from.
 ```{r }
-print( kFit1D$LKinfo)
+print(kFit1D$LKinfo)
 ```
 
 Here we simulate 4 sample curves from this model and evaluate them on a finer grid of points than the observations. The random seed is set to reproduce these particular psuedo random draws. 
 
 ```{r }
 set.seed(123)
-gSim<- LKrig.sim( xGrid, kFit1D$LKinfo, M=4)
-matplot( xGrid, gSim, type="l", lty=1, xlab="x", ylab="g(x)")
+gSim <- LKrig.sim(xGrid, kFit1D$LKinfo, M=4)
+matplot(xGrid, gSim, type="l", lty=1, xlab="x", ylab="g(x)")
 title("Simulated using model in 1D example")
 ```
 Note that in actually fitting the data a linear function is also included but since this is not a random component it is not part of the simulated process. Also the variance of the process is set to one. 
@@ -117,11 +117,11 @@ the observed data. This technique turns out to be very useful for quantifying th
 
 ```{r }
 set.seed(123)
-gCondSim<- LKrig.sim.conditional(  kFit1D, M=25, x.grid=as.matrix(xGrid) )
-matplot( xGrid, gCondSim$g.draw, type="l", lty=1, xlab="x", ylab="y",
-         col="grey", lwd=.5)
-lines(xGrid,predict( kFit1D, xGrid), col="red")
-points( kFit1D$x,kFit1D$y, pch=16, col="black")
+gCondSim <- LKrig.sim.conditional(kFit1D, M=25, x.grid=as.matrix(xGrid))
+matplot(xGrid, gCondSim$g.draw, type="l", lty=1,
+        xlab="x", ylab="y", col="grey", lwd=.5)
+lines(xGrid, predict(kFit1D, xGrid), col="red")
+points(kFit1D$x, kFit1D$y, pch=16, col="black")
 ```
 
 ## Extra Credit 
@@ -129,16 +129,18 @@ points( kFit1D$x,kFit1D$y, pch=16, col="black")
 Here is a final example illustrating the power of deteriming the unceratinty by Monte Carlo. We generate a larger conditional sample over the subinterval [-3,0], find the minimum of each realization and plot the minimum and its location. This two dimensional distribution of minima and their locations is a valid approach to approximate the uncertainty of the estimated minimum of the true curve in this range. Moreover, it would be difficult to derive an analytic formula for this distribution. 
 
 ```{r }
-xGrid2<- as.matrix( seq(-3,0,length.out=100) )
+xGrid2 <- as.matrix(seq(-3, 0, length.out=100))
 set.seed(333)
-gCondSim<- LKrig.sim.conditional(  kFit1D, x.grid=xGrid2, M = 75 )
+suppressMessages(
+  gCondSim <- LKrig.sim.conditional(kFit1D, x.grid=xGrid2, M=75)
+)
 # index of where minimum occurs in each draw
-minXIndex<- apply( gCondSim$g.draw, 2, which.min)
-XMin<- xGrid2[minXIndex]
-YMin<- apply( gCondSim$g.draw, 2, min)
-matplot(xGrid2, gCondSim$g.draw, type="l", lty=1, xlab="x", ylab="y",
-         col="grey", ylim=c()) 
-points( XMin, YMin, col="red4", cex=.5)         
-lines(xGrid2, predict( kFit1D, xGrid2), col="red")
-points( kFit1D$x,kFit1D$y, pch=16, col="black")        
+minXIndex <- apply(gCondSim$g.draw, 2, which.min)
+XMin <- xGrid2[minXIndex]
+YMin <- apply(gCondSim$g.draw, 2, min)
+matplot(xGrid2, gCondSim$g.draw, type="l", lty=1,
+        xlab="x", ylab="y", col="grey", ylim=c()) 
+points(XMin, YMin, col="red4", cex=.5)         
+lines(xGrid2, predict(kFit1D, xGrid2), col="red")
+points(kFit1D$x,kFit1D$y, pch=16, col="black")        
 ```

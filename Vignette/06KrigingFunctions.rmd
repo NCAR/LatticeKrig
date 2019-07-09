@@ -1,9 +1,9 @@
-# How this package works
+# LatticeKrig Implementation Details
 
 This package is designed to be modular and separate the steps of computation, prediction and simulation. It also uses R's function overloading with S3 and S4 objects to simplify the coding. This strategy is especially helpful for different geometries and distance functions. 
 Finally, the use of sparse matrix methods is also implemented as S4 methods through the spam package and so much of linear algebra uses the standard R matrix multiplication operator \ttt{\%*\%} even through sparse computations are being done behind the scenes. 
 
-Despite this complexity it is important to keep in mind the computation and statistical results are just the usual ones associated with Kriging and maximum likelihood associated with a Gaussian spatial process model. The difference is that the spatial process is specified in a way that is suited to generating sparse matrices for the computations. Also overloading function calls makes the code handling different geometries easier to read and write, as demonstrated below.
+Despite this complexity it is important to keep in mind the computation and statistical results are just the usual ones associated with Kriging and maximum likelihood associated with a Gaussian spatial process model. The difference is that the spatial process is specified in a way that is suited to generating sparse matrices for the computations. Also, overloading function calls makes the code handling different geometries easier to read and write, as demonstrated below.
 
 ## An example of classes and methods
 
@@ -29,7 +29,7 @@ makeGrid.2DGrid <- function(gridInfo,...) {
 ```
 
 The first function is a template that is used for disptaching and the two following functions actually handle the two cases.
-Now to use these we create some objects and just call \ttt{makeGrid}.
+Now to use these we create some objects and just call \ttt{makeGrid}. Notice that even though we call the \ttt{makeGrid} function both times, the outputs are completely different based on the class of each input.
 
 ```{r KringFunctionsOverloadingExample, eval=TRUE}
 test1 <- list(min=0.0, max=1.0, delta=.2)

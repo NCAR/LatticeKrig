@@ -1,4 +1,4 @@
-EnvelopePlot <- function(x1, y1, x2, y2, col = NA, ...) {
+EnvelopePlot <- function(x1, y1, x2 = x1, y2, col = NA, ...) {
   if(is.na(col)) {
     col = "thistle1"
   }

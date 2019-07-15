@@ -1,18 +1,22 @@
 # Introduction
 
-In this vignette, we will explore the functions in the LatticeKrig package and show examples of how they can be used to solve problems. The LatticeKrig model is an example of the spatial statistics method known as kriging, adapted to large data sets.
+In this vignette, we will explore the functions in the LatticeKrig package and show examples of how they can be used to solve problems. The LatticeKrig (LK) model is an example of the spatial statistics method known as kriging, adapted to large data sets.
 
-## What is Kriging?
+## What is kriging?
 
-Kriging (named for South African statistician Danie Krige) is a method for making predictions from a spatial data set. A spatial data set means the data contains the observed variable and its location, the variable depends on the location, and pairs of observations taken close together have similar values. For example, the current temperature in cities would be spatial data. As such, kriging can be applied to a variety of important data sets, from geological data to atmospheric data.
+Kriging (named for South African statistician Danie Krige) is a method for making predictions from a spatial data set. By spatial data, we mean the data contains the observed variable and its location, the variable depends on the location, and pairs of observations taken close together have similar values. For example, the current temperature in cities would be spatial data. As such, kriging can be applied to a variety of important data sets, from geological data to atmospheric data.
 
-The standard spatial model for Kriging relates the observation to a sum of three components: a polynomial function of the locations (and covariates, if provided), a spatial process, and measurement error. In LatticeKrig, we use a linear polynomial for the locations, meaning we start by estimating each data point at location $(x,y)$ with $a x + b y + c$, where $a$, $b$, and $c$ are constants that don't change between data points.
+The standard spatial model for Kriging relates the observation to a sum of three components: a polynomial function of the locations (and covariates, if provided), a spatial process, and measurement error.
 
-## The LatticeKrig Model
+## The LatticeKrig model
 
-The central method of LatticeKrig is that we model a spatial process as the sum of radial basis functions (functions that are symmetric around their center and are 0 for far away points) scaled by coefficients, which we assume are correlated. The smooth basis functions and correlated coefficients create a smooth function representation for the spatial process. The structure of the basis functions and covariance has some flexibility, so you can change the structure to make a more reasonable model for a certain problem. The linear polynomial in the locations and covariates is determined using generalized least squares, so it will be as close as possible to all of the data. To approximate the spatial process, we then fit the basis functions to the residuals from the linear model. In terms of linear algebra, the model is $\mathbf y = Z \mathbf d + \Phi \mathbf c + \mathbf e$, where $\mathbf y$ is the vector of variable measurements, $Z$ is the matrix of locations and covariates, $\mathbf d$ is the vector of coefficients for the linear model, $\Phi$ is the matrix of basis functions evaluated at the data points, $\mathbf c$ is the vector of coefficients for each basis function, and $\mathbf e$ is the measurement error. We show the derivations of the equations for $\mathbf c$ and $\mathbf d$ in Appendix A, and show how all of these calculations are done in Appendix C.
+The key feature of LatticeKrig is that we model a spatial process as the sum of radial basis functions (functions that are symmetric around their center and are 0 for far away points) scaled by coefficients, which we assume are correlated. The smooth basis functions and correlated coefficients create a smooth function representation for the spatial process, and the structure of the basis functions and covariance has some flexibility so you can change the structure to make a more reasonable model for a certain problem. The linear polynomial in the locations and covariates is determined using generalized least squares, following the standard approach of Universal Kriging. To approximate the spatial process, we then fit the basis functions to the residuals from the linear model. In terms of linear algebra, the model is
+\[\mathbf y = Z \mathbf d + \Phi \mathbf c + \mathbf e\]
+where $\mathbf y$ is the vector of variable measurements, $Z$ is the matrix of locations and covariates, $\mathbf d$ is the vector of coefficients for the linear model, $\Phi$ is the matrix of basis functions evaluated at the data points, $\mathbf c$ is the vector of coefficients for each basis function, and $\mathbf e$ is the measurement error. If we let $\mathbf g$ represent the true values of the variable (without measurement error $\mathbf e$), we can unroll the matrix multiplications into sums and get the form
+\[ g(\mathbf s) = \sum_{k=1}^n \phi_k(\mathbf s) \hat {\mathbf d}_k + \sum_{k=1}^m \psi_k (\mathbf s) \hat{\mathbf c}_k\]
+We show the derivations of the equations for $\mathbf c$ and $\mathbf d$ in Appendix A, and show how all of these calculations are done in Appendix C.
 
-The package is named LatticeKrig because of the placement of the basis functions: they are equally spaced in all dimensions on a lattice. We can also consider multiple different lattice sizes simultaneously to better capture different levels of resolution; each additional level has half as much space between the basis functions in each dimension. The following plot shows an example of 11 basis functions in the region from 0 to 10, with the one centered around 6 highlighted for emphasis.
+The package is named LatticeKrig because of the placement of the basis functions: they are equally spaced in all dimensions on a lattice. We can also consider multiple different lattice sizes simultaneously to better capture different levels of resolution; by default, each additional level has half as much space between the basis functions in each dimension. The following plot shows an example of 11 basis functions in the region from 0 to 10, with the one centered around 6 highlighted for emphasis.
 ```{r IntroCovarianceFunctionPlot, fig.height=3.5, fig.width=6, echo=FALSE}
 phi <- function(d) {
   return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
@@ -22,24 +26,30 @@ basisCenters <- 0:10
 gridPoints <- seq(0, 10, length=1000)
 distances <- rdist(gridPoints, basisCenters)
 values <- phi(distances / overlap)
-matplot(x = gridPoints, values, type="l", xlab="Location",
+matplot(x = gridPoints, values, type="l", col = "black", lty = 1, xlab="Location",
         ylab = "Basis function value", main="1-D Basis Functions")
 lines(values[,7], x=gridPoints, type="l", col="black", lwd=3)
 ```
 
-The following plot shows some examples of potential curve fits that could be produced from these basis functions, depending on the given data.
+To represent a curve, we multiply each basis function by a coefficient and add them together, as shown in the following plot.The blue bars show the coefficient value at each lattice point, and the black line shows the resulting curve from scaling the basis functions with these coefficients and adding them together.
 
 ```{r IntroCurveSimulations, fig.height=3.5, fig.width=6, echo=FALSE}
-info <- LKrigSetup(as.matrix(c(0,10)), alpha = 1, nlevel = 1, NC = 10, a.wght=2.5, LKGeometry = "LKInterval")
-curves <- LKrig.sim(seq(0,10,,100), info, M=5)
-matplot(curves, type="l", x = seq(0,10,,100), xlab = "Location", ylab = "Curve value", main="Example 1-D Curves")
+info <- LKrigSetup(as.matrix(c(0,10)), alpha = 1, nlevel = 1, NC = 11, NC.buffer = 0, a.wght=2.5, LKGeometry = "LKInterval")
+set.seed(483765)
+coefs <- LKrig.sim(seq(0,10,,100), info, M=1, just.coefficients = TRUE)
+curve <- values %*% coefs
+plot(curve, type="l", x = seq(0,10,,1000), xlab = "Location",
+     ylab = "Curve value", main="Example 1-D Curve and Coefficients")
+abline(v = 0:10, col="gray", lty=2)
+abline(h = 0, col = "darkgray")
+barplot(coefs, col = "lightblue", width = 0.2, space = c(-0.5, rep(4, 10)), add = TRUE)
 ```
 
-## Glossary of Important Functions
+## Glossary of important package functions
 
-* \ttt{LatticeKrig}: Top level function that sets up the default spatial model, estimates some key spatial parameters, and uses the \ttt{LKrig} function for the kriging computation. \ttt{LatticeKrig} can use a minimal set of inputs and is a quick way to fit a kriging model to data.
-* \ttt{LKrig}: Performs the Kriging computation for a fixed LatticeKrig model. This is the main computational step in the package.
-* \ttt{LKrigSetup}: Creates an \ttt{LKinfo} object, which is a list to store the parameters to use for a \ttt{LatticeKrig} or \ttt{LKrig} call; especially useful for examining the effect of changing one parameter on the fit.
+* \ttt{LatticeKrig}: A top level function that sets up the default spatial model, estimates some key spatial parameters, and uses the \ttt{LKrig} function for the kriging computation. \ttt{LatticeKrig} can use a minimal set of inputs and is a quick way to fit a kriging model to data.
+* \ttt{LKrig}: Performs the Kriging computation and evaluates the Gaussian spatial likelihood function for a fixed LatticeKrig model. This is the main computational step in the package, and is common to all choices of geometries and models.
+* \ttt{LKrigSetup}: Creates an \ttt{LKinfo} object, which is used to describe the complete spatial model for a \ttt{LatticeKrig} or \ttt{LKrig} call; especially useful for examining the effect of changing one parameter on the model.
 * \ttt{surface}: Plots a fitted surface in 2D space as a color plot and adds contour lines.
-* \ttt{image.plot}: Plots a dataset or fitted surface in 2D space as a color plot without contour lines.
-* \ttt{predictSurface}: Computes the values from a Kriging fit and makes a surface, but doesn't plot it.
+* \ttt{image.plot}: Plots a dataset or fitted surface in 2D space as an image plot and adds a color bar legend.
+* \ttt{predictSurface}: Takes a Kriging model and evaluates its fitted function on a grid of locations.

@@ -1,7 +1,7 @@
 ---
 title: "LatticeKrig Vignette"
-author: "Matthew Iverson, Doug Nychka"
-date: "5/21/2019"
+author: "Matthew Iverson, Douglas Nychka"
+date: "7/15/2019"
 output: 
   pdf_document:
       toc: true

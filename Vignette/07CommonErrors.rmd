@@ -1,6 +1,6 @@
 # Common Errors
 
-## Could not find function [FunctionName]
+## Could not find function
 
 Make sure that the library is installed (\ttt{install.packages("LatticeKrig")}) and loaded (\ttt{library(LatticeKrig)}).
 

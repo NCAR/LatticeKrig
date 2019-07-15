@@ -1,4 +1,4 @@
-# Appendix B: Comparison with kriging from fields package
+# Appendix B: Comparison with mKrig function from fields package
 
 In this section we will compare the kriging done in LatticeKrig with ordinary kriging, such as the kriging done in fields. The chief difference is that LatticeKrig assumes a particular covariance function that leads to a sparse precision matrix (the precision matrix is the inverse of the covariance matrix). However, when we do ordinary kriging with this particular covariance function, we will see that the results come out the same for both algorithms, though the ordinary kriging uses dense matrix operations so it takes much longer with large data. To investigate this, we will use \ttt{LKrig} (the function that does the computation in \ttt{LatticeKrig}) and \ttt{mKrig} to compute models for the data. To make sure the parameters match up, we use an \ttt{LKinfo} object to store the parameters for the kriging. 
 

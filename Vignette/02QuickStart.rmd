@@ -1,24 +1,28 @@
 # Quick Start Guide
 
-In this section, we will lay out the bare essentials of the package as a quick overview. To fit a surface and interpolate data using \ttt{LatticeKrig}, the only required arguments are, naturally, the measurement locations (formatted in a matrix where each row is one location) and measurement values. However, we highly recommend using some of the optional parameters to customize the model to your specific data problem - several ways to do this are illustrated in this vignette. Calling the \ttt{LatticeKrig} function and passing in the locations and values will produce an \ttt{LKrig} object that contains all the information needed to predict the variable at any location. 
+In this section, we will lay out the bare essentials of the package as a quick overview for the impatient reader. To fit a surface and interpolate data using \ttt{LatticeKrig}, the only required arguments are, naturally, the measurement locations (formatted in a matrix where each row indexes one location) and measurement values. However, we highly recommend using some of the optional parameters to customize the model to your specific data problem - several ways to do this are illustrated in this vignette. Calling the \ttt{LatticeKrig} function and passing in the locations and values will produce an \ttt{LatticeKrig} object that contains all the information needed to predict the variable at any location. Also, some spatial parameters are estimated by maximum likelihood if not specified. 
 
-For a simple, 1-dimensional example, we will take our locations to be 50 randomly spaced points on the interval $[-6, 6]$, and our variable measurements to be the values of $\sin(x)$ at these locations. The goal of our kriging fit is to estimate this smooth curve from the observations.
+For a simple, 1-dimensional example, we will take our locations to be 50 randomly spaced points on the interval $[-6, 6]$, and our observations to be the values of $\sin(x)$ at these locations with some added error. The goal of our kriging fit is to estimate this smooth curve from the observations.
 
-## Fitting the model in one dimension
+## One dimensional LatticeKrig example
 
 ```{r QuickStart1D}
+#Making the synthetic data
 set.seed(223)
 locations <- runif(50, min=-6, max=6)
 locations <- as.matrix(locations)
 observations <- sin(locations) + rnorm(50, sd = 1e-1)
+#Fit to the data, with parameters sigma and rho found by maximum likelihood.
 kFit1D <- LatticeKrig(locations, observations)
 ```
 
-Now we will print out the \ttt{LKrig} object: this list features the data's estimated covariance scale \ttt{rho} and estimated standard measurement error \ttt{sigma}, and many basis function settings: the type of basis function, how distance is measured, and the number and spacing of basis functions. In this example, all of this information is determined by \ttt{LatticeKrig} from the defaults, but can be changed with optional parameters.
+Now we will print out the \ttt{LKrig} object: this list features the data's estimated covariance scale \ttt{rho} and estimated standard measurement error \ttt{sigma}, and the basis function description: the type of basis function, how distance is measured, and the number and spacing of basis functions. In this example, all of this information is determined by \ttt{LatticeKrig} from defaults, but can be changed with optional parameters.
 
 ```{r QuickStart1DPrintout}
 print(kFit1D)
 ```
+
+In the printout above, \ttt{sigma} is the estimated standard deviation of the measurement error; we set it to be 0.1, so the estimate 0.106 is great. EDF is a measurement of how strictly the model matches the original data; when EDF = 1, the model will be a straight line; when EDF equals the number of observations, the model will exactly match each recorded data point. We can also see the type of basis function used: in this case it is the Wendland function. We also have the default 3 levels to capture different effect scales.
 
 ##Plotting the results
 
@@ -32,28 +36,33 @@ lines(xGrid, sin(xGrid), col='blue')
 lines(xGrid, prediction, col='red', lty=2, lwd=2)
 ```
 
-For this example, the fitted curve (in red) matches the true function (in blue) rather closely. 
+For this example, the fitted curve (in red) matches the true function (in blue) rather closely, though error increases near the endpoints and we underestimate some peaks and troughs.
 
-## Inference and Error Analysis
+## Inference and error analysis
 
-This next plot adds a collection of simulations based on the fitted curve and the 95\% confidence envelope for the fitted curve; the simulations get farther apart, meaning the confidence envelope gets wider, where there aren't many data points and especially at the edges of the region. These simulations are easier to compute than the standard error, so they are used to estimate the standard error of a model in LatticeKrig.
+This next plot adds a collection of simulations based on the fitted curve and the 95\% confidence envelope for the fitted curve. These simulations are easier to compute than the standard error for large data sets and so they are used to estimate the standard error of a model in LatticeKrig.
 
 ```{r QuickStart1DResidualPlot}
+#simulates 50 curves based on the given data
 uncertainty <- LKrig.sim.conditional(kFit1D, x.grid = as.matrix(xGrid), M=50)
+#computing the number of standard deviations needed to make the envelope contain 95% of the data
 sdVec <- apply(uncertainty$g.draw, 1, sd)
 norm <- (uncertainty$g.draw - as.vector(prediction)) / sdVec
 gammas <- apply(abs(norm), 2, max)
 gamma <- quantile(gammas, 0.95)
+#making the upper and lower bounds and plotting the envelope
 upperBound <- prediction + gamma*sdVec
 lowerBound <- prediction - gamma*sdVec
 plot(xGrid, upperBound, type="l", ylim = c(min(lowerBound), max(upperBound)),
      main = "Simulated Curves with Confidence Envelope", xlab = "Location", ylab = "Measured Value")
-EnvelopePlot(xGrid, lowerBound, xGrid, upperBound)
+EnvelopePlot(xGrid, y1 = lowerBound, y2 = upperBound)
 for(i in 1:10) {
   lines(uncertainty$x.grid, uncertainty$g.draw[,i], col="gray")
 }
 
 ```
+
+We can see that the simulations get farther apart, meaning the confidence envelope gets wider, where there aren't many data points and especially at the edges of the region.
 
 ## Fitting the model in two dimensions
 
@@ -90,7 +99,7 @@ This surface is so rough because it accounts for elevation; we can see that the 
 
 Finally, it is important to note some potential issues that \ttt{LatticeKrig} calculations won't catch. Because \ttt{LatticeKrig} estimates some parameters of the data, the model could be a poor fit if the estimates aren't reasonable. See section 6.4 for more details on this. The \ttt{LatticeKrig} model also approximates a thin plate spline by default, which may not be a good fit for a given problem. Finally, as with other curve fitting techniques, you should examine the residuals of the model for any patterns or features that may indicate a poor fit.
 
-## Simulating a process from the LatticeKrig model
+## Simulating a spatial process from the LatticeKrig model
  
 As a final topic we describe how to generate realizations from the Gaussian model in this package. The \ttt{LKinfo} object has a full description of the model and so simulation is easy. In the two examples of this section this object was set up from the top level function \ttt{LatticeKrig} and is the LKinfo component of the returned results. For more control over the model, however,  we recommend that this object be created separately. (See Section 3)
 
@@ -124,7 +133,7 @@ lines(xGrid, predict(kFit1D, xGrid), col="red")
 points(kFit1D$x, kFit1D$y, pch=16, col="black")
 ```
 
-## Extra Credit 
+## Extra credit!
 
 Here is a final example illustrating the power of deteriming the unceratinty by Monte Carlo. We generate a larger conditional sample over the subinterval [-3,0], find the minimum of each realization and plot the minimum and its location. This two dimensional distribution of minima and their locations is a valid approach to approximate the uncertainty of the estimated minimum of the true curve in this range. Moreover, it would be difficult to derive an analytic formula for this distribution. 
 

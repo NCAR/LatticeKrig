@@ -71,7 +71,7 @@ This parameter determines how many lattice points to add outside the range of th
 
 This parameter determines whether or not to normalize the basis functions after computing them, making the variance 1. This is set to \ttt{TRUE} by default, sacrificing some computing time to reduce edge artifacts created by the model that aren't present in the real data. 
 
-## Effects on covariance function
+## Relationships between parameters and the covariance function
 
 The following plots show how different values of \ttt{NC}, \ttt{a.wght}, \ttt{alpha}, and \ttt{nu} affect the covariance function. These plots are all one dimensional for ease of viewing; the covariance function is radially symmetric in higher dimensions so these plots can easily be extended to higher dimensions.
 

@@ -78,7 +78,7 @@ test.for.zero(krigPredictions, predictions)
 
 ## Second example: One level with normalization
 
-In this example, we normalize \ttt{Phi} so that the basis functions have covariance 1 at each data point. We also print out the diagonal of the covariance matrix, $\Phi P \Phi^T$ - note that it is all ones.
+In this example, we normalize \ttt{Phi} so that the basis functions have covariance 1 at each data point. This normalization will reduce artifacts in the kriging model that aren't present in the data near the edges of the window. We also print out the diagonal of the covariance matrix, $\Phi P \Phi^T$ - note that it is all ones.
 ```{r Calculations3New}
 D <- Phi %*% P %*% t(Phi)
 #discarding the off-diagonal elements of D

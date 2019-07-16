@@ -40,13 +40,27 @@ For this example, the fitted curve (in red) matches the true function (in blue) 
 
 ## Inference and error analysis
 
-This next plot adds a collection of simulations based on the fitted curve and the 95\% confidence envelope for the fitted curve. These simulations are easier to compute than the standard error for large data sets and so they are used to estimate the standard error of a model in LatticeKrig.
+This first plot shows the 95\% confidence intervals for the individual locations, based on a collection of simulations. These simulations are easier to compute than the standard error for large data sets and so they are used to estimate the standard error of a model in LatticeKrig.
 
-```{r QuickStart1DResidualPlot}
+```{r QuickStart1DErrorPlot1}
 #simulates 50 curves based on the given data
 uncertainty <- LKrig.sim.conditional(kFit1D, x.grid = as.matrix(xGrid), M=50)
-#computing the number of standard deviations needed to make the envelope contain 95% of the data
+#making a 95% confidence interval for each data point
 sdVec <- apply(uncertainty$g.draw, 1, sd)
+gamma <- qnorm(0.975)
+upperBound <- prediction + gamma*sdVec
+lowerBound <- prediction - gamma*sdVec
+plot(xGrid, upperBound, type="l", ylim = c(min(lowerBound), max(upperBound)),
+     main = "Data with Confidence Intervals", xlab = "Location", ylab = "Measured Value")
+EnvelopePlot(xGrid, y1 = lowerBound, y2 = upperBound)
+points(locations, observations)
+lines(xGrid, prediction, col='red', lty=2, lwd=2)
+```
+
+This next plot adds a collection of simulations based on the fitted curve and the 95\% confidence envelope for the entire fitted curve.
+
+```{r QuickStart1DErrorPlot2}
+#computing the number of standard deviations needed to make the envelope contain 95% of the data
 norm <- (uncertainty$g.draw - as.vector(prediction)) / sdVec
 gammas <- apply(abs(norm), 2, max)
 gamma <- quantile(gammas, 0.95)
@@ -66,20 +80,26 @@ We can see that the simulations get farther apart, meaning the confidence envelo
 
 ## Fitting the model in two dimensions
 
-For another, more practical example, we will predict the average spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, use the \ttt{US} function to draw in the USA state borders to show where Colorado is, and draw the points where data was recorded. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
+For another, more practical example, we will predict the average daily mean spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, use the \ttt{US} function to draw in the USA state borders to show where Colorado is, and draw the points where data was recorded. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
 
 ```{r QuickStart2D}
 data(COmonthlyMet)
 locations <- CO.loc
 observations <- CO.tmean.MAM.climate
 kFitWeather <- LatticeKrig(locations, observations)
-surface(kFitWeather, main = "2-Dimensional LatticeKrig Example",
+print(kFitWeather)
+```
+
+
+
+```{r QuickStart2DPlot1}
+surface(kFitWeather, main = "Spring Temperature Estimates across Colorado",
         xlab="Longitude", ylab="Latitude")
 points(locations, pch = '*')
 US(add=TRUE, col='black', lwd=4)
 ```
 
-This plot is useful, but we can do better. We can see that the coldest temperatures are in the Rocky Mountains, which is not surprising. Thus, we might expect that we will get a more accurate fit by having \ttt{LatticeKrig} account for the elevation at each location as well. Another way we can improve the plot is by increasing its resolution - the current image is somewhat pixelated. The \ttt{surface} function will evaluate the surface at more points if we increase the \ttt{nx} and \ttt{ny} arguments: setting \ttt{nx=200, ny=150} will produce a grid of 30,000 points, which will take longer to compute but produces a nicer looking, more detailed plot. Finally, we can also have \ttt{surface} extend the evaluation all the way to the corners of the window by using the \ttt{extrap} argument; by default it doesn't extrapolate outside of the existing data, since the error often increases dramatically when predicting outside of the given data. However, extending the plot to the corners will make it look nicer. For the sake of example, we will also change the color scale in the image by setting the \ttt{col} parameter.
+This plot is useful, but we can do better. We can see that the coldest temperatures are in the Rocky Mountains at higher elevations, which is not surprising. Thus, we might expect that we will get a more accurate fit by having \ttt{LatticeKrig} account for the elevation at each location as well. Another way we can improve the plot is by increasing its resolution - the current image is somewhat pixelated. The \ttt{surface} function will evaluate the surface at more points if we increase the \ttt{nx} and \ttt{ny} arguments: setting \ttt{nx=200, ny=150} will produce a grid of 30,000 points, which will take longer to compute but produces a nicer looking, more detailed plot. Finally, we can also have \ttt{surface} extend the evaluation all the way to the corners of the window by using the \ttt{extrap} argument; by default it doesn't extrapolate outside of the existing data, since the error often increases dramatically when predicting outside of the given data. However, extending the plot to the corners will make it look nicer. For the sake of example, we will also change the color scale in the image by setting the \ttt{col} parameter.
 
 ```{r QuickStart2DImproved}
 data(COmonthlyMet)
@@ -87,10 +107,16 @@ locations <- CO.loc
 observations <- CO.tmean.MAM.climate
 elevations <- CO.elev
 kFitWeather <- LatticeKrig(locations, observations, Z=cbind(elevations))
+print(kFitWeather)
+```
+
+Compared to the previous fit, we can see that this new fit with the covariate has...
+
+```{r QuickStart2DPlot2}
 # look at the help file in fields for information on the grid.list format
 prediction <- predictSurface(kFitWeather, grid.list = CO.Grid, ZGrid = CO.elevGrid,
                              nx = 200, ny = 150, extrap = TRUE)
-surface(prediction, main = "Improved 2-Dimensional LatticeKrig Example", 
+surface(prediction, main = "Improved Spring Temperature Estimates across Colorado", 
         xlab="Longitude", ylab="Latitude", col=larry.colors())
 US(add=TRUE, col='black', lwd=4)
 ```
@@ -105,7 +131,7 @@ As a final topic we describe how to generate realizations from the Gaussian mode
 
 For 
 \ttt{kFit1D} from Section 2.1 note that a listing of the full model is shown from.
-```{r }
+```{r eval=FALSE}
 print(kFit1D$LKinfo)
 ```
 
@@ -115,27 +141,27 @@ Here we simulate 4 sample curves from this model and evaluate them on a finer gr
 set.seed(123)
 gSim <- LKrig.sim(xGrid, kFit1D$LKinfo, M=4)
 matplot(xGrid, gSim, type="l", lty=1, xlab="x", ylab="g(x)")
-title("Simulated using model in 1D example")
+title("Simulated curves from LK model")
 ```
 Note that in actually fitting the data a linear function is also included but since this is not a random component it is not part of the simulated process. Also the variance of the process is set to one. 
 
 These simulated curves are referred to as *unconditional* because they are
 unrelated to the actual data except in terms of the range of the x values.
-Another form of simulation is to generate the process conditional on
-the observed data. This technique turns out to be very useful for quantifying the uncertianty in the curve estimate. The example below creates 25 draws from fitting the 1D example and to highlight the variability in these draws the plot is restricted to just a subset of the range of the data. This function returns several different parts of the estimate and so a list format is used. Note the use of the predict function to recover the estimated curve and also that the data is part of the fitted object. Within the range of the data all the conditional curves tend to track the estimate and the data, however, as one might expect beyond on the range of the observations there is much more variability among the simulated curves.   
+Another form of simulation is to generate the process *conditional* on
+the observed data. This technique turns out to be very useful for quantifying the uncertianty in the curve estimate, and is the Monte Carlo method used to generate standard errors and confidence envelopes in the previous section. The example below creates 25 conditional draws from fitting the 1D example. All these curves are "equally likely" or plausible given the observations. This function returns several different parts of the estimate and so a list format is used. Note the use of the predict function to recover the estimated curve and also that the data is part of the fitted object. Within the range of the data all the conditional curves tend to track the estimate and the data, however, as one might expect beyond on the range of the observations there is much more variability among the simulated curves.   
 
 ```{r }
 set.seed(123)
 gCondSim <- LKrig.sim.conditional(kFit1D, M=25, x.grid=as.matrix(xGrid))
-matplot(xGrid, gCondSim$g.draw, type="l", lty=1,
-        xlab="x", ylab="y", col="grey", lwd=.5)
+matplot(xGrid, gCondSim$g.draw, type="l", lty=1,xlab="x", ylab="y", col="grey",
+        main="Estimating minimum with conditional simulation", lwd=.5)
 lines(xGrid, predict(kFit1D, xGrid), col="red")
 points(kFit1D$x, kFit1D$y, pch=16, col="black")
 ```
 
 ## Extra credit!
 
-Here is a final example illustrating the power of deteriming the unceratinty by Monte Carlo. We generate a larger conditional sample over the subinterval [-3,0], find the minimum of each realization and plot the minimum and its location. This two dimensional distribution of minima and their locations is a valid approach to approximate the uncertainty of the estimated minimum of the true curve in this range. Moreover, it would be difficult to derive an analytic formula for this distribution. 
+Here is a final example illustrating the power of deteriming the unceratinty by Monte Carlo. We generate a larger conditional sample over the subinterval [-3,0], find the minimum of each realization and plot the minimum and its location. Note that this represents uncertainty in both the minimum value itself and its location on the x-axis. Of course, because we know the true curve is a sine wave, we know the true minimum is exactly -1 at $x= -\pi / 2$. This two dimensional distribution of minima and their locations is a valid approach to approximate the uncertainty of the estimated minimum of the true curve in this range. It would be difficult to derive an analytic formula for this distribution so the Monte Carlo approach is quite useful. 
 
 ```{r }
 xGrid2 <- as.matrix(seq(-3, 0, length.out=100))

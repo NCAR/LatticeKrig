@@ -1,8 +1,14 @@
 # \ttt{LKrigSetup}
 
-The only \textit{required} arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a variety of optional arguments to adapt the model to be more realistic. In this section we will list some of the most important optional parameters that can be passed into \ttt{LatticeKrig}; for a complete list, check the \ttt{LatticeKrig} help page. The \ttt{LKrigSetup} function is a convenient (and, in some cases, the only) way to pass in a group of parameters to \ttt{LatticeKrig} or \ttt{LKrig}. We will cover the required parameters and some of the more important optional parameters here; for full descriptions, check the help pages for \ttt{LatticeKrig} and \ttt{LKrigSetup}. For context, this is the printout of the \ttt{LKinfo} object created by \ttt{LatticeKrig} in the quick start guide's one-dimensional example.
-```{r LKInfo}
+The only \textit{required} arguments for the \ttt{LatticeKrig} function are the set of locations and variable observations. However, \ttt{LatticeKrig} also allows for a variety of optional arguments to adapt the model to be more realistic. In this section we will list some of the most important optional parameters that can be passed into \ttt{LatticeKrig}; for a complete list, check the \ttt{LatticeKrig} help page. The \ttt{LKrigSetup} function is a convenient (and, in some cases, the only) way to pass in a group of parameters to \ttt{LatticeKrig} or \ttt{LKrig}. We will cover the required parameters and some of the more important optional parameters here; for full descriptions, check the help pages for \ttt{LatticeKrig} and \ttt{LKrigSetup}. This code will printout of the \ttt{LKinfo} object created by \ttt{LatticeKrig} in the quick start guide's one-dimensional example.
+```{r LKInfoPrint, eval=FALSE}
 print(kFit1D$LKinfo)
+```
+
+We could make such an LKinfo object directly from the \ttt{LKrigSetup} function as follows:
+
+```{r LKInfoConstruct, eval = FALSE}
+kFit1DInfo <- LKrigSetup(locations, nlevel = 3, NC = 6, nu = 1, a.wght = 2.01)
 ```
 
 ##Required Parameters for \ttt{LKrigSetup}
@@ -13,33 +19,11 @@ The parameter \ttt{x} is used to find the range of the data locations in each di
 
 * \ttt{nlevel} 
 
-The parameter \ttt{nlevel} is an integer that determines the number of different lattice sizes the computation should run on. This is set to 3 by default in \ttt{LatticeKrig}. Increasing \ttt{nlevel} will increase the potential detail of the fitted surface, and will increase the computation time significantly. The coefficients at each different lattice size is computed independently, and the resulting coefficients are scaled by the weights in \ttt{alpha}. The following plot shows the basis functions for each of the three default levels.
-
-```{r levelsPlot, echo=FALSE}
-phi <- function(d) {
-  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
-}
-overlap <- 2.5
-gridPoints <- seq(0, 10, length=1000)
-centers1 <- seq(0,10, length=11)
-centers2 <- seq(0,10, length=21)
-centers3 <- seq(0,10, length=41)
-dists1 <- rdist(gridPoints, centers1)
-dists2 <- rdist(gridPoints, centers2)
-dists3 <- rdist(gridPoints, centers3)
-values1 <- phi(dists1 / overlap)
-values2 <- 1/2 * phi(2 * dists2 / overlap)
-values3 <- 1/4 * phi(4 * dists3 / overlap)
-matplot(x = gridPoints, cbind(values1, values2, values3), type="l", xlab="Location",
-        ylab = "Basis function value", main="Basis Functions for 3 Levels", lty = 1,
-        col = c(rep("black", 11), rep("red", 21), rep("green", 41)))
-legend("topright", c("First Level", "Second Level", "Third Level"), col=c("black", "red", "green"), lty=1)
-#lines(values[,7], x=gridPoints, type="l", col="black", lwd=3)
-```
+The parameter \ttt{nlevel} is an integer that determines the number of different lattice sizes the computation should run on. This is set to 3 by default in \ttt{LatticeKrig}. Increasing \ttt{nlevel} will increase the potential detail of the fitted surface, and will increase the computation time significantly. The coefficients at each different lattice size is computed independently, and the resulting coefficients are scaled by the weights in \ttt{alpha}. 
 
 * \ttt{NC}
 
-The parameter \ttt{NC} is an integer that determines the number of basis functions to put along the largest dimension at the first level. Recall that each basis function is centered on a lattice point, so \ttt{NC} equivalently controls the number of lattice points to set across the region in the longest dimension. Note that the actual number of basis functions will be different because there are 5 additional basis functions (this can be changed with the optional \ttt{NC.buffer} parameter) added outside the domain on the each end of longest side. For example, if the domain for the data locations is a rectangle whose length is double its width and \ttt{NC = 6}, the first level of basis functions will contain 16x13 basis functions (6x3 inside the domain with 5 extended from each edge).
+The parameter \ttt{NC} is an integer that determines the number of basis functions to put along the largest dimension at the first level. Recall that each basis function is centered on a lattice point, so \ttt{NC} equivalently controls the number of lattice points to set across the region in the longest dimension. Note that the actual number of basis functions may be different. By default, 5 additional basis functions (this can be changed with the optional \ttt{NC.buffer} parameter) are added outside the domain on each side. For example, if the domain for the data locations is a rectangle whose length is double its width and \ttt{NC = 6}, the first level of basis functions will contain 16x13 basis functions (6x3 inside the domain with 5 extended from each edge).
 
 * \ttt{alpha} or \ttt{alphaObject} or \ttt{nu}
 

@@ -48,7 +48,7 @@ To represent a curve, we multiply each basis function by a coefficient and add t
 info <- LKrigSetup(as.matrix(c(0,10)), alpha = 1, nlevel = 1, NC = 11, NC.buffer = 0, a.wght=2.5, LKGeometry = "LKInterval")
 set.seed(483765)
 coefs <- LKrig.sim(seq(0,10,,100), info, M=1, just.coefficients = TRUE)
-curve <- values %*% coefs
+curve <- values1 %*% coefs
 plot(curve, type="l", x = seq(0,10,,1000), xlab = "Location",
      ylab = "Curve value", main="Example 1-D Curve and Coefficients")
 abline(v = 0:10, col="gray", lty=2)

@@ -118,7 +118,7 @@ kFitWeather <- LatticeKrig(locations, observations, Z=cbind(elevations))
 print(kFitWeather)
 ```
 
-Compared to the previous fit, we can see that this new fit with the covariate has...
+Compared to the previous fit, we can see that this new fit with the covariate has much fewer effective degrees of freedom and a much lower \ttt{rho}, which means that the covariate was able to explain a significant amount of the variation in the data. 
 
 ```{r QuickStart2DPlot2}
 # look at the help file in fields for information on the grid.list format

@@ -50,18 +50,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \pagebreak
 
-```{r child = '08FAQ.rmd'}
+```{r child = '08LinearAlgebraAppendix.rmd'}
 ```
 \pagebreak
 
-```{r child = '09LinearAlgebraAppendix.rmd'}
+```{r child = '09FieldsComparisonAppendix.rmd'}
 ```
 \pagebreak
 
-```{r child = '10FieldsComparisonAppendix.rmd'}
-```
-\pagebreak
-
-```{r child = '11SampleKriging.rmd'}
+```{r child = '10SampleKriging.rmd'}
 ```
 \pagebreak

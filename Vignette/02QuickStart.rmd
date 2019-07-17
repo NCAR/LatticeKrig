@@ -40,7 +40,15 @@ For this example, the fitted curve (in red) matches the true function (in blue) 
 
 ## Inference and error analysis
 
-This first plot shows the 95\% confidence intervals for the individual locations, based on a collection of simulations. These simulations are easier to compute than the standard error for large data sets and so they are used to estimate the standard error of a model in LatticeKrig.
+Although it is beyond the scope of this Vignette to go into the details of conditional simulation it is useful to explain how the package is designed to do this computation -- and what it is good for! Suppose you have fit a model to data, with the results in \ttt{MyFit} as an \ttt{LKrig} or \ttt{LatticeKrig} object and suppose \ttt{Z1} are the covariates at the locations \ttt{x1}.  
+The following code generates 10 draws from the distribution of the unknown process *given* (i.e. conditional on) the observations. This random sample is often called an ensemble. As a frequentist-based package, the conditioning in LatticeKrig also assumes that sigma, rho, alpha and a.wght covariance parameters are known. (A Bayesian approach would also sample these from their posterior distribution.)
+
+```{r eval=FALSE}
+ aDraw<- LKrig.sim.conditional( MyFit, M=10, x.grid= x1, Z.grid=Z1)
+```
+The interpretation of \ttt{aDraw} is that each column of aDraw is an equally likely representation of the process and linear model at locations \ttt{x1} given the observed data. As M becomes large the sample mean of the ensemble will converge to the estimate from LKrig. These simulations are easier to compute than the standard error for large data sets and so they are used to estimate the standard error of a model in LatticeKrig. The sample covariances of the ensemble will converge to the correct covariance matrix expressing the unceratinty in the estimate.
+
+This first plot shows the 95\% confidence intervals for the individual locations, based on a collection of simulations. 
 
 ```{r QuickStart1DErrorPlot1}
 #simulates 50 curves based on the given data

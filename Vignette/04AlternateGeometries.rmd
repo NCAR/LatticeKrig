@@ -1,6 +1,6 @@
 # Kriging in Different Geometries
 
-By default, \ttt{LatticeKrig} will interpret the location data it receives as points in $n$-dimensional Euclidean space, and calculate the distance accordingly. However, this package also supports distance measurements for other geometries. For instance, this package can work with locations on a sphere, which is useful for locations of latitude and longitude on Earth. There are also other options for non-Euclidean geometries: a cylinder using 3 dimensional cylindrical coordinates, and a ring using 2 dimensional cylindrical coordinates (z and $\theta$ at a fixed radius). To set the geometry, set the \ttt{LKGeometry} parameter in \ttt{LKrigSetup}. These are the current choices:
+By default, \ttt{LatticeKrig} will interpret the location data it receives as points in $n$-dimensional Euclidean space, and calculate the distance accordingly. However, this package also supports distance metrics for other geometries. One example is locations on a sphere (e.g. observations on the Earth's surface), expressed as azimuth (longitude) and zenith (latitude). There are also other options for non-Euclidean geometries: a cylinder using 3 dimensional cylindrical coordinates, and a ring using 2 dimensional cylindrical coordinates (z and $\theta$ at a fixed radius). To set the geometry, set the \ttt{LKGeometry} parameter in \ttt{LKrigSetup}. These are the current choices:
 
 * \ttt{"LKInterval"}: 1 dimensional Euclidean space
 * \ttt{"LKRectangle"}: 2 dimensional Euclidean space
@@ -9,18 +9,19 @@ By default, \ttt{LatticeKrig} will interpret the location data it receives as po
 * \ttt{"LKCylinder"}: 3 dimensional cylindrical coordinates
 * \ttt{"LKRing"}: 2 dimensional cylindrical coordinates
 
-By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of dimensions in the given location data. However, if you aren't using \ttt{LKRectangle}, it is best to set \ttt{LKGeometry} explicitly; failing to do so can cause errors. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance, which you can set using the \ttt{distance.type} argument of the \ttt{LKinfo} object - the default is \ttt{"GreatCircle"}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{"Chordal"} to measure the straight-line distance, treating the coordinates as 3-dimensional Euclidean locations. Finally, when using the spherical geometry, you need to set \ttt{startingLevel}, which serves a similar role to \ttt{NC} from the Euclidean space. The \ttt{startingLevel} parameter controls how fine of a grid to use at the lowest level of the fit in spherical coordinates. The following plot shows the centers of the basis functions at \ttt{startingLevel = 1}, where they are at the vertices of an icosohedron inscribed in the sphere; for more information, check the \ttt{LKSphere} help page.
+By default, \ttt{LKinfo} will use either \ttt{LKInterval}, \ttt{LKRectangle}, or \ttt{LKBox}, depending on the number of columns in the data locations. However, it is best to set \ttt{LKGeometry} explicitly; failing to do so can cause errors. When using the \ttt{LKSphere} geometry, there are also different ways of measuring distance using the \ttt{distance.type} argument of the \ttt{LKinfo} object - the default is \ttt{"GreatCircle"}, which measures the shortest distance over the surface of the sphere, or you can use \ttt{"Chordal"} to measure the straight-line distance, treating the coordinates as 3-dimensional Euclidean locations. Finally, when using the spherical geometry, you need to set \ttt{startingLevel}, which serves a similar role to \ttt{NC} from the Euclidean space. The \ttt{startingLevel} parameter controls how fine of a grid to use at the lowest level of the fit in spherical coordinates. The following plot shows the centers of the basis functions at \ttt{startingLevel = 3}, where they are at the vertices of an icosohedron inscribed in the sphere; for more information, check the \ttt{LKSphere} help page and the example in the \ttt{IcosohedronGrid} help page using the rgl library.
 
 ```{r SphereLatticePlot, echo=FALSE}
 range = cbind(c(-180, 180), c(-90, 90))
-info <- LKrigSetup(range, startingLevel = 1, nlevel = 1, LKGeometry = "LKSphere")
-centers <- LKrigLatticeCenters(info, Level = 1)
-plot(centers[,1], centers[,2], cex=0.5, pch=18)
+info <- LKrigSetup(range, startingLevel = 3, nlevel = 1, LKGeometry = "LKSphere")
+centers <- LKrigLatticeCenters(info, Level = 3)
+plot(centers[,1], centers[,2], cex=0.5, pch=18,
+     xlab="Longitude", ylab="Latitude", main="Spherical Grid Centers")
 ```
 
 ## Working with spherical coordinates
 
-For an example of fitting data taken on the globe using spherical geometry instead of rectangular, we will load 2 copies of the same sample data -- one near the equator, one near the north pole -- and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. We compute a kriging fit for the original data and the rotated data using the rectangular geometry and the spherical geometry, and print out the sum of squared errors as a measurement of how accurately the different fits match the data. We will expect to see very similar results for the two spherical models and noticeably different results for the two rectangular models. 
+For an example of fitting data taken on the globe using spherical geometry, we will load 2 copies of the same sample data -- one near the equator, one near the north pole -- and compare the models computed on the \ttt{LKRectangle} geometry and \ttt{LKSphere} geometry. We compute a kriging fit for the original data and the rotated data using the rectangular geometry and the spherical geometry, and print out the sum of squared errors as a measurement of how accurately the different fits match the data. We will expect to see very similar results for the two spherical models and noticeably different results for the two rectangular models. 
 
 ```{r SphereExampleDataCreation, fig.height=3.5, fig.width=7.75, fig.align='center'}
 library(LatticeKrig)
@@ -30,8 +31,8 @@ data(PolarData)
 #plot the data at the equator and at the north pole in rectangular coordinates
 #note the significant distortion at the north pole
 par(mfrow = c(1,2))
-quilt.plot(equatorGrid, equatorGridValues, main="Equator Data",
-           xlab="Longitude", ylab="Latitude")
+quilt.plot(equatorGrid, equatorGridValues, nx = 90, ny = 45,
+           main="Equator Data", xlab="Longitude", ylab="Latitude")
 world(add=TRUE)
 quilt.plot(polarGrid, polarGridValues, main="Polar Data",
            xlab="Longitude", ylab="Latitude")
@@ -49,34 +50,34 @@ rectEqInfo <- LKrigSetup(equatorLocations, nlevel = 2, NC = 13,
                          NC.buffer = 2, alpha = c(0.8, 0.2), a.wght = 4.01)
 rectEqFit <- LatticeKrig(equatorLocations, equatorValues,
                          LKinfo = rectEqInfo)
-surface(rectEqFit, main="Equator Surface Prediction \nUsing Rectangular Kriging",
-        xlab="Longitude", ylab="Latitude")
-#world(add=TRUE)
-sqrt(sum(rectEqFit$residuals^2) / nrow(equatorLocations))
 
 rectPoleInfo <- LKrigSetup(polarLocations, nlevel = 2, NC = 13,
                            NC.buffer = 2, alpha = c(0.8, 0.2), a.wght = 4.01)
 rectPoleFit <- LatticeKrig(polarLocations, polarValues, LKinfo = rectPoleInfo)
+
+
+sphereEqInfo <- LKrigSetup(equatorLocations, nlevel = 2, startingLevel = 6,
+                    alpha = c(0.8, 0.2), a.wght = 1.01, LKGeometry = "LKSphere")
+sphereEqFit <- LatticeKrig(equatorLocations, equatorValues, LKinfo = sphereEqInfo)
+
+
+spherePoleInfo <- LKrigSetup(polarLocations, nlevel = 2, startingLevel = 6,
+                    alpha = c(0.8, 0.2), a.wght = 1.01, LKGeometry = "LKSphere")
+spherePoleFit <- LatticeKrig(polarLocations, polarValues, LKinfo = spherePoleInfo)
+
+
+
+surface(rectEqFit, main="Equator Surface Prediction \nUsing Rectangular Kriging",
+        xlab="Longitude", ylab="Latitude")
+
 surface(rectPoleFit, main="Polar Surface Prediction \nUsing Rectangular Kriging",
         xlab="Longitude", ylab="Latitude")
-#world(add=TRUE)
-sqrt(sum(rectPoleFit$residuals^2) / nrow(polarLocations))
 
-info1 <- LKrigSetup(equatorLocations, nlevel = 2, startingLevel = 6,
-                    alpha = c(0.8, 0.2), a.wght = 1.01, LKGeometry = "LKSphere")
-sphereEquatorFit <- LatticeKrig(equatorLocations, equatorValues, LKinfo = info1)
-surface(sphereEquatorFit, main="Equator Surface Prediction \nUsing Spherical Kriging",
+surface(sphereEqFit, main="Equator Surface Prediction \nUsing Spherical Kriging",
         xlab="Longitude", ylab="Latitude")
-#world(add=TRUE)
-sqrt(sum(sphereEquatorFit$residuals^2) / nrow(equatorLocations))
 
-info2 <- LKrigSetup(polarLocations, nlevel = 2, startingLevel = 6,
-                    alpha = c(0.8, 0.2), a.wght = 1.01, LKGeometry = "LKSphere")
-spherePolarFit <- LatticeKrig(polarLocations, polarValues, LKinfo = info2)
-sqrt(sum(spherePolarFit$residuals^2) / nrow(polarLocations))
-surface(spherePolarFit, main="Polar Surface Prediction \nUsing Spherical Kriging",
+surface(spherePoleFit, main="Polar Surface Prediction \nUsing Spherical Kriging",
         xlab="Longitude", ylab="Latitude")
-#world(add=TRUE)
 ```
 
-As we can see, the rectangular fit fails badly on the data that has been rotated up to the north pole, with approximately 15 times the root mean square error of the corresponding spherical model. While the rectangular fit does perform slightly better than the spherical fit at the equator, this is an artifact of how we created the data rather than an indication that the spherical kriging is any worse at the equator than at the poles. 
+As we can see, the rectangular model fails badly on the data that has been rotated up to the north pole, while the spherical model matches it nicely. At the equator, the two model are nearly indistinguishable. 

@@ -211,7 +211,7 @@ test.for.zero(testCov, targetCov)
 test.for.zero(dHat, krigFit$d.coef)
 test.for.zero(cHat, krigFit$c.coef)
 ```
-
+<!--
 ## Using the kriging equations directly
 
 Recall the standard kriging equations for $\hat{\bld c}$ and $\hat{\bld d}$ in Appendix A:
@@ -272,3 +272,4 @@ test.for.zero(kPredict, gHat)
 plot(xGrid, kPredict, type="l", col="black", lwd=5)
 lines(xGrid, gHat, col="green", lwd=2)
 ```
+-->

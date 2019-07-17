@@ -161,7 +161,7 @@ points(kFit1D$x, kFit1D$y, pch=16, col="black")
 
 ## Extra credit!
 
-Here is a final example illustrating the power of deteriming the unceratinty by Monte Carlo. We generate a larger conditional sample over the subinterval [-3,0], find the minimum of each realization and plot the minimum and its location. Note that this represents uncertainty in both the minimum value itself and its location on the x-axis. Of course, because we know the true curve is a sine wave, we know the true minimum is exactly -1 at $x= -\pi / 2$. This two dimensional distribution of minima and their locations is a valid approach to approximate the uncertainty of the estimated minimum of the true curve in this range. It would be difficult to derive an analytic formula for this distribution so the Monte Carlo approach is quite useful. 
+Here is a final example illustrating the power of determining the uncertainty by Monte Carlo. We generate a larger conditional sample over the subinterval [-3,0], find the minimum of each realization and plot the minimum and its location. Note that this represents uncertainty in both the minimum value itself and its location on the x-axis. Of course, because we know the true curve is a sine wave, we know the true minimum is exactly -1 at $x= -\pi / 2$. This two dimensional distribution of minima and their locations is a valid approach to approximate the uncertainty of the estimated minimum of the true curve in this range. It would be difficult to derive an analytic formula for this distribution so the Monte Carlo approach is quite useful. 
 
 ```{r }
 xGrid2 <- as.matrix(seq(-3, 0, length.out=100))

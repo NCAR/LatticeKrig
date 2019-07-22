@@ -13,6 +13,7 @@ extern void F77_NAME(lkdistcomp)(void *, void *, void *, void *, void *, void *,
 extern void F77_NAME(lkdistgrid)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(lkdistgridcomp)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(lkdiag)(void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(interp)(void *, void *, void *, void *, void *, void *);
 
 static const R_FortranMethodDef FortranEntries[] = {
     {"findnorm",       (DL_FUNC) &F77_NAME(findnorm),       11},
@@ -21,6 +22,7 @@ static const R_FortranMethodDef FortranEntries[] = {
     {"lkdistgrid",     (DL_FUNC) &F77_NAME(lkdistgrid),     11},
     {"lkdistgridcomp", (DL_FUNC) &F77_NAME(lkdistgridcomp), 11},
     {"lkdiag",         (DL_FUNC) &F77_NAME(lkdiag),          6},
+    {"interp",         (DL_FUNC) &F77_NAME(interp),          6},
     {NULL, NULL, 0}
 };
 

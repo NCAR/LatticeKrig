@@ -86,7 +86,7 @@ for(i in 1:10) {
 
 We can see that the simulations get farther apart, meaning the confidence envelope gets wider, where there aren't many data points and especially at the edges of the region.
 
-## Fitting the model in two dimensions
+## Two dimensional example
 
 For another, more practical example, we will predict the average daily mean spring temperature for locations throughout Colorado. Using the data set \ttt{COmonthlyMet}, we can make a surface showing our predictions over a range of longitudes and latitudes, use the \ttt{US} function to draw in the USA state borders to show where Colorado is, and draw the points where data was recorded. Notice that \ttt{LatticeKrig} will automatically discard any data points with missing values (NAs) if needed.
 

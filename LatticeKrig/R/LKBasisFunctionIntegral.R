@@ -12,8 +12,8 @@ LKBasisFunctionIntegral <- function(normDists) {
         stop("Integral table not found in working directory and downloading failed (https://github.com/NCAR/LatticeKrig/raw/master/TomographyIntegralTable/LineIntegralGrid.rda)")
       })
     }
-    load("LineIntegralGrid.rda")
-    print("Loaded table successfully")
+    load("LineIntegralGrid.rda", envir = globalenv())
+    #print("Loaded table successfully")
   }
   
   out <- .Fortran("interp", grid = lineIntegralGrid, nGrid = length(lineIntegralGrid), delta = lineIntegralDelta,

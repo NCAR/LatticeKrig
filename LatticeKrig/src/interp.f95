@@ -1,7 +1,7 @@
 subroutine interp(grid, nGrid, delta, points, nPoints, output)
-  integer, intent(in) nGrid, nPoints, gridIdx
-  double precision, intent(in) delta, weight, grid(nGrid), points(nPoints)
-  double precision, intent(out) output(nPoints)
+  integer nGrid, nPoints, gridIdx
+  double precision delta, weight, grid(nGrid), points(nPoints)
+  double precision output(nPoints)
 
   !$OMP PARALLEL IF(nPoints > 100) DEFAULT(SHARED) PRIVATE(gridIdx, weight)
     !$OMP DO

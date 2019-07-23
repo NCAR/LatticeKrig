@@ -3,7 +3,7 @@ subroutine interp(grid, nGrid, delta, points, nPoints, output)
   double precision delta, weight, grid(nGrid), points(nPoints)
   double precision output(nPoints)
 
-  !$OMP PARALLEL IF(nPoints > 100) DEFAULT(SHARED) PRIVATE(gridIdx, weight)
+  !$OMP PARALLEL NUM_THREADS(64) PRIVATE(gridIdx, weight)
     !$OMP DO
     do idx = 1, nPoints
       x = points(idx)

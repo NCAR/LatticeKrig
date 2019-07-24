@@ -1,6 +1,5 @@
 LKBasisFunctionIntegral <- function(normDists) {
-  dims <- dim(normDists)
-  dists <- matrix(normDists, nrow = 1)
+  dists <- as.double(normDists)
   
   #loading in the integral grid, downloading it from github if needed
   if(!exists("lineIntegralGrid")) {

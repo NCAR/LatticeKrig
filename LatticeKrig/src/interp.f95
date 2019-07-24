@@ -3,8 +3,8 @@ subroutine interp(grid, nGrid, delta, points, nPoints, output)
   double precision delta, weight, grid(nGrid), points(nPoints)
   double precision output(nPoints)
 
-  !$OMP PARALLEL NUM_THREADS(64) PRIVATE(gridIdx, weight)
-    !$OMP DO
+  !$OMP PARALLEL PRIVATE(gridIdx, weight)
+    !$OMP DO SIMD
     do idx = 1, nPoints
       x = points(idx)
       gridIdx = 1 + FLOOR(x / delta)
@@ -15,7 +15,7 @@ subroutine interp(grid, nGrid, delta, points, nPoints, output)
         output(idx) = grid(gridIdx) * (1-weight) + grid(gridIdx + 1) * weight
       endif
     enddo
-    !$OMP END DO
+    !$OMP END DO SIMD
   !$OMP END PARALLEL
 
 end

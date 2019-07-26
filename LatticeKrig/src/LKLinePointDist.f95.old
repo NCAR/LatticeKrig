@@ -1,0 +1,75 @@
+subroutine LKLinePointDist(dim, points, nPoints, lines, nLines, ranges, &
+        rangeReps, nRanges, ind, entries, nEntries) bind(C)
+    implicit none
+    integer, intent(in):: dim, nPoints, nLines, nRanges, rangeReps(nRanges)
+    integer :: rangeStarts(nRanges), outputIdx, rangeIdx, lineIdx, dimIdx, pointIdx, copyIdx, capacity
+    double precision, intent(in):: points(dim, nPoints), lines(2*dim, nLines), ranges(nRanges)
+    double precision :: lineLengthSquared, dist, lineVec(dim), projectionResid(dim, dim), pointVec(dim), range
+
+    integer, allocatable :: tempInd(:,:)
+    double precision, allocatable :: tempEntries(:)
+
+    integer, intent(out) :: nEntries
+    integer, intent(out), allocatable :: ind(:,:)
+    double precision, intent(out), allocatable :: entries(:)
+
+!this is all completely untested
+!the goal of this code was to compute the entries and store them in a growing list, then at the end return that list
+!into a C wrapper to copy that list into a SEXP object (the format of R objects), but I haven't been able to get it back
+!into C successfully
+
+    capacity = 128
+    allocate(ind(2, capacity))
+    allocate(entries(capacity))
+
+    outputIdx = 1
+    rangeStarts(1) = 0
+    do rangeIdx = 1, (nRanges-1)
+        rangeStarts(rangeIdx+1) = rangeStarts(rangeIdx) + rangeReps(rangeIdx)
+    enddo
+    !$omp parallel private(lineVec, lineLengthSquared, projectionResid, pointVec, dist, range)
+        !$omp do
+        do lineIdx = 1, nLines
+            lineVec = lines(:dim, lineIdx) - lines(dim+1:, lineIdx)
+            lineLengthSquared = sum(lineVec * lineVec)
+            projectionResid(:,:) = -1/lineLengthSquared
+            do dimIdx = 1, dim
+                projectionResid(dimIdx,:) = projectionResid(dimIdx,:) * lineVec(dimIdx)
+                projectionResid(:,dimIdx) = projectionResid(:,dimIdx) * lineVec(dimIdx)
+                projectionResid(dimIdx, dimIdx) = projectionResid(dimIdx, dimIdx) + 1
+            enddo
+
+            do rangeIdx = 1, nRanges
+                range = ranges(rangeIdx)
+                do pointIdx = (rangeStarts(rangeIdx)+1), (rangeStarts(rangeIdx) + rangeReps(rangeIdx))
+                    pointVec = points(:, pointIdx) - lines(:dim, lineIdx)
+                    pointVec = matmul(projectionResid, pointVec)
+                    dist = sqrt(sum(pointVec * pointVec)) / range
+                    if (dist < 1) then
+                        !$omp critical(critical_writeOutput)
+                            ind(1, outputIdx) = lineIdx
+                            ind(2, outputIdx) = pointIdx
+                            entries(outputIdx) = dist
+                            outputIdx = outputIdx + 1
+                            if (outputIdx == capacity + 1) then
+                                allocate(tempEntries(capacity))
+                                allocate(tempInd(2, capacity))
+                                tempEntries(:) = entries
+                                tempInd(:,:) = ind
+                                capacity = capacity * 2
+                                allocate(entries(capacity))
+                                allocate(ind(2,capacity))
+                                entries(:(capacity/2)) = tempEntries
+                                ind(:,:(capacity/2)) = tempInd
+                            endif
+                        !$omp end critical(critical_writeOutput)
+                    endif
+                enddo
+            enddo
+        enddo
+        !$omp end do
+    !$omp end parallel
+    nEntries = outputIdx
+    entries = entries(:nEntries)
+    ind = ind(:,:nEntries)
+end subroutine LKLinePointDist

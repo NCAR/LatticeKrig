@@ -3,7 +3,7 @@ subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
     implicit none
     integer :: dim, nPoints, nLines, nRanges, rangeReps(nRanges)
     integer :: nEntries
-    integer :: rangeStarts(nRanges), outputIdx, rangeIdx, lineIdx, dimIdx, pointIdx
+    integer :: rangeStarts(nRanges), outputIdx, localOutputIdx, rangeIdx, lineIdx, dimIdx, pointIdx
     double precision :: points(dim, nPoints), lines(2*dim, nLines), ranges(nRanges)
     double precision :: lineLengthSquared, dist, lineVec(dim), projectionResid(dim, dim), pointVec(dim), range
 
@@ -36,12 +36,13 @@ subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
                     pointVec = matmul(projectionResid, pointVec)
                     dist = sqrt(sum(pointVec * pointVec)) / range
                     if (dist < 1) then
-                        !$omp critical(critical_writeOutput)
-                            ind(1, outputIdx) = lineIdx
-                            ind(2, outputIdx) = pointIdx
-                            entries(outputIdx) = dist
+                        !$omp atomic capture
+                            localOutputIdx = outputIdx
                             outputIdx = outputIdx + 1
-                        !$omp end critical(critical_writeOutput)
+                        !$omp end atomic
+                        ind(1, localOutputIdx) = lineIdx
+                        ind(2, localOutputIdx) = pointIdx
+                        entries(localOutputIdx) = dist
                     endif
                 enddo
             enddo

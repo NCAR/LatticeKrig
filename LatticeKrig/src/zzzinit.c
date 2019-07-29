@@ -16,6 +16,7 @@ extern void F77_NAME(lkdistgrid)(void *, void *, void *, void *, void *, void *,
 extern void F77_NAME(lkdistgridcomp)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(lkdiag)(void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(interp)(void *, void *, void *, void *, void *, void *);
+extern void F77_NAME(cubicinterp)(void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(lktomgridcount)(void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(lktomgrid)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
@@ -30,6 +31,7 @@ static const R_FortranMethodDef FortranEntries[] = {
     {"lkdistgridcomp", (DL_FUNC) &F77_NAME(lkdistgridcomp), 11},
     {"lkdiag",         (DL_FUNC) &F77_NAME(lkdiag),          6},
     {"interp",         (DL_FUNC) &F77_NAME(interp),          6},
+    {"cubicinterp",    (DL_FUNC) &F77_NAME(cubicinterp),     6},
     {"lktomgridcount", (DL_FUNC) &F77_NAME(lktomgridcount),  9},
     {"lktomgrid",      (DL_FUNC) &F77_NAME(lktomgrid),      11},
     {NULL, NULL, 0}

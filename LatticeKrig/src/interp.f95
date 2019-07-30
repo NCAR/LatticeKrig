@@ -1,3 +1,6 @@
+!linear interpolation; has since been replaced with cubic interpolation to improve accuracy and performance
+!(performance is better because the grid needed for cubic interpolation is much smaller and fits into cache easily)
+
 subroutine interp(grid, nGrid, delta, points, nPoints, output)
   integer nGrid, nPoints, gridIdx
   double precision delta, weight, grid(nGrid), points(nPoints)

@@ -1,3 +1,10 @@
+! this subroutine fills in the entries of the line/point distance matrix. The matrix is in a sparse format; entries are
+! only populated when the closest distance between line/point pairs is less than the point's range.
+! the number of entries must be known beforehand (via a call to LKTomGridCount) to make sure the right amount of space
+! is allocated for the matrix entries.
+
+! all the comments in this file (and any other file in this directory) that start with !$omp are OpenMP directives,
+! which are instructions to the compiler that allow the program's work to be split into parallel threads.
 subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
         rangeReps, nRanges, ind, entries, nEntries)
     implicit none
@@ -13,13 +20,17 @@ subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
     outputIdx = 1
     ind(:,:) = -1
     entries(:) = -5.1
+
+    ! determining which points will have which ranges
     rangeStarts(1) = 0
     do rangeIdx = 1, (nRanges-1)
         rangeStarts(rangeIdx+1) = rangeStarts(rangeIdx) + rangeReps(rangeIdx)
     enddo
-    !$omp parallel if(nLines > 50) private(lineVec, lineLengthSquared, projectionResid, pointVec, dist, range)
+    !$omp parallel private(lineVec, lineLengthSquared, projectionResid, pointVec, dist, range)
         !$omp do
         do lineIdx = 1, nLines
+
+            !making a matrix M from the line such that for a vector v, Mv is the component of v perpendicular to the line
             lineVec = lines(:dim, lineIdx) - lines(dim+1:, lineIdx)
             lineLengthSquared = sum(lineVec * lineVec)
             projectionResid(:,:) = -1/lineLengthSquared
@@ -29,13 +40,18 @@ subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
                 projectionResid(dimIdx, dimIdx) = projectionResid(dimIdx, dimIdx) + 1
             enddo
 
+            !iterate over the ranges and then the points with that range, so we don't need to get a new value for
+            !the point's range every iteration
             do rangeIdx = 1, nRanges
                 range = ranges(rangeIdx)
                 do pointIdx = (rangeStarts(rangeIdx)+1), (rangeStarts(rangeIdx) + rangeReps(rangeIdx))
+                    !using the matrix M from before to determine the distance between the line and point
+                    !(divided by the range so the value is between 0 and 1)
                     pointVec = points(:, pointIdx) - lines(:dim, lineIdx)
                     pointVec = matmul(projectionResid, pointVec)
                     dist = sqrt(sum(pointVec * pointVec)) / range
                     if (dist < 1) then
+                        !recording the distance, line number, and point number for the matrix entry
                         !$omp atomic capture
                             localOutputIdx = outputIdx
                             outputIdx = outputIdx + 1
@@ -49,5 +65,4 @@ subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
         enddo
         !$omp end do
     !$omp end parallel
-    nEntries = outputIdx
 end subroutine LKTomGrid

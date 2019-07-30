@@ -1,3 +1,7 @@
+!  this function does cubic spline interpolation using the provided grid, which is nGrid sets of 4 coefficients,
+!  at points starting from 0 with separation delta. We compute the cubic spline interpolant at each of the nPoints
+!  values in points, storing the results in output
+
 subroutine CubicInterp(grid, nGrid, delta, points, nPoints, output)
     integer, intent(in) :: nGrid, nPoints
     double precision, intent(in) :: delta, grid(4, 0:nGrid-1), points(nPoints)
@@ -12,8 +16,10 @@ subroutine CubicInterp(grid, nGrid, delta, points, nPoints, output)
             x = points(idx)
             gridIdx = FLOOR(x / delta)
             if (gridIdx >= nGrid) then
-                output(idx) = 0
+                ! the entry doesn't fit in the grid, so use the constant term of the last component of the cubic spline
+                output(idx) = grid(1,nGrid-1)
             else
+                ! grabbing the coeficients and evaluating the spline interpolant
                 offset = x - gridIdx*delta
                 coefs(:) = grid(:,gridIdx)
                 output(idx) = coefs(1) + coefs(2)*offset + coefs(3)*offset*offset + coefs(4)*offset*offset*offset

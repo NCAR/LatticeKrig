@@ -1,0 +1,4 @@
+KrigingExampleData: x y
+EquatorData: equatorLocations equatorValues equatorGrid equatorGridValues
+PolarData: polarLocations polarValues polarGrid polarGridValues
+CubicLineIntegralGrid: lineIntegralGrid

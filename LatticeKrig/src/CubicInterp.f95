@@ -3,13 +3,14 @@
 !  values in points, storing the results in output
 
 subroutine CubicInterp(grid, nGrid, delta, points, nPoints, output)
+    implicit none
     integer, intent(in) :: nGrid, nPoints
+    integer :: gridIdx, idx
+
     double precision, intent(in) :: delta, grid(4, 0:nGrid-1), points(nPoints)
-
-    integer :: gridIdx
     double precision :: offset, x, coefs(4)
-
     double precision, intent(out) :: output(nPoints)
+
     !$OMP PARALLEL PRIVATE(gridIdx, offset, coefs)
         !$OMP DO SIMD
         do idx = 1, nPoints

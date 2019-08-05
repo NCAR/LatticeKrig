@@ -10,6 +10,7 @@ subroutine LKTomGridCount(dim, points, nPoints, lines, nLines, ranges, rangeReps
     integer, intent(in) :: dim, nPoints, nLines, nRanges, rangeReps(nRanges)
     integer :: rangeStarts(nRanges), outputIdx, rangeIdx, lineIdx, dimIdx, pointIdx
     integer, intent(out) :: nEntries
+
     double precision, intent(in) :: points(dim, nPoints), lines(2*dim, nLines), ranges(nRanges)
     double precision :: lineLengthSquared, dist, lineVec(dim), projectionResid(dim, dim), pointVec(dim), range
 

@@ -8,14 +8,13 @@
 subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
         rangeReps, nRanges, ind, entries, nEntries)
     implicit none
-    integer :: dim, nPoints, nLines, nRanges, rangeReps(nRanges)
-    integer :: nEntries
+    integer, intent(in) :: dim, nPoints, nLines, nRanges, rangeReps(nRanges), nEntries
     integer :: rangeStarts(nRanges), outputIdx, localOutputIdx, rangeIdx, lineIdx, dimIdx, pointIdx
-    double precision :: points(dim, nPoints), lines(2*dim, nLines), ranges(nRanges)
-    double precision :: lineLengthSquared, dist, lineVec(dim), projectionResid(dim, dim), pointVec(dim), range
+    integer, intent(out) :: ind(2, nEntries)
 
-    integer :: ind(2, nEntries)
-    double precision :: entries(nEntries)
+    double precision, intent(in) :: points(dim, nPoints), lines(2*dim, nLines), ranges(nRanges)
+    double precision :: lineLengthSquared, dist, lineVec(dim), projectionResid(dim, dim), pointVec(dim), range
+    double precision, intent(out) :: entries(nEntries)
 
     outputIdx = 1
     ind(:,:) = -1

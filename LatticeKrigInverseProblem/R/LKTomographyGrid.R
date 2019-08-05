@@ -13,7 +13,7 @@ LKTomographyGrid <- function(lines, points, ranges, rangeReps) {
   
   output <- .Fortran("LKTomGridCount", dim=dims, points=points, nPoints = nPoints,
                      lines=lines, nLines = nLines, ranges=ranges, rangeReps=rangeReps,
-                     nRanges=nRanges, nEntries = 0L, PACKAGE = "LatticeKrig")
+                     nRanges=nRanges, nEntries = 0L, PACKAGE = "LatticeKrigInverseProblem")
   
   nEntries <- output$nEntries
   ind <- as.integer(matrix(0, nrow=2, ncol = nEntries))
@@ -21,7 +21,7 @@ LKTomographyGrid <- function(lines, points, ranges, rangeReps) {
   
   output <- .Fortran("LKTomGrid", dim=dims, points=points, nPoints = nPoints,
                      lines=lines, nLines = nLines, ranges=ranges, rangeReps=rangeReps,
-                     nRanges=nRanges, ind=ind, entries=entries, nEntries = nEntries, PACKAGE = "LatticeKrig")
+                     nRanges=nRanges, ind=ind, entries=entries, nEntries = nEntries, PACKAGE = "LatticeKrigInverseProblem")
   
   ra = output$entries
   ind = matrix(output$ind, nrow = 2)

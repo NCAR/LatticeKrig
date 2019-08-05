@@ -8,10 +8,10 @@ LKTomographyPoints <- function(latticeInfo) {
   coordinates <- as.double(unlist(latticeInfo$grid))
   if (dimension == 3) {
     out <- .Fortran("LKTomPoints3D", coorinates=coordinates, levelSizes=levelSizes,
-                    nLevels=nLevels, points=points, nPoints=nPoints, PACKAGE="LatticeKrig")
+                    nLevels=nLevels, points=points, nPoints=nPoints, PACKAGE="LatticeKrigInverseProblem")
   } else if (dimension == 2) {
     out <- .Fortran("LKTomPoints2D", coorinates=coordinates, levelSizes=levelSizes,
-                    nLevels=nLevels, points=points, nPoints=nPoints, PACKAGE="LatticeKrig")
+                    nLevels=nLevels, points=points, nPoints=nPoints, PACKAGE="LatticeKrigInverseProblem")
   } else {
     stop("LKTomography only works for 2 or 3 dimensional problems")
   }

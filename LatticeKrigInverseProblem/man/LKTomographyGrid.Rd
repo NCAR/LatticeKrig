@@ -24,3 +24,4 @@ matrix <- LKTomographyGrid(lines, points, ranges, rangeReps)
 \item{points}{The list of points, specified in a matrix where each column contains the coordinates of a point.}
 \item{ranges}{The ranges of each group of points, in order.}
 \item{rangeReps}{The number of times to repeat each range.}
+}

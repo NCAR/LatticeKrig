@@ -39,7 +39,7 @@ Now we create the covariance matrix for $\mathbf y$, which is $M_\lambda$, and t
 
 ```{r Calculations1Covariance}
 Phi <- psi(rdist(x, lattice) / (overlap*delta))
-B <- spind2full(LKDiag(c(-1, 2.01, -1), m))
+B <- spam2full(LKDiag(c(-1, 2.01, -1), m))
 Q <- t(B) %*% B
 P <- solve(Q)
 M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
@@ -172,9 +172,9 @@ Phi2 <- psi(rdist(x, L2) / (overlap*delta/2)) * sqrt(alpha[2])
 Phi3 <- psi(rdist(x, L3) / (overlap*delta/4)) * sqrt(alpha[3])
 Phi <- cbind(Phi1, Phi2, Phi3)
 
-B1 <- spind2full(LKDiag(c(-1, 2.01, -1), s1))
-B2 <- spind2full(LKDiag(c(-1, 2.01, -1), s2))
-B3 <- spind2full(LKDiag(c(-1, 2.01, -1), s3))
+B1 <- spam2full(LKDiag(c(-1, 2.01, -1), s1))
+B2 <- spam2full(LKDiag(c(-1, 2.01, -1), s2))
+B3 <- spam2full(LKDiag(c(-1, 2.01, -1), s3))
 Q1 <- t(B1) %*% B1
 Q2 <- t(B2) %*% B2
 Q3 <- t(B3) %*% B3

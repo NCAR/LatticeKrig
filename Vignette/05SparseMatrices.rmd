@@ -12,11 +12,11 @@ To demonstrate the difference sparse matrices can make, we will time how long it
 ```{r SparseCholComparison}
 for(N in c(100, 300, 1000, 3000)) {
   FMat <- LKDiag(c(-1, 5, -1), N)
-  SMat <- as.spam(FMat)
+  SMat <- spind2spam(FMat)
   cat("Matrix size: ", N, "\n")
   cat("Full Matrix:\t\t")
   startTime <- Sys.time()
-  FChol <- chol(FMat)
+  FChol <- chol(spind2full(FMat))
   stopTime <- Sys.time()
   delta <- stopTime - startTime
   print(delta)

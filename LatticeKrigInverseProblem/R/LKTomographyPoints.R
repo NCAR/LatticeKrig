@@ -1,5 +1,5 @@
 LKTomographyPoints <- function(latticeInfo) {
-  levelSizes <- t(latticeInfo$mxDomain)
+  levelSizes <- t(latticeInfo$mx)
   dimension <- as.integer(dim(levelSizes)[1])
   nLevels <- as.integer(dim(levelSizes)[2])
   nPoints <- as.integer(sum(apply(levelSizes, 2, prod)))

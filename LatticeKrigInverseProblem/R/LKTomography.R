@@ -1,7 +1,7 @@
-LKTomography <- function(lines, obs, points, LKinfo) {
+LKTomography <- function(lines, obs, LKinfo) {
   ranges <- LKinfo$basisInfo$overlap * LKinfo$latticeInfo$delta
   rangeReps <- LKinfo$latticeInfo$mLevel
-  points <- LKTomographyPoints(LKinfo$latticeInfo$grid)
+  points <- LKTomographyPoints(LKinfo$latticeInfo)
   
   tomMatrix <- LKTomographyGrid(lines, points, ranges, rangeReps)
   tomMatrix$ra <- LKBasisFunctionIntegral(tomMatrix$ra)
@@ -12,6 +12,6 @@ LKTomography <- function(lines, obs, points, LKinfo) {
       idx = idx + 1
     }
   }
-  kFit <- LatticeKrig(x=points, y=obs, X = tomMatrix)
-  
+  kFit <- LatticeKrig(x=points, y=obs, X=tomMatrix, LKinfo=LKinfo)
+  return(kFit)
 }

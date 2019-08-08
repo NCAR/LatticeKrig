@@ -16,7 +16,7 @@ points have range 1, the next 50 points have range 0.5, and the next 100 points 
 }
 
 \usage{
-matrix <- LKTomographyGrid(lines, points, ranges, rangeReps)
+LKTomographyGrid(lines, points, ranges, rangeReps)
 }
 
 \arguments{

@@ -24,6 +24,9 @@ LKTomographyGrid <- function(lines, points, ranges, rangeReps) {
                      nRanges=nRanges, ind=ind, entries=entries, nEntries = nEntries, PACKAGE = "LatticeKrigInverseProblem")
   
   ra = output$entries
-  ind = matrix(output$ind, nrow = 2)
-  return(list(ind = t(ind), da = c(nLines, nPoints), ra = ra))
+  ind = t(matrix(output$ind, nrow = 2))
+  ord <- order(ind[,1], ind[,2])
+  ind <- ind[ord,]
+  ra <- ra[ord]
+  return(list(ind = ind, da = c(nLines, nPoints), ra = ra))
 }

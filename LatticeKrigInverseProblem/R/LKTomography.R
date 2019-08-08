@@ -12,6 +12,7 @@ LKTomography <- function(lines, obs, LKinfo) {
       idx = idx + 1
     }
   }
-  kFit <- LatticeKrig(x=points, y=obs, X=tomMatrix, LKinfo=LKinfo)
+  N <- length(obs)
+  kFit <- LKrig(x=points, y=obs, U=cbind(rep(1, N), runif(N)), X=spind2spam(tomMatrix), LKinfo=LKinfo, lambda=0.05)
   return(kFit)
 }

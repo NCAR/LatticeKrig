@@ -2,7 +2,7 @@ Package: LatticeKrigInverseProblem
 Version: 1.0
 Date: 2019-08-05
 Title: Multiresolution Kriging Based on Markov Random Fields
-Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut], Colette Smirniotis [aut]
+Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut], Colette Smirniotis [aut], Matthew Iverson [aut], University Corporation for Atmospheric Research [cph]
 Authors@R: c( 
             person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "nychka@ucar.edu"),
@@ -56,3 +56,4 @@ URL: https://www.r-project.org
 Depends: R (>= 3.2.2), methods, spam, fields (>= 8.15), LatticeKrig (>= 7.0)
 Packaged: 2019-08-03; nychka
 NeedsCompilation: yes
+LazyData: true

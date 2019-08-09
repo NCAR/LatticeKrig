@@ -15,7 +15,7 @@ leaving the main diagonal as zeroes.
 }
 
 \usage{
-LKDiag(entries, nrow, diags = NA, ncol = nrow)
+LKDiag(entries, nrow, diags = NULL, ncol = nrow, full=FALSE)
 }
 
 \arguments{
@@ -25,6 +25,8 @@ LKDiag(entries, nrow, diags = NA, ncol = nrow)
 \item{diags}{The diagonals to put the entries on. 0 corresponds to the main diagonal, positive values 
 go above the main diagonal, and negatives go below.}
 \item{ncol}{The number of columns in the matrix, if it's different from the number of rows.}
+\item{full}{If true, the function returns a full matrix representation; if false, the function
+returns a sparse matrix in the spam format.}
 }
 
 \value{
@@ -47,7 +49,8 @@ LKDiag(c(1, -2, 1), 6, diags=(-1:1))
 n <- 5
 LKDiag(3, n, diags=c(0, n-1, -(n-1)))
 
-#each of the following produces a 4x6 matrix with 2 right below the main diagonal and 5 right above it
+#each of the following produces a 4x6 matrix with 2 right below
+#the main diagonal and 5 right above it
 LKDiag(c(2, 5), nrow = 4, ncol = 6)
 LKDiag(c(2, 5), nrow = 4, ncol = 6, diags = c(-1, 1))
 LKDiag(c(5, 2), nrow = 4, ncol = 6, diags = c(1, -1))

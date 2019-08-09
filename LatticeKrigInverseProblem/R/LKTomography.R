@@ -2,6 +2,7 @@ LKTomography <- function(lines, obs, LKinfo) {
   ranges <- LKinfo$basisInfo$overlap * LKinfo$latticeInfo$delta
   rangeReps <- LKinfo$latticeInfo$mLevel
   points <- LKTomographyPoints(LKinfo$latticeInfo)
+  dimension <- dim(points)[1]
   
   tomMatrix <- LKTomographyGrid(lines, points, ranges, rangeReps)
   tomMatrix$ra <- LKBasisFunctionIntegral(tomMatrix$ra)
@@ -13,6 +14,8 @@ LKTomography <- function(lines, obs, LKinfo) {
     }
   }
   N <- length(obs)
-  kFit <- LKrig(x=points, y=obs, U=cbind(rep(1, N), runif(N)), X=spind2spam(tomMatrix), LKinfo=LKinfo, lambda=0.05)
+  #TODO create a more reasonable U matrix; ideally everything but the first column should be 0, so there is no fixed effect, but I don't know how to
+  #do that in LatticeKrig without creating a singular matrix
+  kFit <- LKrig(x=t(points), y=obs, U=cbind(rep(1, N), matrix(runif(N*dimension), nrow = N)), X=spind2spam(tomMatrix), LKinfo=LKinfo, lambda=0.05)
   return(kFit)
 }

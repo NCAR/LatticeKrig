@@ -1,19 +1,19 @@
 \name{EnvelopePlot}
 \alias{EnvelopePlot}
-\title{Shade the region between two functions on an existing plot}
+\title{ Add a shaded the region between two functions to an existing plot}
 
 \description{
 This function shades the region vertically between two functions, specified as pairs of x and y vectors,
 and draws the functions in a darker shade. More formally, it shades all points (x,y) such that f1(x) < y
 < f2(x) or f2(x) < y < f1(x). When both functions have the same group of x values, 
-the x values only need to be set once but y2 needs to be passed in by name. Note that the function
-does not create a new plot, but it will draw over anything that is under the envelope specified.
+the x values only need to be set once but y2 needs to be passed in by name. 
 If the two functions intersect, the vertical space between the functions will be shaded on both sides, as
 implied in the definition above.
 }
 
 \usage{
-EnvelopePlot(x1, y1, x2=x1, y2, col=NA, lineCol=NA, ...)
+EnvelopePlot(x1, y1, x2 = x1, y2,
+                         col ="thistle1" , lineCol = "thistle3", ...)
 }
 
 \arguments{
@@ -23,6 +23,7 @@ EnvelopePlot(x1, y1, x2=x1, y2, col=NA, lineCol=NA, ...)
 \item{y2}{The y coordinates for the second function.}
 \item{col}{The color to make the filling between the functions.}
 \item{lineCol}{The color to make the lines representing the functions.}
+\item{dots}{Additional arguments to the base R function \code{polygon} }
 }
 
 \author{

@@ -15,7 +15,10 @@ leaving the main diagonal as zeroes.
 }
 
 \usage{
-LKDiag(entries, nrow, diags = NA, ncol = nrow)
+LKDisg(entries, nrow, diags = NULL, ncol = nrow,
+full =
+                 FALSE)
+
 }
 
 \arguments{
@@ -25,6 +28,9 @@ LKDiag(entries, nrow, diags = NA, ncol = nrow)
 \item{diags}{The diagonals to put the entries on. 0 corresponds to the main diagonal, positive values 
 go above the main diagonal, and negatives go below.}
 \item{ncol}{The number of columns in the matrix, if it's different from the number of rows.}
+\item{full}{If TRUE return a dense matrix in the usual R matrix format. If FALASE return a sparse
+matrix in spam format. }
+
 }
 
 \value{

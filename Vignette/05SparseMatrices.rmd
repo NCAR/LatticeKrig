@@ -9,26 +9,27 @@ In this package, we use the \ttt{spam} package for sparse matrices. This package
 ## Timing sparse v.s. dense matrices
 
 To demonstrate the difference sparse matrices can make, we will time how long it takes to compute the Cholesky decomposition with and without taking advantage of the sparsity. We will consider $100 \times 100$, $300 \times 300$, $1000 \times 1000$, and $3000 \times 3000$ matrices. For each size, we will first do the Cholesky decomposition on the full matrix representation, then on the sparse representation. Recall that even though many of the matrix entries are 0, the decomposition doesn't take advantage of this feature unless we use the sparse formatting.
-```{r SparseCholComparison}
-for(N in c(100, 300, 1000, 3000)) {
-  FMat <- LKDiag(c(-1, 5, -1), N)
+```{r SparseCholComparison, echo=FALSE}
+sizes<- c(100, 300, 1000, 3000)
+NTotal<- length( sizes)
+tab<- matrix( NA, nrow= NTotal, ncol=3)
+dimnames(tab)<- list( NULL, c("N","Dense", "Sparse"))
+for(k in 1:NTotal) {
+  N<- sizes[k]
+  FMat <- LKDiag(c(-1, 5, -1), N, full=TRUE )
   SMat <- as.spam(FMat)
-  cat("Matrix size: ", N, "\n")
-  cat("Full Matrix:\t\t")
   startTime <- Sys.time()
+  # 
   FChol <- chol(FMat)
-  stopTime <- Sys.time()
-  delta <- stopTime - startTime
-  print(delta)
-  
-  cat("Sparse Matrix:\t")
+  deltaF<-  Sys.time() - startTime
+  #
   startTime <- Sys.time()
   SChol <- chol(SMat)
-  stopTime <- Sys.time()
-  delta <- stopTime - startTime
-  print(delta)
-  cat("\n")
+  deltaS<-  Sys.time() - startTime
+  tab[k,]<- c(N,deltaF, deltaS ) 
 }
+print(tab,digits=3)
 ```
+
 
 As you can see from the output above, with sizable inputs the sparse matrix computation is thousands of times faster than the traditional dense matrix computation, and this advantage grows even faster with larger inputs.

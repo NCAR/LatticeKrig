@@ -1,0 +1,59 @@
+Package: LatticeKrigInverseProblem
+Version: 1.0
+Date: 2019-08-05
+Title: Multiresolution Kriging Based on Markov Random Fields
+Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut], Colette Smirniotis [aut], Matthew Iverson [aut], University Corporation for Atmospheric Research [cph]
+Authors@R: c( 
+            person("Douglas", "Nychka", role = c("aut", "cre"),
+               email = "nychka@ucar.edu"),
+            person("Dorit", "Hammerling", role = c("aut"),
+               email = "hammerling@samsi.info"),
+            person("Stephan", "Sain", role = "aut",
+               email = "sainsr2@gmail.comlls"),
+            person("Nathan", "Lenssen", role = "aut",
+               email = "lenssen@ucar.edu"),
+	    person("Colette", "Smirniotis", role = "aut",
+               email = "cmsmirni@gmail.com"),
+	    person("Matthew", "Iverson", role = "aut",
+               email = "miverson@mines.edu"),
+	    person("University Corporation for Atmospheric Research",
+               role="cph", email="nychka@ucar.edu")
+	       ) 
+Maintainer: Douglas Nychka <nychka@ucar.edu>
+Description: Methods for the interpolation of large spatial
+  datasets. This package follows a "fixed rank Kriging" approach using
+  a large number of basis functions and provides spatial estimates
+  that are comparable to standard families of covariance functions.
+  Using a large number of basis functions allows for estimates that
+  can come close to interpolating the observations (a spatial model
+  with a small nugget variance.)  Moreover, the covariance model for
+  this method can approximate the Matern covariance family but also
+  allows for a multi-resolution model and supports efficient
+  computation of the profile likelihood for estimating covariance
+  parameters. This is accomplished through compactly supported basis
+  functions and a Markov random field model for the basis
+  coefficients. These features lead to sparse matrices for the
+  computations and this package makes of the R spam package for this.
+  An extension of this version over previous ones ( < 5.4 ) is the
+  support for different geometries besides a rectangular domain. The
+  Markov random field approach combined with a basis function
+  representation makes the implementation of different geometries
+  simple where only a few specific functions need to be added with
+  most of the computation and evaluation done by generic routines that
+  have been tuned to be efficient.  One benefit of this package's
+  model/approach is the facility to do unconditional and conditional
+  simulation of the field for large numbers of arbitrary points. There
+  is also the flexibility for estimating non-stationary covariances
+  and also the case when the observations are a linear combination
+  (e.g. an integral) of the spatial process.  Included are generic
+  methods for prediction, standard errors for prediction, plotting of
+  the estimated surface and conditional and unconditional simulation.
+  Development of this package was supported in part by the National
+  Science Foundation  Grant 1417857 and the National Center for
+  Atmospheric Research. 
+License: GPL (>= 2)
+URL: https://www.r-project.org
+Depends: R (>= 3.2.2), methods, spam, fields (>= 8.15), LatticeKrig (>= 7.0)
+Packaged: 2019-08-03; nychka
+NeedsCompilation: yes
+LazyData: true

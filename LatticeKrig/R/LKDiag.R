@@ -52,6 +52,6 @@ LKDiag <- function(entries, nrow, diags = NULL, ncol = nrow, full = FALSE) {
     ord <- order(ind[,1], ind[,2])
     ind <- ind[ord,]
     ra <- ra[ord]
-    return(list(ind = ind, da = da, ra = ra))
+    return(spind2spam(list(ind = ind, da = da, ra = ra)))
   }
 }

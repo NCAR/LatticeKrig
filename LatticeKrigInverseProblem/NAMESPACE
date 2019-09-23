@@ -1,0 +1,10 @@
+useDynLib(LatticeKrigInverseProblem,.registration=TRUE)
+
+exportPattern("^[^\\.]")
+importFrom("utils", "data")
+importFrom("graphics", "lines", "polygon")
+importFrom("methods", "new")
+importFrom("stats", "optimize", "predict", "rnorm", "var", "optim","sd")
+import("spam")
+import("fields")
+import("LatticeKrig")

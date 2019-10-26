@@ -33,7 +33,7 @@
 	from an LKinfo object and finds the locations or scales at each lattice points.
 	 These locations are the 
 	"nodes" or centers of the basis functions. The "scales" scales that distance function when the 
-	basis functions are evaluated and combine the spacing of lattice and the specificed overlap. 
+	basis functions are evaluated and combine the spacing of lattice and the specified overlap. 
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -56,7 +56,7 @@ LKrigLatticeScales(object, ...)
   	An LKinfo object. 
 }
 \item{Level}{
-The multiresolution level.
+The multi-resolution level.
 }
 \item{physicalCoordinates}{If TRUE the centers are returned in the 
 untransformed scale. See the explanation of the 
@@ -96,7 +96,7 @@ grid points used to generate the lattice.  For LKSphere the centers are in lon/l
 ( Use \code{directionCosines} to convert to 3-d coordinates from lon/lat.)
 
 \strong{Scales} The default method returns the vector  \code{delta*offset} with length being the
-number of multiresolution levels. 
+number of multi-resolution levels. 
 }
 
 \author{

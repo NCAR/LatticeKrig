@@ -96,7 +96,7 @@ attr(,"fastNormalize")
  	rectangular domain. 
  	
  	 For the LKRectangle geometry, however, more complicated
-	anisotropic and nonstationary a.wght specifications are possible. 
+	anisotropic and non-stationary a.wght specifications are possible. 
 	See \code{\link{LKrig}} for details. Also in the case that the
     fastNormalization is TRUE for rectangles several more attributes are added to the  \code{a.wght} list 	that precompute some matrices of the SAR. 
 	

@@ -28,7 +28,7 @@
 	%%  ~~function to do ... ~~
 }
 \description{Using the information in LKinfo create the SAR matrix 
-	for a given level of the multiresolution.
+	for a given level of the multi-resolution.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -46,7 +46,7 @@ LKrigSAR(object, ...)
   	An LKinfo object. 
 }
  \item{Level}{
-  	The level of the multiresolution.  
+  	The level of the multi-resolution.  
 }
   \item{\dots}{
   	Any additional arguments to pass to this method. 

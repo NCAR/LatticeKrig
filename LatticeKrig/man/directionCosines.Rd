@@ -7,7 +7,7 @@
 %%  ~~function to do ... ~~
 }
 \description{
-Covnert back and forth between  lon/lat and direction cosines and also project spherical coordinates on a local tangent plane. 
+Convert back and forth between  lon/lat and direction cosines and also project spherical coordinates on a local tangent plane. 
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -36,11 +36,11 @@ coordinates.  The projection function is done by two rotations, first around the
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-\strong{directionCosines} A three coumn matrix of direction cosines.
+\strong{directionCosines} A three column matrix of direction cosines.
 
 \strong{toSphere} A two column matrix of longitudes and latitudes.
 
-\strong{projectionSphere} A two column matrix of Euclidean coordinates on the tangent plane to \code{x1}. The convention is that the orign (0,0) is mapped to \code{x1} and the X- axis are points along the meridian through  \code{x1}. The Y axis are points on the great circle passing through  \code{x1} and perpendicular to the meridian. 
+\strong{projectionSphere} A two column matrix of Euclidean coordinates on the tangent plane to \code{x1}. The convention is that the origin (0,0) is mapped to \code{x1} and the X- axis are points along the meridian through  \code{x1}. The Y axis are points on the great circle passing through  \code{x1} and perpendicular to the meridian. 
 
 }
 
@@ -51,7 +51,7 @@ Doug Nychka
 
 \examples{
 # 
-# icosohedron:
+# icosahedron:
  phi = (1 + sqrt(5))/2
   V = matrix(c(0, 1, phi, 0, 1, -phi, 0, -1, phi, 0, -1, -phi, 
         1, phi, 0, -1, phi, 0, 1, -phi, 0, -1, -phi, 0, phi, 

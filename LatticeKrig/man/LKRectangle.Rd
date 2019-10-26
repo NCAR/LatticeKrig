@@ -13,7 +13,7 @@ is standard Euclidean distance. The number of lattice points in
 the first level is NC inside the spatial domain and the subsequent
 levels decrease the lattice spacing by factors of 2.  The spatial
 autoregressive
-coefficients, refered to as the a.wght parameter(s) have several levels
+coefficients, referred to as the a.wght parameter(s) have several levels
 of detail depending on the
 stationarity and isotropy. In the simplest case a.wght is the central
 value, and should be greater than 4. Also the four nearest neighbors
@@ -30,8 +30,8 @@ extent [-1,1] in the horizontal and [-1,1] in vertical and beginning
 with 4 grid points in lowest level and with a default of 5 extra points
 outside the domain for boundary corrections. The assumed SAR model defaults
 to a central value of 4.1 and the 4 nearest weights are -1. Defining the
-extent of the spatial domain explicitly was done to simplfy the example. Typically
-one just defines the domain to the minimum and maxmimum x and y locations 
+extent of the spatial domain explicitly was done to simplify the example. Typically
+one just defines the domain to the minimum and maximum x and y locations 
 of the spatial data (and the locations can passed as the first argument 
 in the example below instead of finding ranges.) Note that does not mean
 that the spatial locations
@@ -86,7 +86,7 @@ direction amounting to 14 total and similarly 14
 in the y direction because it is exactly of the
 same size. The default is the the parameter NC
 determines the number of lattice points in the larger
-dimension and the smaller dimesion is divided according 
+dimension and the smaller dimension is divided according 
 to the spacing from the longer dimension. For example if 
 the y extent was  [-1,.5] the number of lattice points 
 would be spaced according to 
@@ -142,7 +142,7 @@ function evaluated at location x1 is
 basisFunctionValue <- Wendland( rdist( x1,x0)/( delta[l]*overlap))
 }
 
-If V is included then  x1 is tranformed as  \code{x1\%*\%solve(V)}
+If V is included then  x1 is transformed as  \code{x1\%*\%solve(V)}
 before evaluating in the basis function. 
 
 \strong{About  \code{a.wght}} 
@@ -165,9 +165,9 @@ the central lattice point and 8 nearest neighbors with the indexing:
 E.g. the 5 element is the center, 3  is the lower left hand
 corner etc. 
 
-\strong{Nonstationary models}
-This is the nuclear option to handle a completely nonstationary correlation
-strucutre! In this case one specifies the models by passing prediction
+\strong{Non-stationary models}
+This is the nuclear option to handle a completely non-stationary correlation
+structure! In this case one specifies the models by passing prediction
 objects for one or more of \code{rho.object}, \code{alphaObject} or 
 \code{a.wghtObject}. 
 }

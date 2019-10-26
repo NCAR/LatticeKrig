@@ -1,20 +1,20 @@
 \name{nonstationaryModels}
 \alias{nonstationaryModels}
-\title{Specifying nonstationary models}
-\description{An overview of specifying nonstationary 
+\title{Specifying non-stationary models}
+\description{An overview of specifying non-stationary 
 and anisotropic models with some specific 2-d examples showing how to vary the alpha, rho and a.wght parameters.}
 \details{
-The Lattice Krig model can be extended in a natural way to have a  nonstationary covariance that has a multiscale structure. 
+The Lattice Krig model can be extended in a natural way to have a  non-stationary covariance that has a multi-scale structure. 
 
 The default and  process model has the form 
 
  \deqn{ g(x)= \sum_{l=1}^L g_l(x)
 }
 where g_l(x) are processes defined by fixed basis functions and with
-coefficients that follow a mena zero multivariate normal distribution
-and with dependence described by a spatial autoregrssion (SAR).
+coefficients that follow a mean zero multivariate normal distribution
+and with dependence described by a spatial autoregression (SAR).
 
-Under the model with approximate stationary the SAR is parametrized by
+Under the model with approximate stationary the SAR is parameterized by
 a set of a.wght values that are applied in the same way to every
 lattice point and its neighbors. When the process is normalized to
 have constant marginal variance, the variance of g_l(x) is given by
@@ -24,7 +24,7 @@ the parameters a.wght, rho, and alpha to vary over the spatial
 domain. In this way the variance of g_l(x) is given by
 rho(x)alpha_l(x) and g(x) by rho(x) provided alpha_l sums to one. The
 a.wght parameters can different values at each lattice point and
-possibly at each level. Some preliminarly results suggest that having
+possibly at each level. Some preliminary results suggest that having
 a.wght vary differently for different levels may be too much
 flexibility and may not needed.
 
@@ -50,7 +50,7 @@ a.wght[[l]] corresponding to this lattice point would be
 
 \code{ c( 0, -1, 0, -1, 4.5, -1, 0,-1, 0)}
 
-Specifying the matrices of a.wghts directly can be invovled because
+Specifying the matrices of a.wghts directly can be involved because
 one needs to known the lattice information. An easier way to
 accomplish specifying these models is to use a function on the spatial
 domain to define the a.wght values based on the locations of the
@@ -58,7 +58,7 @@ lattice points. In this case one would pass an object, a.wghtObject,
 that describes the function. This object needs to be defined so that
 predict(a.wghtObject, x) will evaluate the function at the locations
 x. (See example below.). With this object, LKrigSetupAwght will
-evalute the function at the lattice poiints and so create the correct
+evaluate the function at the lattice points and so create the correct
 list of matrices.
 
 \bold{alpha}. To specify spatial varying alpha parameters one
@@ -112,7 +112,7 @@ predict function.
     }
 
 ################################################
-##### Nonstationary examples
+##### Non-stationary examples
 ###############################################
 # spatial domain    
 sDomain<- rbind( c(-1.2,-1.2),
@@ -121,7 +121,7 @@ sDomain<- rbind( c(-1.2,-1.2),
 # we will use this coarse grid to define any 
 # surfaces of parameters
 # (unrelated to the lattice grids and plotting grid!)
-# this is larger than the sDomain to accomodate buffer points
+# this is larger than the sDomain to accommodate buffer points
 # (with larger ranges when NC is small)
   gridList<- list( x = seq( -3, 3,,50),
                    y = seq( -3, 3,,75) )
@@ -157,7 +157,7 @@ sDomain<- rbind( c(-1.2,-1.2),
 #######################################################
 
 # the alpha surface at each level will just be the result of 
-# bilinear interpolation of values specified on a small grid.
+# bi-linear interpolation of values specified on a small grid.
 # To keep things identified the alpha weights at 
 # any grid location are 
 # normalized to sum to 1. 
@@ -278,7 +278,7 @@ sDomain<- rbind( c(-1.2,-1.2),
   look<- LKrig.sim( fineGrid, LKinfo4)
   image.plot( as.surface( fineGrid, look) )            
 
-###### nonstationary anisotropy
+###### non-stationary anisotropy
  a.wghtA <- c( rbind( c(    0,   0, -2),
                        c( 0, 4.5,  0),
                        c(-2,  0,     0)

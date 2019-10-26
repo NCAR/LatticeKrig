@@ -1,18 +1,18 @@
-\name{IcosohedronGrid}
-\alias{IcosohedronGrid}
+\name{IcosahedronGrid}
+\alias{IcosahedronGrid}
 \alias{IcosohedronFaces}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Icosoherdal multiresolution grids
+\title{Icosahedral multi-resolution grids
 %%  ~~function to do ... ~~
 }
 \description{
-Creates a multiresolution grid based on subdividing triangles starting with faces of an 
-icosohedron.  
+Creates a multi-resolution grid based on subdividing triangles starting with faces of an 
+icosahedron.  
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-IcosohedronGrid(K)
+IcosahedronGrid(K)
 
 IcosohedronFaces(K)
 
@@ -25,7 +25,7 @@ IcosohedronFaces(K)
 }
 \details{
 Creates a nearly regular grid by taking the first
-level as the 12 points from a regular icsohedron. The subsequent levels generate a finer set
+level as the 12 points from a regular icosahedron. The subsequent levels generate a finer set
 of points by subdividing each triangular face into 4 new triangles. The three new mid points
 from the subdivision are added to the previous nodes to give the new level of resolution. The
 triangles tend to be roughly  equilateral and so the nodes will tend to be roughly equally
@@ -55,12 +55,12 @@ Level<- 3
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-\strong{IcosohedronGrid} A list with \code{K} components each component is a three column matrix
+\strong{IcosahedronGrid} A list with \code{K} components each component is a three column matrix
 giving the direction cosines for each grid point. 
 
 \strong{IcosohedronFaces} A list with components
 \describe{
-\item{MutiGrid}{The same list returned by IcoshedronGrid. }
+\item{MutiGrid}{The same list returned by IcosahedronGrid. }
 \item{Faces}{A list with \code{K-1} components. Each components are the faces at a given level
 represented as a three dimensional array (3X3XN with N the number of faces and a given level). The
 array indices are vertices of triangle, coordinates and faces within a resolution level.   e.g. to
@@ -98,7 +98,7 @@ Doug Nychka and Zach Thomas
 
 \examples{
 # second level in lon lat coordinates 
-look<- IcosohedronGrid(3)
+look<- IcosahedronGrid(3)
 lonlat<- toSphere( look[[3]])
 plot( lonlat, xlab="lon", ylab="lat")
 }

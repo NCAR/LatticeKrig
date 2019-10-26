@@ -45,7 +45,7 @@ LKRectangleSetupNormalization(mx, a.wght)
   \item{a.wght}{A.wght parameters.}
   \item{LKinfo}{ An LKinfo object.  NOTE:  Here  \code{choleskyMemory}, a Spam memory argument, can be a component of LKinfo and is subsequently passed
   	 through to the	(spam) sparse cholesky decomposition}
-  \item{Level}{The multiresolution level.}
+  \item{Level}{The multi-resolution level.}
   \item{mx}{Matrix of lattice sizes.}
   \item{PHI}{Unnormalized basis functions evaluated at the locations 
   	to find the normalization weights.}
@@ -66,7 +66,7 @@ The basic calculation is
 This generic method uses the low level utility \code{LKrig.quadraticform} that evaluates  diag( t(PHI) solve( Q.l) PHI ) where PHI are the basis functions evaluated at the locations and Q.l is the precision matrix for the lattice coefficients at level l. 
  
 
-For constant a.wght and for the rectangular geometry one can use an eigendecomposition of the Kronecker product of the SAR matrix. 
+For constant a.wght and for the rectangular geometry one can use an eigen decomposition of the Kronecker product of the SAR matrix. 
 }
 \value{
 A vector of weights. The basis are normalized by dividing by the square root

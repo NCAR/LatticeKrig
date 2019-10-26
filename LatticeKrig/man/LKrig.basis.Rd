@@ -26,14 +26,14 @@
 \alias{LKrigCovWeightedObs}
 \alias{LKrigMarginalVariance}
 \title{
-Functions for generating a multiresolution, compactly supported basis,  
-multiresolution covariance functions and simulating from these processes.
+Functions for generating a multi-resolution, compactly supported basis,  
+multi-resolution covariance functions and simulating from these processes.
 }
 \description{
 These functions support the \code{LKrig} function.  Their main
 function is to create and evaluate radial basis functions of varying
 support on a nested set of regular grids.  This series of grids forms
-a multiresolution basis.  The Gaussian process model is an expansion
+a multi-resolution basis.  The Gaussian process model is an expansion
 in these basis functions where the basis coefficients follow a Markov
 random field model for each resolution level.  This family of
 functions generate the basis using sparse matrices, evaluate the
@@ -79,7 +79,7 @@ center of the spatial domain.}
 	
 
 \item{LKinfo}{A list with components that give the information
-describing a multiresolution basis with a Markov random field used for
+describing a multi-resolution basis with a Markov random field used for
 the covariance of the basis coefficients. This list is created in
 \code{LKrig} or by \code{LKrigSetup} and returned in the output
 object.  (See section on returned Value below for this list's
@@ -182,7 +182,7 @@ function coefficients.
 Although correct, the code above is not an efficient algorithm to
 compute the unnormalized process variance.  First the normalization
 can be done level by level rather than dealing with the entire
-multiresolution process at once. Also it is important to work with the
+multi-resolution process at once. Also it is important to work with the
 precision matrix rather than the covariance.  The function
 \code{LKrig.normalize.basis.slow} takes advantage of the sparsity of the
 precision matrix for the coefficients.
@@ -261,7 +261,7 @@ LatticeKrig process at each level and at the locations in \code{x1}. Returned va
 If  \code{varLevels} is a row of this matrix then  sum( varLevels* LKinfo$alpha) is the marginal variance
 for the full process when the different levels are weighted by alpha. This is weighted sum is the marginal
 variance returned by \code{LKrig.cov} and \code{ marginal=TRUE} ( Also assuming that \code{LKinfo$rho.object}
-is NULL, which it usaully is.) . 
+is NULL, which it usually is.) . 
 
 
 \strong{LKrig.sim:} A matrix with dimensions of \code{nrow(x1)} by

@@ -1,8 +1,7 @@
 Package: LatticeKrig
-Version: 8.1
-Date: 2019-08-03
-Title: Multiresolution Kriging Based on Markov Random Fields
-Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut], Colette Smirniotis [aut]
+Version: 8.2
+Date: 2019-10-28
+Title: Multi-Resolution Kriging Based on Markov Random Fields
 Authors@R: c( 
             person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "nychka@ucar.edu"),
@@ -21,9 +20,9 @@ Authors@R: c(
 	       ) 
 Maintainer: Douglas Nychka <nychka@ucar.edu>
 Description: Methods for the interpolation of large spatial
-  datasets. This package follows a "fixed rank Kriging" approach using
-  a large number of basis functions and provides spatial estimates
-  that can approximate standard spatial estimates.
+  datasets. This package follows a "fixed rank Kriging" approach but
+  provides a surface fitting method
+  that can approximate standard spatial data models.
   Using a large number of basis functions allows for estimates that
   can come close to interpolating the observations (a spatial model
   with a small nugget variance.)  Moreover, the covariance model for
@@ -49,12 +48,12 @@ Description: Methods for the interpolation of large spatial
   (e.g. an integral) of the spatial process. Included are generic
   methods for prediction, standard errors for prediction, plotting of
   the estimated surface and conditional and unconditional simulation.
-  See the LatticeKrig githob repository for a vignette of this package.
+  See the 'LatticeKrig' GitHub repository for a vignette of this package.
   Development of this package was supported in part by the National
   Science Foundation  Grant 1417857 and the National Center for
   Atmospheric Research. 
 License: GPL (>= 2)
 URL: https://www.r-project.org
-Depends: R (>= 3.2.2), methods, spam, fields (>= 8.15)
-Packaged: 2019-08-03; nychka
+Depends: R (>= 3.5.0), methods, spam, fields (>= 9.9)
+Packaged: 2019-10-28; nychka
 NeedsCompilation: yes

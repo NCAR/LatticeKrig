@@ -1,6 +1,6 @@
 \name{IcosahedronGrid}
 \alias{IcosahedronGrid}
-\alias{IcosohedronFaces}
+\alias{IcosahedronFaces}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Icosahedral multi-resolution grids
@@ -14,7 +14,7 @@ icosahedron.
 \usage{
 IcosahedronGrid(K)
 
-IcosohedronFaces(K)
+IcosahedronFaces(K)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -36,7 +36,7 @@ To depict the faces and nodes in a snazzy way use the \code{rgl} package and the
 library( rgl)
 # show level 3
 Level<- 3
-    SGrid <- IcosohedronFaces(4)
+    SGrid <- IcosahedronFaces(4)
     Tri <- SGrid$Face[[Level]]
     L <- dim(Tri)[3]
     plot3d(rbind(c(0, 0, 0)), xlim = c(-1, 1), ylim = c(-1, 1), 
@@ -58,7 +58,7 @@ Level<- 3
 \strong{IcosahedronGrid} A list with \code{K} components each component is a three column matrix
 giving the direction cosines for each grid point. 
 
-\strong{IcosohedronFaces} A list with components
+\strong{IcosahedronFaces} A list with components
 \describe{
 \item{MutiGrid}{The same list returned by IcosahedronGrid. }
 \item{Faces}{A list with \code{K-1} components. Each components are the faces at a given level
@@ -66,7 +66,7 @@ represented as a three dimensional array (3X3XN with N the number of faces and a
 array indices are vertices of triangle, coordinates and faces within a resolution level.   e.g. to
 extract the 10th face (out of 80) for  the 2nd level: 
 \preformatted{
-look<- IcosohedronFaces(3)$Faces
+look<- IcosahedronFaces(3)$Faces
 triangle <- (look[[2]])[,,10]
 print (triangle)
            [,1]       [,2]      [,3]
@@ -91,7 +91,7 @@ vertices.
 }
 
 \author{
-Doug Nychka and Zach Thomas
+Doug Nychka and Zachary Thomas
 %%  ~~who you are~~
 }
 

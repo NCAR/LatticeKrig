@@ -9,7 +9,8 @@ suppressMessages(library(LatticeKrig))
 options(echo = FALSE)
 test.for.zero.flag <- 1
 
-# NOTE: these tests also exercise the LKinfoUpdate function which is complex and 
+# NOTE: these tests also exercise the LKinfoUpdate
+# function which is complex and 
 # has many potential places for creative bugs!
 
 tick<- Sys.time()
@@ -26,7 +27,8 @@ lambdaTrue<- .1^2
 #NOTE: true rho is 1.0 dont add fixed function so likelihood is precise.
 LKinfoTrue<- LKrigSetup(x,NC=3, nlevel=2, a.wght= 4.2,
                         alpha=c(1.0,.5), lambda=lambdaTrue,
-                        normalize=FALSE, NC.buffer=2, fixedFunction = NULL)
+                        normalize=FALSE, NC.buffer=2,
+                        fixedFunction = NULL)
 f<- LKrig.sim( x, LKinfoTrue, M=M) 
 E<- matrix( rnorm( prod( dim( f))), nrow= nrow( f), ncol=ncol(f) )
 Y<- f + sqrt(lambdaTrue)* E
@@ -55,13 +57,6 @@ print(signif(Fit2$summary,4))
 print(signif(Fit3$summary,4))
 
 
-
-##plot( log10(Fit1$lnLike.eval[,1]), Fit1$lnLike.eval[,5], xlim=c(-3,-1.5), ylim=c(328000,339000))
-#points( log10(Fit1$lambda.MLE),Fit1$summary["lnProfLike"], col="red")
-
-#plot( log10(Fit2$lnLike.eval[,1]), Fit2$lnLike.eval[,4], xlim=c(-3,-1.5), ylim=c(328000,339000))
-#points( log10(Fit2$lambda.MLE),Fit2$summary["lnProfLike"], col="red")
-
 # check that MLE really is MLE when refining over lambda 
 LKinfoTest2<- LKinfoUpdate(LKinfoTest, a.wght= Fit1$a.wght.MLE,
                            lambda=Fit1$lambda.MLE )
@@ -70,7 +65,8 @@ signif( Fit2$summary, 4)
 signif(Fit2$lambda.MLE, 4)
 
 test.for.zero( Fit2$summary["lnProfLike"],
-               Fit1$summary["lnProfLike"], tol=5e-3, tag=" log Like lambda MLE")
+              Fit1$summary["lnProfLike"], tol=5e-3,
+              tag=" log Like lambda MLE")
 
 # Monte Carlo test that parameters  are estimated correctly
 set.seed(223)
@@ -81,7 +77,8 @@ lambdaTrue<- .05^2
 #NOTE: true rho is 1.0
 LKinfoTrue<- LKrigSetup(x,NC=3, nlevel=2, a.wght= 4.2,
                         alpha=c(1.0,.5), lambda=lambdaTrue,
-                        normalize=FALSE, NC.buffer=2,fixedFunction = NULL )
+                        normalize=FALSE, NC.buffer=2,
+                        fixedFunction = NULL )
 f<- LKrig.sim( x, LKinfoTrue, M=M) 
 E<- matrix( rnorm( prod( dim( f))), nrow= nrow( f), ncol=ncol(f) )
 Y<- f + sqrt(lambdaTrue)* E

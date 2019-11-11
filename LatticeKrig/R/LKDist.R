@@ -55,9 +55,12 @@ LKDist<- function(  x1, x2, delta, max.points = NULL,
     else {
         Nmax <- max.points
     }
-   
-   out <- .Fortran("LKdist", x1 = as.double(x1), n1 = as.integer(n1), 
-                             x2 = as.double(x2), n2 = as.integer(n2),
+ #  subroutine lkdist( x1, n1, x2, n2, dim,  delta2, ind, rd, Nmax, iflag)   
+        out <- .Fortran("lkdist",
+                        x1 = as.double(x1),
+                        n1 = as.integer(n1), 
+                        x2 = as.double(x2),
+                        n2 = as.integer(n2),
                             dim = as.integer(dimension), 
                          delta2 = as.double(delta^2),
                             ind = as.integer(rep(0, Nmax * 2)),

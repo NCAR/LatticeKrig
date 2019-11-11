@@ -57,7 +57,9 @@ print(signif(Fit2$summary,4))
 print(signif(Fit3$summary,4))
 
 
-# check that MLE really is MLE when refining over lambda 
+# check that MLE really is MLE when refining over lambda
+doThisCheck <- FALSE
+if( doThisCheck){
 LKinfoTest2<- LKinfoUpdate(LKinfoTest, a.wght= Fit1$a.wght.MLE,
                            lambda=Fit1$lambda.MLE )
 Fit2<- LKrigFindLambda( x,Y,LKinfo=LKinfoTest2)
@@ -97,4 +99,4 @@ tock<- Sys.time()
 test.for.zero( Fit1$summary["a.wght.MLE"], 4.2, tol=.02)
 test.for.zero( Fit1$summary["lambda.MLE"], lambdaTrue, tol=.01)
 
-
+}

@@ -32,7 +32,8 @@
   nLocation<- nrow( xLocation)
 # solving linear system in based on writing as a Kronecker product
 # see setup function for LKrigSetupAwght.LKrectangle to see 
-# definitions of the matrices below.
+                                        # definitions of the matrices below.
+      #     subroutine   findNorm(mx,my,offset,Ux,Dx,Uy,Dy,nLocations, xLocations, weights, Z)
   return(
          .Fortran("findNorm",
                           mx = as.integer(mx1Level),

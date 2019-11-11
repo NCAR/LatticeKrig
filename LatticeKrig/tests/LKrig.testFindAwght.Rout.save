@@ -1,6 +1,6 @@
 
-R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -36,19 +36,6 @@ Type 'q()' to quit R.
    1.739e+01    1.132e+04    1.839e+01    9.873e-02    5.846e+00    1.667e-03 
   a.wght.MLE       lnLike functionEval gradientEval    totalEval 
    8.482e+00           NA    1.000e+01    1.000e+01    5.100e+01 
-       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-    17.47000   8178.00000     19.21000      0.09951      1.09300      0.00906 
- llambda.MLE       lnLike counts value         grad 
-    -4.70400           NA     11.00000           NA 
-[1] 0.00906
-Testing:   log Like lambda MLE
-PASSED test at tolerance  0.005
-       EffDf   lnProfLike          GCV    sigma.MLE      rho.MLE   lambda.MLE 
-   2.332e+01    1.084e+04    3.237e-01    4.981e-02    9.975e-01    2.487e-03 
-  a.wght.MLE       lnLike functionEval gradientEval    totalEval 
-   4.249e+00           NA    5.000e+00    5.000e+00    2.600e+01 
-PASSED test at tolerance  0.02
-PASSED test at tolerance  0.01
 > proc.time()
    user  system elapsed 
- 52.430   0.757  53.818 
+ 27.724   0.263  28.050 

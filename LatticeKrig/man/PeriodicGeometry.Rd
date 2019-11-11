@@ -177,19 +177,22 @@ basis functions in the model if the spatial domain includes the entire sphere.
  data(CO2)
 # to look at raw data: quilt.plot(CO2$lon.lat, CO2$y, nx=288, ny=165)
 # Use two levels starting at the second generation of lattice points from the triangulation
-  LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=2 ,nlevel=2,
+  LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=1 ,nlevel=2,
                        a.wght=1.1, alpha=c(1,.25),
                        LKGeometry="LKSphere" )
 # Take a look at Model summary
   print( LKinfo0)
   
-# Use arbitrary  lambda 
+# Use arbitrary  lambda  (.01) 
   obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.01)
+\dontrun{
+# Surface plot of estimate
   surface(obj0, nx=288, ny=165)
   world( add=TRUE)
+}  
 \dontrun{
 data(CO2)
-# estimate lambda ( should be 0.003
+# estimate lambda ( should be around 0.003)
 # NOTE: lambda values will tend to be sensitive to the model choice
   LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=2 ,nlevel=2,
                        a.wght=1.1, alpha=c(1,.25),

@@ -1,6 +1,6 @@
 Package: LatticeKrig
-Version: 8.2
-Date: 2019-10-28
+Version: 8.4
+Date: 2019-11-08
 Title: Multi-Resolution Kriging Based on Markov Random Fields
 Authors@R: c( 
             person("Douglas", "Nychka", role = c("aut", "cre"),
@@ -55,5 +55,5 @@ Description: Methods for the interpolation of large spatial
 License: GPL (>= 2)
 URL: https://www.r-project.org
 Depends: R (>= 3.5.0), methods, spam, fields (>= 9.9)
-Packaged: 2019-10-28; nychka
+Packaged: 2019-11-08; nychka
 NeedsCompilation: yes

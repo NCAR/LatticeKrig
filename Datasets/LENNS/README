@@ -1,29 +1,27 @@
 
 The slopes in BRACEUfields.rda
 are the orignal fields created by Stacey Alexeeff and used in subsequent papers.
-
-Unfortunately, I (DWN) am not able to reproduce this precisely and
+Unfortunately, I (DWN) am not able to reproduce these precisely and
 include source code to create a close version of the slope fields from
 the original LENNS model output datasets.
-See createPattern.R and makeTS.R The script  check.R checks these against Stacey's original to show the agreement.
-
-This data set that can be constructed precisely from the model output is in
-the R binary
+See createPattern.R and makeTS.R with the resulting data object being
 
 JJAPatternScalingSlope.rda
 For future work I recommend that one use
+
 load("JJAPatternScalingSlope.rda")
-as a data example that is reproducible.
 
-and  also includes the global temperatures and so makes for a good comparison of how pattern scaling works. 
+as a data source that is reproducible.
 
+The script check.R checks these against Stacey's original to show the close but not exact  agreement.
 
-
-The raw LENNS output files are large are not included here but can be obtained
-through 
+The raw LENNS output files are large are not included here. One will hce to download these to run the scripts cited above.  However, the original output but canbe obtained through 
 http://www.cesm.ucar.edu/projects/community-projects/LENS/data-sets.html
 
-Here are model outpout file names that are used:
+See also https://github.com/dnychka/STATMOSShortCourse/tree/master/LENSStatmos
+for other subsets of the LENNS output formatted for R. 
+
+Here are the  model output file names that are needed for creating the data used for pattern scaling:
 (and see createPattern.R as to how they are read in and preocessed. )
 
 b.e11.BRCP45C5CNBDRD.f09_g16.001.cam.h0.TS.200601-208012.nc

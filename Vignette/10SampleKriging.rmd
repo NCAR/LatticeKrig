@@ -1,0 +1,301 @@
+# Appendix C: Explicit linear algebra for a  \ttt{LatticeKrig} calculation
+
+
+
+The computations inside of \ttt{LatticeKrig} and \ttt{LKrig} can be hard to understand, so here we will work through several examples showing all of the linear algebra used. Some of the variable names will be changed from the code in the previous section so that they match the names in the linear algebra appendix and in the JCGS article. Although not explored here, note that for sdmall problems these computations can also be reproduced from the fields package and with the \ttt{mKrig} function using the LatticeKrig covariance function. Thus, there are 3 separate routes to verify these estimates. 
+
+## First Example: One level, no normalization
+
+First, we create the data, create the basis/covariance function \ttt{basis}, and call \ttt{LKrig} to fit the data.
+
+```{r Calculations1Setup}
+lambda = 0.05
+overlap = 2.5
+# this is the function WendlandFunction used in package ...
+psi <- function(d) {
+  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
+}
+
+#clear x and y to make sure our data doesn't get overwritten
+rm(x, y)
+data(KrigingExampleData)
+x<- KrigingExampleData$x
+y<- KrigingExampleData$y
+```
+
+Next, we create an equally spaced lattice of 6 points in [0,1] and add 5 additional points on either side; since we only have 1 level in 1 dimension, this is relatively easy.
+
+```{r Calculations1Lattice}
+nc <- 6
+ncBuffer <- 5
+
+#finding the spacing for the lattice
+delta <- 1/(nc-1)
+latInside <- seq(from=0, to=1, by=delta)
+
+#adding the buffer lattice points outside the interval
+latBefore <- seq(to=0-delta, by=delta, length.out = ncBuffer)
+latAfter <- seq(from=1+delta, by=delta, length.out = ncBuffer)
+lattice <- c(latBefore, latInside, latAfter)
+# compare to info$latticeInfo$grid below -- should be identical
+m <- length(lattice)
+```
+
+Now we create the covariance matrix for $\mathbf y$, which is $M_\lambda$, and the covariance matrix for the basis functions, which is $P$. Throughout we use the direct linear algebra to find the components of the LatticeKrig model. This makes the steps clear and easy to reproduce, however, for larger problems the direct linear algebra is hopeless -- hence the LK algorithms. 
+
+```{r Calculations1Covariance}
+# the basis function matrix 
+Phi <- psi(rdist(x, lattice) / (overlap*delta) )
+# SAR matrix built by hand
+B <- (
+  LKDiag(c(-1, 2.01, -1), m)
+  )
+# coerce to a dense matrix from spam format where zeroes are filled in 
+B <- spam2full(LKDiag(c(-1, 2.01, -1), m))
+# proportional to the precision matrix
+Q <- t(B) %*% B
+# proportional to the covariance matrix for the basis coefficients. 
+P <- solve(Q)
+# the covariance of the observations includeing nugget/ measurement error
+M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
+# don't do this if m is large! several thousand works. 
+Minverse <- solve(M)
+```
+
+Finally, we can calculate our estimates for $\mathbf c$ and $\mathbf d$: \ttt{cHat} and \ttt{dHat}, respectively. This fit is compared to a call directly to the LKrig function. The function \ttt{test.for.zero} is handy function used throughout to compare to sets of numerical values. 
+
+```{r Calculations1Fixed}
+ones <- rep(1, length(x))
+Z <- cbind(ones, x)
+dHat <- solve(t(Z) %*% Minverse %*% Z, t(Z) %*% Minverse %*% y)
+G <- t(Phi)  %*% Phi + lambda*Q
+cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
+# make sure all these arguments match what we have use "by hand"
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5,
+                   nlevel = 1, a.wght = 2.01,
+                   alpha = 1, lambda = 0.05, overlap=2.5,  
+                   normalize = FALSE,
+                   LKGeometry = "LKInterval")
+krigFit <- LKrig(x, y, LKinfo = info)
+
+#compare kriging prediction with calculated prediction
+xGrid <- seq(0,1,length = 200)
+krigPredictions <- predict(krigFit, xGrid)
+PhiPredict <- psi(rdist(xGrid, lattice) / (overlap*delta))
+ZPredict <- cbind(rep(1, length(x)), xGrid)
+predictions <- ZPredict %*% dHat + PhiPredict %*% cHat
+
+#making covariance matrix and comparing it to the LKrig one
+testCov <- Phi %*% P %*% t(Phi)
+targetCov <- LKrig.cov(x, x, info)
+
+test.for.zero(testCov, targetCov)
+test.for.zero(dHat, krigFit$d.coef)
+test.for.zero(cHat, krigFit$c.coef)
+test.for.zero(krigPredictions, predictions)
+```
+
+## Second example: One level with normalization
+
+In this example, we normalize \ttt{Phi} so that the basis functions have covariance 1 at each data point. This normalization will reduce artifacts in the kriging model that aren't present in the data near the edges of the window. We also print out the diagonal of the covariance matrix, $\Phi P \Phi^T$ - note that it is all ones.
+```{r Calculations3New}
+D <- Phi %*% P %*% t(Phi)
+#discarding the off-diagonal elements of D
+# and finding inverse square root
+DS<- diag(D)^(-1/2)
+Phi <- diag(DS) %*% Phi
+diag(Phi %*% P %*% t(Phi))
+
+#calculating Phi matrix for prediction locations
+xGrid <- seq(0,1,length = 200)
+PhiPredict <- psi(rdist(xGrid, lattice) / (overlap*delta))
+#normalizing PhiPredict too
+DPredict <- PhiPredict %*% P %*% t(PhiPredict)
+#discarding the off-diagonal elements of D
+DPredictS <- diag(diag(DPredict)^(-1/2))
+PhiPredict <- DPredictS %*% PhiPredict
+```
+
+The rest of the calculations proceed in the same way as the first section without normalization.
+
+```{r Calculations3Finish}
+M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
+Minverse <- solve(M)
+
+Z <- cbind(1, x)
+ZPredict <- cbind(1, xGrid)
+dHat <- solve(t(Z) %*% Minverse %*% Z, t(Z) %*% Minverse %*% y)
+G <- t(Phi)  %*% Phi + lambda*Q
+cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
+predictions <- ZPredict %*% dHat + PhiPredict %*% cHat
+
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, NC.buffer = 5, nlevel = 1,
+                   a.wght = 2.01, alpha = 1, lambda = 0.05, LKGeometry = "LKInterval")
+krigFit <- LKrig(x, y, LKinfo = info)
+krigPredictions <- predict(krigFit, xGrid)
+
+#making covariance matrix and comparing it to the LKrig one
+testCov <- Phi %*% P %*% t(Phi)
+targetCov <- LKrig.cov(x, x, info)
+
+test.for.zero(testCov, targetCov)
+test.for.zero(dHat, krigFit$d.coef)
+test.for.zero(cHat, krigFit$c.coef)
+test.for.zero(krigPredictions, predictions)
+
+```
+
+## Third Example: Three levels, no normalization
+
+The setup in this example is almost the same as in the first one; the only differences are the different random seed and the different values of \ttt{nlevel} and \ttt{alpha} in the \ttt{LKinfo} object. The value of \ttt{alpha} is chosen so that each level has half as much weight as the previous and the sum of all the weights is 1. These direct computations mirror the sparse matrix and precision approach of LatticeKrig. 
+
+```{r Calculations2Setup}
+lambda <- 0.05
+overlap <- 2.5
+```
+
+Making the lattice is now more complicated, since we need to create three different levels. However, note that the first level is the same as before, and the new levels just have lattice points 2x and 4x closer together. This lattice is created in the package through the LKrigSetup call. 
+
+```{r Calculations2Lattice}
+nc <- 6
+ncBuffer <- 5
+delta <- 1 / (nc-1)
+L1Inside <- seq(from=0, to=1, by=delta)
+L1Before <- seq(to=0-delta, by=delta, length.out = ncBuffer)
+L1After <- seq(from=1+delta, by=delta, length.out = ncBuffer)
+L1 <- c(L1Before, L1Inside, L1After)
+
+L2Inside <- seq(from=0, to=1, by=delta/2)
+L2Before <- seq(to=0-delta/2, by=delta/2, length.out = ncBuffer)
+L2After <- seq(from=1+delta/2, by=delta/2, length.out = ncBuffer)
+L2 <- c(L2Before, L2Inside, L2After)
+
+L3Inside <- seq(from=0, to=1, by=delta/4)
+L3Before <- seq(to=0-delta/4, by=delta/4, length.out = ncBuffer)
+L3After <- seq(from=1+delta/4, by=delta/4, length.out = ncBuffer)
+L3 <- c(L3Before, L3Inside, L3After)
+
+s1 <- length(L1)
+s2 <- length(L2)
+s3 <- length(L3)
+c(s1, s2, s3)
+```
+
+Note that the values of \ttt{s1, s2, s3} don't follow a strict 1:2 ratio as we might expect; this is because of the lattice points outside the region, and because of the boundaries. Specifically, \ttt{s1 = 16} because there are \ttt{nc = 6} lattice points covering the interval, with 5 gaps between them, and an additional 5 lattice points on each side of the interval. At the second level, the gaps are half as wide, so the 5 gaps become 10; there are now 11 lattice points in the interval and 5 on each side, giving the total \ttt{s2 = 21}. Similarly, at the third level the 10 gaps become 20, making 21 lattice points in the interval and 5 on either side, so we have \ttt{s3 = 31}.
+
+Now we create the covariance matrix for $\mathbf y$, which is $M_\lambda$, and the covariance matrix for the basis functions, which is $P$. Now that we have 3 different lattice sizes, making $Q = P^{-1}$ becomes more difficult, since it's a block-diagonal matrix with a block entry for each different lattice size.
+
+```{r Calculations2Covariance}
+alpha <- c(4, 2, 1)/7
+Phi1 <- psi(rdist(x, L1) / (overlap*delta)  )* sqrt(alpha[1])
+Phi2 <- psi(rdist(x, L2) / (overlap*delta/2)) * sqrt(alpha[2])
+Phi3 <- psi(rdist(x, L3) / (overlap*delta/4)) * sqrt(alpha[3])
+Phi <- cbind(Phi1, Phi2, Phi3)
+
+#
+B1 <- ( LKDiag(c(-1, 2.01, -1), s1, full=TRUE) )
+B2 <- ( LKDiag(c(-1, 2.01, -1), s2, full=TRUE) )
+B3 <- ( LKDiag(c(-1, 2.01, -1), s3, full=TRUE) )
+
+B1 <- spam2full(LKDiag(c(-1, 2.01, -1), s1))
+B2 <- spam2full(LKDiag(c(-1, 2.01, -1), s2))
+B3 <- spam2full(LKDiag(c(-1, 2.01, -1), s3))
+
+Q1 <- t(B1) %*% B1
+Q2 <- t(B2) %*% B2
+Q3 <- t(B3) %*% B3
+Q <- matrix(0, nrow = s1+s2+s3, ncol = s1+s2+s3)
+
+#putting Q1, Q2, Q3 into block-diagonal matrix Q
+Q[1:s1, 1:s1] <- Q1
+Q[(s1+1):(s1+s2), (s1+1):(s1+s2)] <- Q2
+Q[(s1+s2+1):(s1+s2+s3), (s1+s2+1):(s1+s2+s3)] <- Q3
+P <- solve(Q)
+M <- Phi %*% P %*% t(Phi) + lambda*diag(1, length(x))
+Minverse <- solve(M)
+```
+
+Finding coefficients
+
+```{r Calculations2Fixed}
+ones <- rep(1, length(x))
+Z <- cbind(ones, x)
+dHat <- solve(t(Z) %*% Minverse %*% Z, t(Z) %*% Minverse %*% y)
+G <- t(Phi)  %*% Phi + lambda*Q
+cHat <- solve(G) %*% t(Phi) %*% (y - Z %*% dHat)
+
+info <- LKrigSetup(as.matrix(c(0,1)), NC = 6, nlevel = 3, a.wght = 2.01, alpha = c(4,2,1)/7,
+                   lambda = 0.05, normalize = FALSE, LKGeometry = "LKInterval")
+krigFit <- LKrig(x, y, LKinfo = info)
+
+#making covariance matrix and comparing it to the LKrig one
+targetBasis <- spam2full(LKrig.basis(x, info))
+test.for.zero(targetBasis, Phi)
+testCov <- Phi %*% P %*% t(Phi)
+targetCov <- LKrig.cov(x, x, info)
+test.for.zero(testCov, targetCov)
+test.for.zero(dHat, krigFit$d.coef)
+test.for.zero(cHat, krigFit$c.coef)
+```
+<!--
+## Using the kriging equations directly
+
+Recall the standard kriging equations for $\hat{\bld c}$ and $\hat{\bld d}$ in Appendix A:
+\begin{align*}
+\hat{\bld d} &= (Z^T \Sigma^{-1} Z)^{-1} Z^T \Sigma^{-1} \\
+E[\bld y_2 | \bld y_1] = \mu_2 + \Sigma_{21} \Sigma_{11}^{-1} (\bld y_1 - \mu_1).
+\end{align*}
+In this section, we will compute the estimates on a grid of points directly using these equations and using LatticeKrig to show that they match. For brevity, we will only consider the case with one level and no normalization; adjustments for more levels and normalization can be made in the same way as in the previous section. For a comparison of the \ttt{LKrig} function and the \ttt{mKrig} function in the fields package, refer to the *Comparing LKrig to orindary Kriging* section of the \ttt{LKrig} help page.
+
+{r KrigingPredictionComparison}
+data(KrigingExampleData)
+#setting up the parameters for LKinfo
+NC <- 4
+NC.buffer <- 1
+a.wght <- 3
+lambda <- 0.001
+info <- LKrigSetup(as.matrix(c(0,1)), NC = NC, 
+                   NC.buffer = NC.buffer, nlevel = 1,
+                   normalize = FALSE, a.wght = a.wght,
+                   alpha = 1, LKGeometry = "LKInterval")
+
+#setting up the grid to predict values on and the lattice
+#(which are different; note the different range and sizes)
+xGrid <- seq(0.1, 0.5, length.out=70)
+delta <- 1/(NC-1)
+lattice<- c(
+            seq(to=0-delta, by=delta, length.out = NC.buffer), # buffer left
+            seq(from=0, to=1, by=delta),                       #  middle 
+            seq(from=1+delta, by=delta, length.out = NC.buffer) # buffer right
+          )
+m <- length(lattice)
+n <- length(x)
+
+#making the LatticeKrig prediction
+krigFit <- LKrig(x, y, LKinfo = info, lambda=lambda)
+kPredict <- predict(krigFit, xGrid)
+
+#intermediate steps for the kriging calculations shown above
+B <- LKDiag(c(-1, 3, -1), m, full=TRUE)
+Q <- t(B) %*% B
+QInv <- solve(Q)
+PhiObs <- psi(rdist(x, lattice) / (delta*overlap))
+PhiGrid <- psi(rdist(xGrid, lattice) / (delta*overlap))
+CovObs <- PhiObs %*% QInv %*% t(PhiObs)
+CovGrid <- PhiGrid %*% QInv %*% t(PhiObs)
+Sigma <- CovObs + lambda*diag(1, n)
+SigmaInverse <- solve(Sigma)
+ZObs <- cbind(1, x)
+ZGrid <- cbind(1, xGrid)
+
+#calculating the kriging prediction and comparing the two
+d.coef <- solve((t(ZObs) %*% SigmaInverse %*% ZObs), t(ZObs) %*% SigmaInverse %*% y)
+gHat <- ZGrid %*% d.coef + CovGrid %*% SigmaInverse %*% (y - ZObs %*% d.coef)
+test.for.zero(krigFit$d.coef, d.coef)
+test.for.zero(kPredict, gHat)
+
+#plot showing the predicted curves on top of each other
+plot(xGrid, kPredict, type="l", col="black", lwd=5)
+lines(xGrid, gHat, col="green", lwd=2)
+
+-->

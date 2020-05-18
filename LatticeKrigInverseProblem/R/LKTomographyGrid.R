@@ -28,5 +28,17 @@ LKTomographyGrid <- function(lines, points, ranges, rangeReps) {
   ord <- order(ind[,1], ind[,2])
   ind <- ind[ord,]
   ra <- ra[ord]
+  
+  #convert ra from distances to line integral values
+  ra <- LKBasisFunctionIntegral(ra)
+  
+  #scale ra by the corresponding range
+  idx = 1L
+  for(i in 1:length(ranges)) {
+    for(j in 1:rangeReps[i]) {
+      tomMatrix$ra[idx] = tomMatrix$ra[idx] * ranges[i]
+      idx = idx + 1
+    }
+  }
   return(list(ind = ind, da = c(nLines, nPoints), ra = ra))
 }

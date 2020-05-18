@@ -29,7 +29,8 @@ subroutine LKTomGrid(dim, points, nPoints, lines, nLines, ranges, &
         !$omp do
         do lineIdx = 1, nLines
 
-            !making a matrix M from the line such that for a vector v, Mv is the component of v perpendicular to the line
+            !making a matrix projectionResid from the line such that for a vector v, projectionResid times v is the
+            !component of v perpendicular to the line
             lineVec = lines(:dim, lineIdx) - lines(dim+1:, lineIdx)
             lineLengthSquared = sum(lineVec * lineVec)
             projectionResid(:,:) = -1/lineLengthSquared

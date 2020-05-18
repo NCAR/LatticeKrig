@@ -81,10 +81,10 @@ are in lon/lat degrees.}
  
    
   \strong{NC  and  NC.buffer} 
-  for cartesian geometries (e.g. \code{LKInterval, LKRectangle, LKBox, 
+  for Cartesian geometries (e.g. \code{LKInterval, LKRectangle, LKBox, 
   LKRing}) are parameters to specify to number of the
   	 grid points in the largest dimension of the spatial domain and for the 
-  	 coarsest lattice. These should alrady be a component in the LKinfo object,
+  	 coarsest lattice. These should already be a component in the LKinfo object,
   	 object specified in the usage. 
   	 
 	 For \code{LKInterval} this is just of lattice points at the coarsest level.
@@ -106,7 +106,7 @@ are in lon/lat degrees.}
 			      of basis functions.}
 			      \item{mx}{A matrix giving the number of lattice points in 
 			      	each coordinate (columns) and at each level (rows) of the 
-			      	multiresolution.}
+			      	multi-resolution.}
 		\item{offset}{When the lattice points are unrolled as a single array,
 			 a vector of indexes giving the start of each 
 			 lattice level in the coefficient vector. }
@@ -115,7 +115,7 @@ are in lon/lat degrees.}
 		\item{mLevel}{A vector giving number of lattice points at each level.}
 	}
 	
-	In addition, the methods for cartesian and cartesian-like  spatial domains (
+	In addition, the methods for Cartesian and cartesian-like  spatial domains (
 	LKInterval, LKRectangle, LKBox, LKRing, LKCylinder, LKSphere) include the additional components:
 	\describe{	
 		\item{mx}{A matrix giving number of grid points at each level and for each dimension.}

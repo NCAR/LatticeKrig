@@ -1,8 +1,7 @@
 Package: LatticeKrig
-Version: 8.1
-Date: 2019-08-03
-Title: Multiresolution Kriging Based on Markov Random Fields
-Author: Douglas Nychka [aut, cre], Dorit Hammerling [aut], Stephan Sain [aut], Nathan Lenssen [aut], Colette Smirniotis [aut]
+Version: 8.4
+Date: 2019-11-08
+Title: Multi-Resolution Kriging Based on Markov Random Fields
 Authors@R: c( 
             person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "nychka@ucar.edu"),
@@ -21,9 +20,9 @@ Authors@R: c(
 	       ) 
 Maintainer: Douglas Nychka <nychka@ucar.edu>
 Description: Methods for the interpolation of large spatial
-  datasets. This package follows a "fixed rank Kriging" approach using
-  a large number of basis functions and provides spatial estimates
-  that are comparable to standard families of covariance functions.
+  datasets. This package follows a "fixed rank Kriging" approach but
+  provides a surface fitting method
+  that can approximate standard spatial data models.
   Using a large number of basis functions allows for estimates that
   can come close to interpolating the observations (a spatial model
   with a small nugget variance.)  Moreover, the covariance model for
@@ -33,26 +32,28 @@ Description: Methods for the interpolation of large spatial
   parameters. This is accomplished through compactly supported basis
   functions and a Markov random field model for the basis
   coefficients. These features lead to sparse matrices for the
-  computations and this package makes of the R spam package for this.
+  computations and this package makes of the R spam package for sparse
+  linear algebra.
   An extension of this version over previous ones ( < 5.4 ) is the
   support for different geometries besides a rectangular domain. The
   Markov random field approach combined with a basis function
   representation makes the implementation of different geometries
-  simple where only a few specific functions need to be added with
+  simple where only a few specific R functions need to be added with
   most of the computation and evaluation done by generic routines that
   have been tuned to be efficient.  One benefit of this package's
   model/approach is the facility to do unconditional and conditional
   simulation of the field for large numbers of arbitrary points. There
   is also the flexibility for estimating non-stationary covariances
   and also the case when the observations are a linear combination
-  (e.g. an integral) of the spatial process.  Included are generic
+  (e.g. an integral) of the spatial process. Included are generic
   methods for prediction, standard errors for prediction, plotting of
   the estimated surface and conditional and unconditional simulation.
+  See the 'LatticeKrig' GitHub repository for a vignette of this package.
   Development of this package was supported in part by the National
   Science Foundation  Grant 1417857 and the National Center for
   Atmospheric Research. 
 License: GPL (>= 2)
 URL: https://www.r-project.org
-Depends: R (>= 3.2.2), methods, spam, fields (>= 8.15)
-Packaged: 2019-08-03; nychka
+Depends: R (>= 3.5.0), methods, spam, fields (>= 9.9)
+Packaged: 2019-11-08; nychka
 NeedsCompilation: yes

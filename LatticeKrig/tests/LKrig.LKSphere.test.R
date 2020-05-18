@@ -4,7 +4,7 @@ suppressMessages( library( LatticeKrig))
 
 
 Rmax<-7
-MultiGrid<- IcosohedronGrid(Rmax)
+MultiGrid<- IcosahedronGrid(Rmax)
 delta<- 1.408/ 2^( 0:(Rmax-1) )
 dtype<- "GreatCircle"
 attributes(dtype)<- list( Radius=1.0)

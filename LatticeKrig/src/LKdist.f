@@ -14,7 +14,7 @@ c****  # but WITHOUT ANY WARRANTY; without even the implied warranty of
 c****  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 c****  # GNU General Public License for more details.
 
-       subroutine LKdist( x1, n1, x2, n2, dim,  delta2,
+       subroutine lkdist( x1, n1, x2, n2, dim,  delta2,
      *   ind, rd, Nmax, iflag)
        integer n1,n2, dim, Nmax, iflag
        integer ind(Nmax,dim)
@@ -49,7 +49,7 @@ c**** check if there is still array space
          Nmax=kk  
       end
       
-      subroutine LKdistComp( x1, n1, x2, n2, dim, delta,
+      subroutine lkdistComp( x1, n1, x2, n2, dim, delta,
      *  ind, rd, Nmax, iflag)
        integer n1,n2, dim, Nmax, iflag
        integer ind(Nmax,2)

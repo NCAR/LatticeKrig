@@ -84,7 +84,7 @@ function can be used to solve a linear inverse type problem (see X and U below).
 \item{chull.mask}{An additional constraint for evaluating predictions see
 \code{help(in.poly)}. Usually this is not needed.  }
 
-\item{collapseFixedEffect}{If FALSE the fixed part of the model is found seperately for each replicated data set. If TRUE the estimate is polled across replicates.This is largely a modeling decision whether variation among the replicate fields is due to the spatial component or also include variation in the fixed effects across replicates -- guess they are not really fixed then!}
+\item{collapseFixedEffect}{If FALSE the fixed part of the model is found separately for each replicated data set. If TRUE the estimate is polled across replicates.This is largely a modeling decision whether variation among the replicate fields is due to the spatial component or also include variation in the fixed effects across replicates -- guess they are not really fixed then!}
      
 \item{digits}{Number of digits in printed output.}
    
@@ -176,7 +176,7 @@ the z component follows the shape described above for the no list case.   }
  LKrigSetup function and in fact they are just passed through to this function to 
  create an LKinfo object. 
  Of particular use is resetting the size of the memory allocation for the 
- sparse decompositions in spam. This is done by the argument
+ sparse decomposition in spam. This is done by the argument
  \code{choleskyMemory}. This is a list in the format of the spam \code{memory} argument  for the
 	sparse cholesky function.
 	For example if a warning is printed that nnzR needs to be at least 2e5 in size, passing 
@@ -190,13 +190,13 @@ the z component follows the shape described above for the no list case.   }
   The minimal set of arguments for a 2-d rectangular
  domain, however,  are  \code{alpha}, \code{nlevel}, \code{NC}, and \code{a.wght}.
  
- \strong{alpha} The sequence of positive weights for each level of the multiresolution process.
+ \strong{alpha} The sequence of positive weights for each level of the multi-resolution process.
  Usually these sum to one and are interpreted as the variance of the process at each level. 
 
  \strong{a.wght} The weight given to the central lattice point in the 
  	spatial autoregression (see details below). 
 
- \strong{nlevel} Number of levels for the multiresolution basis. Each
+ \strong{nlevel} Number of levels for the multi-resolution basis. Each
 level increases the number of basis functions by roughly a factor of
 4. 
 
@@ -207,7 +207,7 @@ level increases the number of basis functions by roughly a factor of
 	(default is 5 on each side). 
 
 Some additional arguments are \code{V} that defines a linear scaling of the 
-coordinates before the LatticeModel is applied. See details below. 
+coordinates before the LatticeKrig model is applied. See details below. 
 
   }
  
@@ -230,7 +230,7 @@ scales of spatial dependence.  The \code{alpha} gives the relative
 weighting between these processes.  Thus, the minimum set of
 parameters needed to describe the covariance of f are the integer
 \code{NC}, two scalars \code{rho} and \code{a.wght}, and a vector
-\code{alpha}. \code{alpha} has a length of  the number of multiresolution
+\code{alpha}. \code{alpha} has a length of  the number of multi-resolution
 levels but we recommend that it be constrained sum to one.  The parameter
 rho is the
 marginal variance of the process and this multiples alpha.  Thus in
@@ -290,7 +290,7 @@ observations made at evaluating f at the observation locations.
 \strong{About dense matrix computations:} The value of this package is to
 handle larger spatial data sets by exploiting sparse matrix methods using
 the spam package. However, for small problems, checking, or timing it is
-useful to do the computations using the usual dense matrix decompositions.
+useful to do the computations using the usual dense matrix decomposition.
 If the component \code{dense} in the LKinfo object is \code{TRUE} then dense
 (i.e. standard) methods will be used. Set this switch from the
 LKrigSetup function.
@@ -402,7 +402,7 @@ range parameter. An approximate strategy, however, is to set a.wght
 close to 4 and get some benefit from the normalization to reduce edge
 effects.
 
-\strong{Multiresolution process} Given basis functions and
+\strong{Multi-resolution process} Given basis functions and
  coefficients at each level we have defined a spatial process g.i that
  can be evaluated at any location in the domain. These processes are
  weighted by the parameter vector alpha and then added together to
@@ -427,7 +427,7 @@ minimal amount of information and combined with default choices create
 the LKinfo list. One direct way to create the complete list is to use
 \code{LKrigSetup} as in the example below.  For \code{nlevel==1} one
 needs to specify \code{a.wght}, \code{NC}, and also \code{lambda}
-related to the measurement error variance.  For a multiresolution
+related to the measurement error variance.  For a multi-resolution
 setup, besides these parameters, one should consider different values
 of \code{alpha} keeping in mind that if this vector is not constrained
 in some way ( e.g. \code{sum(alpha)==1}) it will not be identifiable
@@ -462,10 +462,10 @@ for checking and examining the implied covariance function.
 functions result in a covariance that has some non-stationary
 artifacts (see example below). For a covariance matrix P and for any
 location x one can evaluate the marginal variance of the process using
-unnormalized basis functions for each multiresolution level.  Based
+unnormalized basis functions for each multi-resolution level.  Based
 this computation there is a weighting function, say w.i(x), so that
 when the normalized basis w.i(x) Phi.i(x) is used the marginal
-variance for the multiresolution process at each level will be one.
+variance for the multi-resolution process at each level will be one.
 This makes the basis functions dependent on the choice of Q and
 results in some extra overhead for computation.  But we believe it is
 useful to avoid obvious artifacts resulting from the use of a finite
@@ -485,8 +485,8 @@ logicals for the different levels.  To examine what these edge effect
 artifacts are like the marginal variances for a 6 by 6 basis is
 included at the end of the Examples Section.
 
-\strong{Nonstationary and anisotropic modifications to the covariance}
- The simplest way to build in departures from isotopy is to scale the coordinates.
+\strong{Non-stationary and anisotropic modifications to the covariance}
+ The simplest way to build in departures from isotropy is to scale the coordinates.
 The device to specify this transformation is including the \code{V} argument
 in setting up the LKinfo object or passed in the  \dots  for this function. 
 \code{V} should be a matrix that represents the transposed, inverse transformation applied to the raw coordinates.  For example if \code{x1} are  locations  d- dimensions 
@@ -518,7 +518,7 @@ marginal variance of one there are several other points where the
 variance can be modified. The variance at level i is scaled by the
 parameters \code{alpha[i]} and the marginal variance of the process is
 scaled by \code{rho}.  Each of these can be extended to have some
-spatial variation and thus provide a model for nonstationarity.
+spatial variation and thus provide a model for non-stationarity.
 
 An option in specifying the marginal variance is to prescribe a
 spatially varying multiplier. This component is specified by the
@@ -536,7 +536,7 @@ vary across space and at each level. The model in this case could be
 
 g(x) = sqrt(rho(x)) * sum.i sqrt(alpha(x).i) * g.i(x)
 
-To specifiy this case \code{alpha} should be a list
+To specify this case \code{alpha} should be a list
 with \code{nlevel} components and each component being a "predict" object that will evaluate the alpha  variance at a given level at arbitrary spatial locations. 
 Explicitly alpha should be set up so that  \code{ predict(alpha[[l]], x1) } will return a vector of  values for alpha at level \code{l} and at locations \code{x1}. This happens in \code{LKrig.basis} and the user is referred to this function to see how it is handled and possibly to make modifications to the model.  Similar to the scalar alpha case we recommend that the alpha's across levels sum to one and it still may make sense to have the rho parameter vary across space as well. Here alpha would control a varying correlation range and rho the marginal variance. 
 
@@ -547,9 +547,9 @@ components as levels. If each component is a vector of length nine
 then these are interpreted as the weights to be applied for the
 lattice point and its 8 nearest neighbors see  the commented source code in \code{LKrigSAR.LKRectangle} for details. If
 each component is a matrix then these are interpreted as the
-(nonstationary) center weights for each lattice point. Finally if the
+(non-stationary) center weights for each lattice point. Finally if the
 component is an array with three dimensions this specifies the center
-and 8 nearest neighhors for every point in the lattice.  At this point
+and 8 nearest neighbors for every point in the lattice.  At this point
 the choice of these weights beyond a stationary model is experimental
 and we will defer further documentation of these features to a future
 version of this package. 
@@ -584,7 +584,7 @@ that if e are iid N(0,1) E( t(e) A(lambda) e) = trace( A(lambda)).
 \strong{Descriptions of specific functions and objects:}
 
 \strong{\code{LKrig}: } Find spatial process estimate for fixed
-covariance specificed by \code{nlevel}, \code{alpha}, \code{a.wght},
+covariance specified by \code{nlevel}, \code{alpha}, \code{a.wght},
  \code{NC}, and \code{lambda}
 or this information in an \code{LKinfo} list.
 
@@ -601,7 +601,7 @@ measurement errors are multivariate normal. The formula that is used
 involves some recondite shortcuts for efficiency but has been checked
 against the standard errors found from an alternative formula in the
 fields Krig function. (See the script Lkrig.se.tests.R in the tests
-subdirectory for details.)
+sub-directory for details.)
 
 
 }
@@ -620,7 +620,7 @@ parameters. For the LKrig covariance the sparsity pattern will be the
 same if \code{NC}, \code{level}, \code{overlap} and the data locations
 \code{x} are kept the same.  The returned component \code{LKinfo} has
 class LKinfo and is a list with the information that describes the
-layout of the multiresolution basis functions and the covariance
+layout of the multi-resolution basis functions and the covariance
 parameters for the GMRF.  (See help(LKinfo) and also \code{LK.basis}
 as an example.)
 
@@ -713,7 +713,7 @@ mKrig, Krig, fastTps, Wendland, LKrig.coef, Lkrig.lnPlike,
 }
 
 ##########################################################################
-# Use multiresolution model that approximates an exponential covariance
+# Use multi-resolution model that approximates an exponential covariance
 # Note that a.wght, related to a range/scale parameter
 # is specified at a (seemingly) arbitrary value. 
 ##########################################################################
@@ -834,12 +834,12 @@ LKinfo<- LKrigSetup( x,
 ########################################################################
 # A bigger problem: 26K observations and 4.6K basis functions
 # fitting takes about 15 seconds on a laptop for a fixed covariance
-#  LKrig.MLE to find the MLE (not included) for lambda takes abou
+#  LKrig.MLE to find the MLE (not included) for lambda takes about
 #  8 minutes
 #######################################################################
 \dontrun{
   data(CO2)
-  # the Ring geometry will be periodic in the first dimension and rectagular on 
+  # the Ring geometry will be periodic in the first dimension and rectangular on 
   # second. A useful approximation for spherical data omitting the polar caps. 
   
   LKinfo.CO2<- LKrigSetup(CO2$lon.lat, NC=100,nlevel=1, lambda=.2,

@@ -53,8 +53,8 @@ LKinfoUpdate(LKinfo, ... )
 \item{argList}{Argument supplied to the top level LatticeKrig function.}
 	
 \item{alpha}{A vector of length \code{nlevel} with the relative
-variances for the different multiresolution levels.  }
-\item{alphaObject}{For nonstationary models an object to be used with the predict function to give the alpha values at the process locations.
+variances for the different multi-resolution levels.  }
+\item{alphaObject}{For non-stationary models an object to be used with the predict function to give the alpha values at the process locations.
 Typically this is a list of "predict" objects. 
 See \link{nonstationaryModels} for examples how to use this option. 
 }
@@ -83,11 +83,11 @@ See \link{nonstationaryModels} for examples how to use this option.
   	approximately \code{1/sqrt(a.wght-4)}. 
 }
 
-\item{a.wghtObject}{For nonstationary models an object to be used with the predict function to give the a.wght values at the lattice locations. See \link{nonstationaryModels} for examples how to used option. 
+\item{a.wghtObject}{For non-stationary models an object to be used with the predict function to give the a.wght values at the lattice locations. See \link{nonstationaryModels} for examples how to used option. 
 }
 
  \item{basisInfo}{ A list with extra components the object used to
-  	describe the multiresolution basis.  Usually this will not be
+  	describe the multi-resolution basis.  Usually this will not be
   	needed for standard models. }
   	
   \item{BasisType}{A character string indicating the type of basis function. Currently
@@ -98,7 +98,7 @@ do the Cholesky decomposition. See the \code{memory} argument in
 \code{chol.spam}. }
 
 \item{collapseFixedEffect}{If FALSE the fixed part of the model is
-found seperately for each replicated data set. If TRUE the estimate is
+found separately for each replicated data set. If TRUE the estimate is
 polled across replicates.This is largely a modeling decision whether
 variation among the replicate fields is due to the spatial component or
 also include variation in the fixed effects across replicates -- guess
@@ -181,7 +181,7 @@ SAR model.  \code{NC.buffer=5} and \code{NC=5} for a square region will result i
 Note that this number by default is fixed for finer resolutions and so does not
 contribute as much to the total number of lattice points.}
  \item{nlevel}{Number of levels in
-  	multiresolution. Note that each subsequent level increases the
+  	multi-resolution. Note that each subsequent level increases the
   	number of basis functions within the spatial domain size by a
   	factor of roughly 4. }
  
@@ -191,7 +191,7 @@ contribute as much to the total number of lattice points.}
  
   \item{normalize}{ If TRUE the basis functions will be normalized to
   	give a marginal variance of one for each level of
-  	multiresolution.  (Normalizing by levels makes it easier to
+  	multi-resolution.  (Normalizing by levels makes it easier to
   	interpret the \code{alpha} weights.)  } 
   
   \item{nu}{ A
@@ -202,7 +202,7 @@ contribute as much to the total number of lattice points.}
   \item{overlap}{
   	Controls the overlap among the radial basis functions and
   	should be in units of the lattice spacing. For the rectangular
-  	case the default of 2.5 means that the support of the Wenland
+  	case the default of 2.5 means that the support of the Wendland
   	basis function will overlap 2.5 lattice units in each
   	direction.  See \code{LKrig.basis} for how overlap adjusts
   	scaling in the basis function formula. }
@@ -239,7 +239,8 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
   \item{\dots}{Specific arguments that will be included in the
   	\code{setupArgs} list and also passed to
   	\code{LKrigSetupLattice}. For \code{LKinfoUpdate} these specify the components
-  	       of LKinfo to update. For example for a rectangular domain (the default) the argument \code{NC} is needed to specify the initial lattice size \code{NC.buffer} sets the number of extra points included in the lattice and defaults to 5.  \code{NC} for the LKSphere geometry  is the intital level of the icosohedral grid.   }
+  	       of LKinfo to update. For example for a rectangular domain (the default) the argument \code{NC} is needed to specify the initial lattice size \code{NC.buffer} sets the number of extra points included in the lattice and defaults to 5.  \code{NC} for the LKSphere geometry  is the initial level of the
+	       icosahedral grid.   }
 }
 \details{
 	Many of the functions within LKrigSetup are overloaded to
@@ -279,7 +280,7 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
 	\item{sigma}{Value of sigma.}
 	\item{rho}{Value for rho.}
 	\item{rho.object}{Value for rho.object.}
-	\item{latticeInfo}{A list with specific multiresolution lattice information}
+	\item{latticeInfo}{A list with specific multi-resolution lattice information}
   \item{setupArgs}{All arguments passed in the call and any in in \dots }
   \item{basisInfo}{A list with basis information.}
   \item{call}{The actual call used to create this object.}	 

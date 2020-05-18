@@ -60,7 +60,7 @@ upperBound <- prediction + gamma*sdVec
 lowerBound <- prediction - gamma*sdVec
 plot(xGrid, upperBound, type="l", ylim = c(min(lowerBound), max(upperBound)),
      main = "Data with Confidence Intervals", xlab = "Location", ylab = "Measured Value")
-EnvelopePlot(xGrid, y1 = lowerBound, y2 = upperBound)
+envelopePlot(xGrid, y1 = lowerBound, y2 = upperBound)
 points(locations, observations)
 lines(xGrid, prediction, col='red', lty=2, lwd=2)
 ```
@@ -77,7 +77,7 @@ upperBound <- prediction + gamma*sdVec
 lowerBound <- prediction - gamma*sdVec
 plot(xGrid, upperBound, type="l", ylim = c(min(lowerBound), max(upperBound)),
      main = "Simulated Curves with Confidence Envelope", xlab = "Location", ylab = "Measured Value")
-EnvelopePlot(xGrid, y1 = lowerBound, y2 = upperBound)
+envelopePlot(xGrid, y1 = lowerBound, y2 = upperBound)
 for(i in 1:10) {
   lines(uncertainty$x.grid, uncertainty$g.draw[,i], col="gray")
 }

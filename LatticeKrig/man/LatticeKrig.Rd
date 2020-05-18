@@ -25,7 +25,7 @@ multi-resolution basis and a lattice model for the basis coefficients.
 }
 \description{ This is a simple and  high level function  to fit the LatticeKrig spatial
 model to a data set. 
-In is somplest form for 2-d spatial data:
+In is simplest form for 2-d spatial data:
 \code{obj<-LatticeKrig(x,y)} will fit a LatticeKrig type model to 2d locations \code{x} and observation vector \code{y}. Several (actually many!) default choices are made for the multi-resolution spatial
 covariance 
 in this top level function. It uses the defaults that are based on 
@@ -79,7 +79,7 @@ Or for the function \code{print.LatticeKrig} \code{x} is the returned object fro
   	 } 
   	 
   	 \item{U}{For linear inverse problems the matrix that maps coefficients of the fixed part of the model to the predicted
-	values of observations. This needs to specified along wiht \code{X} 
+	values of observations. This needs to specified along with \code{X} 
 	}
   
    \item{nlevel}{Number of levels for the multi-resolution basis. Each
@@ -90,8 +90,8 @@ Or for the function \code{print.LatticeKrig} \code{x} is the returned object fro
     estimated my maximum likelihood. }
   \item{LKinfo}{An optional list giving the full specification of the
    covariance. If this is missing  it will be created internally and
-   returned. If passed this parametrization will be used
-   except lambda will be reestimated by maximum likelihood.}
+   returned. If passed this parameterization will be used
+   except lambda will be re-estimated by maximum likelihood.}
 
   \item{na.rm}{If TRUE NA's are removed from \code{y} and \code{x} is subsetted.}
 
@@ -100,7 +100,7 @@ Or for the function \code{print.LatticeKrig} \code{x} is the returned object fro
  \item{verbose}{ If TRUE print out intermediate results. }
 
   \item{\dots}{Additional arguments to pass to LKrig. 
-  The easiest way to pass a full specification is to create an LKinfo object beforehand and then just pass that (see example below.) This gives more control and the setup function will do some error checking on argumetns. Also see help(LKrig) for a complete list of arguments to pass.  For convenience we note that  if you get some pesky memory warnings from spam
+  The easiest way to pass a full specification is to create an LKinfo object beforehand and then just pass that (see example below.) This gives more control and the setup function will do some error checking on arguments. Also see help(LKrig) for a complete list of arguments to pass.  For convenience we note that  if you get some pesky memory warnings from spam
   you can set the storage higher by adding the argument \code{choleskyMemory}. For example to bump up to 2E6 include:
   \code{choleskyMemory=list(nnzR= 2E6)}. 
   }
@@ -116,15 +116,15 @@ standard in this field.
 
 The simplest model fit is:
  \deqn{Y_k = p(x_k)  + h(x_k) + e_k }
- \eqn{Y_k} is the \eqn{k^{th}} observation at location \eqn{x_k} with measurment error \eqn{e_k}.
+ \eqn{Y_k} is the \eqn{k^{th}} observation at location \eqn{x_k} with measurement error \eqn{e_k}.
  Here \eqn{p(x)} is a low order polynomial of degree m-1 with the default \code{m==2}. \eqn{h(x)} is a mean zero Gaussian process with the representation:
  \deqn{ h(x)= \sum_{l=1}^L \sum_{j=1}^{m(j)} \phi_{m,l}(x) c_{m,l} }
-where \eqn{\phi} are multiresolution basis functions and the coefficients
+where \eqn{\phi} are multi-resolution basis functions and the coefficients
 have mean zero and spatial dependence specified by a Markov random field. Keep in mind that this unusual form still implies a specific covariance function for \eqn{h(x)}. In fact one can use the Krig or mKrig function from fields
 to reproduce the LatticeKrig estimate for smaller data sets and check computations. 
-(See \code{\link{LKrig.cov}} with examples ).  Details on the basis functions and the markov random field are given in the \code{\link{LKrig}}
+(See \code{\link{LKrig.cov}} with examples ).  Details on the basis functions and the Markov random field are given in the \code{\link{LKrig}}
 help function.  
-Throughout this package we assume the standard deivation of \eqn{e_k}
+Throughout this package we assume the standard deviation of \eqn{e_k}
 is \code{sigma}
 and the marginal variance of  \eqn{h(x)} is \code{rho}. An important derived
 parameter of the spatial estimate is \code{lambda = sigma^2/ rho} the noise to 
@@ -156,7 +156,7 @@ the implied covariance function.) LatticeKrig also provides maximum likelihood
 estimates
 of the measurement error standard deviation ("sigma") and process variance parameter ("rho") that are perhaps the 
 parameters that most effect the shape of the estimated spatial field. The ubiquitous
-parameter lambda throughout LatticeKrig is just the reparametrization lambda == sigma^2 / rho.
+parameter lambda throughout LatticeKrig is just the reparameterization lambda == sigma^2 / rho.
 
 This top level function is pitched with all the caveats that
 statistical model assumptions should always be checked and applying
@@ -178,9 +178,9 @@ The current choices are:
 \item{\code{\link{LKRectangle}}}{A 2 dimensional Euclidean spatial domain. The default}
 \item{\code{\link{LKInterval}}}{A 1 dimensional Euclidean spatial domain.}
 \item{\code{\link{LKBox}}}{A 3 dimensional Euclidean spatial domain.}
-\item{\code{\link{LKRing}}}{A 2 dimensional  spatial domain where the first coordinate is periodic (on [0,360]) and the second is Euclidean.  E.g. a slice around the equator and not having a large latitudal range. }
+\item{\code{\link{LKRing}}}{A 2 dimensional  spatial domain where the first coordinate is periodic (on [0,360]) and the second is Euclidean.  E.g. a slice around the equator and not having a large latitudinal range. }
 \item{\code{\link{LKCylinder}}}{A 3 dimension model where an additional  coordinate is added to the LKRing geometry. This is useful for representing a small section of the sphere where one also has a height component.}
-\item{\code{\link{LKSphere}}}{A full 2-d spherical geometry. Coordiantes are given in longitude, latitude but the distances and any structures are on the sphere. 
+\item{\code{\link{LKSphere}}}{A full 2-d spherical geometry. Coordinates are given in longitude, latitude but the distances and any structures are on the sphere. 
 }
 }
 
@@ -193,8 +193,8 @@ implemented as S3 methods. The details of this strategy are described in
 
 This function also supports a model where the observations are simply
 expressed as linear combinations of the basis function coefficients. Equivalently
-this is a model where the observed data can be expressed as linear functinonals
-applied to the polynmial term and the spatial process. 
+this is a model where the observed data can be expressed as linear functionals
+applied to the polynomial term and the spatial process. 
 Typically these 
 linear maps represent observing integrals or weighted combinations of the 
 fields and are important for data that is aggregated over by space.
@@ -244,14 +244,14 @@ LKrig, LKrig.setup, LKrigFindLambda, LKinfo, LKrig.sim.conditional
   out.se<- predictSE( obj, xnew= x)
 # predict at observations:
   out.fhat<- predict( obj, xnew= x)
-# coveniently predict on a 100X100 grid for plotting
+# conveniently predict on a 100X100 grid for plotting
  out.surf<- predictSurface( obj, nx=100, ny=100)
 # image.plot( out.surf) 
 }
 # running an example by first setting up the model object
 \dontrun{
 # this is just a small model to run quickly
-# compare the LKinfo object here  to one created implictily:  obj$LKinfo
+# compare the LKinfo object here  to one created implicitly:  obj$LKinfo
 LKinfo1<- LKrigSetup( x, NC=5, nlevel=3, a.wght=4.1, nu=1.0)
 obj1<- LatticeKrig( x,y, LKinfo= LKinfo1)
 }
@@ -273,14 +273,14 @@ obj1<- LatticeKrig( x,y, LKinfo= LKinfo1)
 
 \dontrun{
 # Refit using with just one level of  basis functions
-# on a 20X20 grid witin the spatial domain ( so about 400) 
+# on a 20X20 grid within the spatial domain ( so about 400) 
 # actually number is 720 ( see obj1b$LKinfo) due adding edge nodes
 # Add an aspect ratio of spatial domain 
 # and find the a.wght parameter along with nugget and process variances.
 # this takes a while partly because LatticeKrig model is not optimized for small data sets!
   obj1b<- LatticeKrig( x, y, nlevel=1, NC=20, findAwght=TRUE)
 # rudimentary look at how likelihood was optimized
-#log lambda and omega =  log(a.wght-4)/2 are useful parametrizations ...
+#log lambda and omega =  log(a.wght-4)/2 are useful parameterization ...
   quilt.plot( obj1b$MLE$lnLike.eval[,c("logLambda","omega")],
        obj1b$MLE$lnLike.eval[,"lnProfileLike.FULL"], 
        xlab="loglamda", ylab="omega",
@@ -314,7 +314,7 @@ out2$MLE$summary[1:7]
 \dontrun{
 # Refit using the tensor product type of basis functions
 # (default is "Radial"). An example how an additional argument that is 
-# passed to the LKrigsetup function to create the LKinfo object.
+# passed to the LKrigSetup function to create the LKinfo object.
   obj2<- LatticeKrig( x, y, BasisType="Tensor")
 }
 

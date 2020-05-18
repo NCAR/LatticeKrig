@@ -21,7 +21,7 @@
 \title{Geometries to represent 
 	2-d and 3-d spherical data. 
 }
-\description{These models include  a completely sphericial geometry based on a nearly regular node layout on the sphere. Also a simpler and perhaps more efficient 
+\description{These models include  a completely spherical geometry based on a nearly regular node layout on the sphere. Also a simpler and perhaps more efficient 
   versions are implemented where the first coordinate is 
 	periodic in the interval [0,360] and the remaining coordinates are regular (Euclidean).   
 	This might be used to approximate a section of spherical data that excludes the 
@@ -33,21 +33,21 @@
 \section{Details}{
 		These geometries are specified with the \code{LKGeometry} argument either in 
 		LKrigSetup or LatticeKrig. The first coordinate is longitude either from [0,360]
-		or [-180,180] and the second is lattiude [-90, 90].
+		or [-180,180] and the second is latitude [-90, 90].
 		
 		They each have the four specific methods: \code{LKrigLatticeCenters},
 		\code{LKrigSAR}, \code{LKrigSetupLattice}, \code{setDefaultsLKinfo}
 		and the source code is consolidated in the source files ModelRing.R and 
-		ModelCylinder.R in the R subdirectory of this package source. For the spherical grid the
+		ModelCylinder.R in the R sub-directory of this package source. For the spherical grid the
 		a.wght is handled a but differently please read the note below.
 		
 		\bold{\code{LKSphere}} Recall that the core of the LatticeKrig model is the placement of
 		the basis function centers and how the spatial autoregression is constructed from these
 		node
-		locations. Here the centers are generated according to a multiresolution based on the
-		triangles from an icosohedron. \code{\link{IcosohedronGrid}} creates a grid by taking the
+		locations. Here the centers are generated according to a multi-resolution based on the
+		triangles from an icosahedron. \code{\link{IcosahedronGrid}} creates a grid by taking the
 		first
-		level as the 12 points from a regular icsohedron. The subsequent levels generate a finer
+		level as the 12 points from a regular icosahedron. The subsequent levels generate a finer
 		set
 		of points by subdividing each triangular face into 4 new triangles. The three new mid
 		points
@@ -55,7 +55,7 @@
 		The
 		triangles tend to roughly equilateral and so the nodes will tend to be roughly equally
 		spaced. This regularly improves for the finer generations of triangles, however,
-		the 12 original nodes from the icosohedron will have 5 nearest neighbors rather than 6. 
+		the 12 original nodes from the icosahedron will have 5 nearest neighbors rather than 6. 
 		
 	  The setup argument \code{startingLevel} specifies the first level of the lattice and \code{nlevel} the
 	  total number. 
@@ -68,7 +68,7 @@
 		\strong{ a.wght must be greater than 1.0 } for a stationary model.                
 		
 		See the help file on 
-		\code{link{IcosohedronFaces}} for code on visualzing these. The first 12 centers will
+		\code{link{IcosahedronFaces}} for code on visualizing these. The first 12 centers will
 		have 5
 		close neighbors and remaining centers will have 6. Currently the SAR weights are
 		roughly equal
@@ -176,20 +176,23 @@ basis functions in the model if the spatial domain includes the entire sphere.
 #  runs quickly)
  data(CO2)
 # to look at raw data: quilt.plot(CO2$lon.lat, CO2$y, nx=288, ny=165)
-# Use two levels starting at the second genertation of lattice points from the triangularization
-  LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=2 ,nlevel=2,
+# Use two levels starting at the second generation of lattice points from the triangulation
+  LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=1 ,nlevel=2,
                        a.wght=1.1, alpha=c(1,.25),
                        LKGeometry="LKSphere" )
 # Take a look at Model summary
   print( LKinfo0)
   
-# Use arbitrary  lambda 
+# Use arbitrary  lambda  (.01) 
   obj0<- LKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0, lambda=0.01)
+\dontrun{
+# Surface plot of estimate
   surface(obj0, nx=288, ny=165)
   world( add=TRUE)
+}  
 \dontrun{
 data(CO2)
-# estimate lambda ( should be 0.003
+# estimate lambda ( should be around 0.003)
 # NOTE: lambda values will tend to be sensitive to the model choice
   LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=2 ,nlevel=2,
                        a.wght=1.1, alpha=c(1,.25),
@@ -201,7 +204,7 @@ LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=3, ,nlevel=3,
                        LKGeometry="LKSphere" )
                        
 obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
-# takes about 1 minute on a macbook air
+# takes about 1 minute on a Macbook air
 # setting findAwght = TRUE  takes about 8 minutes with 
 # lambda = 1.737 and a.wght = 15.8
 } 

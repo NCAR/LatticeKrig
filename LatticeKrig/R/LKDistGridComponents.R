@@ -33,8 +33,11 @@ LKDistGridComponents<- function( x1, gridList, delta,
 # FORTRAN expects x1 to be centered and scaled to the grid. 
 # i.e. the grid coordinates  are all just integer values 1:10 etc.
          xScaled <- scale( x1, center = info$min, scale = info$dx) + 1 
-         deltaScaled <- delta/mean(info$dx)    	
-    out <- .Fortran("LKdistgridcomp",
+         deltaScaled <- delta/mean(info$dx)
+#
+#   subroutine lkdistgridcomp( x1, n1, nGrid, nDim, delta, irow, jcol, ra, Nmax, iflag)
+#
+    out <- .Fortran("lkdistgridcomp",
                                   x1 = as.double(xScaled),
                                   n1 = as.integer(n1), 
                                nGrid = as.integer( info$n),
@@ -45,7 +48,7 @@ LKDistGridComponents<- function( x1, gridList, delta,
                                   ra = as.double(rep(-1, Nmax*info$dim)),
                                 Nmax = as.integer(Nmax),
                                iflag = as.integer(1),
-                               index = as.integer( rep(-1,Nmax*info$dim)),
+#                               index = as.integer( rep(-1,Nmax*info$dim)),
                              PACKAGE = "LatticeKrig")
                              
 # out$Nmax are now the actual number of nonzero distances found. 

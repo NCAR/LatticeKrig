@@ -1,0 +1,74 @@
+
+The slopes in BRACEUfields.rda
+are the orignal fields created by Stacey Alexeeff and used in subsequent papers.
+Unfortunately, I (DWN) am not able to reproduce these precisely and
+include source code to create a close version of the slope fields from
+the original LENNS model output datasets.
+See createPattern.R and makeTS.R with the resulting data object being
+
+JJAPatternScalingSlope.rda
+For future work I recommend that one use
+
+load("JJAPatternScalingSlope.rda")
+
+as a data source that is reproducible.
+
+The script check.R checks these against Stacey's original to show the close but not exact  agreement.
+
+The raw LENNS output files are large are not included here. One will hce to download these to run the scripts cited above.  However, the original output but canbe obtained through 
+http://www.cesm.ucar.edu/projects/community-projects/LENS/data-sets.html
+
+See also https://github.com/dnychka/STATMOSShortCourse/tree/master/LENSStatmos
+for other subsets of the LENNS output formatted for R. 
+
+Here are the  model output file names that are needed for creating the data used for pattern scaling:
+(and see createPattern.R as to how they are read in and preocessed. )
+
+b.e11.BRCP45C5CNBDRD.f09_g16.001.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.002.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.003.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.004.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.005.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.006.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.007.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.008.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.009.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.010.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.011.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.012.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.013.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.014.cam.h0.TS.200601-208012.nc
+b.e11.BRCP45C5CNBDRD.f09_g16.015.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.001.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.002.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.003.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.004.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.005.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.006.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.007.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.008.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.009.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.010.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.011.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.012.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.013.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.014.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.015.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.016.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.017.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.018.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.019.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.020.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.021.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.022.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.023.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.024.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.025.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.026.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.027.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.028.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.029.cam.h0.TS.200601-208012.nc
+b.e11.BRCP85C5CNBDRD.f09_g16.030.cam.h0.TS.200601-208012.nc
+
+
+

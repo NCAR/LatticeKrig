@@ -1,3 +1,16 @@
+<!-- title: "LatticeKrig Vignette"
+author: "Matthew Iverson, Douglas Nychka"
+date: "7/15/2019"
+output: 
+  pdf_document:
+      toc: true
+      number_sections: true
+knit: (function(inputFile, encoding) { 
+          rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file='LatticeKrigVignette.pdf') })
+-->
+
 # Using Sparse Matrices
 
 LatticeKrig, along with other statistical models for large spatial data sets, make use of sparse linear algebra for efficient computation. Sparse matrices are generated in the LK model in two ways. The basis functions have compact support, meaning they are 0 outside a fixed region, so many of the entries in the basis function matrix will be 0. The precision matrix for the coefficients is also constructed to be sparse.  
@@ -9,26 +22,79 @@ In this package, we use the \ttt{spam} package for sparse matrices. This package
 ## Timing sparse v.s. dense matrices
 
 To demonstrate the difference sparse matrices can make, we will time how long it takes to compute the Cholesky decomposition with and without taking advantage of the sparsity. We will consider $100 \times 100$, $300 \times 300$, $1000 \times 1000$, and $3000 \times 3000$ matrices. For each size, we will first do the Cholesky decomposition on the full matrix representation, then on the sparse representation. Recall that even though many of the matrix entries are 0, the decomposition doesn't take advantage of this feature unless we use the sparse formatting.
-```{r SparseCholComparison}
-for(N in c(100, 300, 1000, 3000)) {
+
+```{r SparseCholComparison, echo=TRUE}
+sizes<- c(100, 300, 1000, 2000)
+NTotal<- length( sizes)
+tab<- matrix( NA, nrow= NTotal, ncol=3)
+dimnames(tab)<- list( NULL, c("N","Dense", "Sparse"))
+for(k in 1:NTotal) {
+  N<- sizes[k]
   SMat <- LKDiag(c(-1, 5, -1), N)
   FMat <- spam2full(SMat)
-  cat("Matrix size: ", N, "\n")
-  cat("Full Matrix:\t\t")
-  startTime <- Sys.time()
+
+startTime <- Sys.time()
+  # 
   FChol <- chol(FMat)
-  stopTime <- Sys.time()
-  delta <- stopTime - startTime
-  print(delta)
-  
-  cat("Sparse Matrix:\t")
+  deltaF<-  Sys.time() - startTime
+  #
   startTime <- Sys.time()
   SChol <- chol(SMat)
-  stopTime <- Sys.time()
-  delta <- stopTime - startTime
-  print(delta)
-  cat("\n")
-}
+  deltaS<-  Sys.time() - startTime
+  tab[k,]<- c(N,deltaF, deltaS ) 
+}  
 ```
 
-As you can see from the output above, with sizable inputs the sparse matrix computation is thousands of times faster than the traditional dense matrix computation, and this advantage grows even faster with larger inputs.
+Timing table of dense verses sparse Cholesky decompositions (seconds)
+```{r}
+print(tab,digits=3)
+```
+
+
+As you can see from the output above, with sizable inputs the sparse matrix computation is nearly 3 orders of magnitude   faster than the traditional dense matrix computation, and this advantage increases with larger inputs.
+
+## Precision matrix example
+Here is another example of sparse timing that also illustrates how to create a 
+single level precision matrix  (aka Q) for the 2D LatticeKrig model. 
+
+```{r SparseSAR, echo=TRUE}
+LKinfo <- LKrigSetup( cbind( c(0,1), c(0,1)), NC=15, nlevel=1,
+                      a.wght=4.5)
+Q<- LKrig.precision(LKinfo)
+summary( Q)
+```
+Visualizing the sparsity pattern in Q
+```{r echo=FALSE}
+temp<- spam2full(Q)
+temp[ temp==0]<- NA
+par( pty="s")
+image.plot( 1: nrow( temp), 1:ncol(temp), temp, 
+            col=terrain.colors(256),
+             xlab="", ylab="")
+ title("Original Q matrix")
+ cQ<- chol(Q)
+ ind<- cQ@pivot
+ par( pty="s")
+ image.plot( 1: nrow( temp), 1:ncol(temp), temp[ind, ind], 
+            col=terrain.colors(256),
+             xlab="", ylab="")
+ title("Permuted Q matrix to reduce infilled zeroes")
+```
+
+Q is in spam format. Find Cholesky in this format and also as a dense matrix.
+
+```{r SparseSAR2, echo=TRUE}
+startTime <- Sys.time()
+# sparse Cholesky 
+cQ <- chol(Q)
+deltaS<-  Sys.time() - startTime
+
+startTime <- Sys.time()
+# sparse Cholesky 
+cQF <- chol( spam2full(Q) )
+deltaF<-  Sys.time() - startTime
+cat("Sparse time", deltaS, "Dense time", deltaF, fill=TRUE)
+```
+
+
+

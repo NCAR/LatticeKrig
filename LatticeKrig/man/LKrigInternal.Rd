@@ -118,14 +118,14 @@ the  grid.list argument. }
 
 The LatticeKrig article can be used as a reference for the matrix computations
 and the G matrix from those formulas figures prominently. The GCholesky object
-in these functions is the cholesky decompoistion of this matrix. For
+in these functions is the cholesky decomposition of this matrix. For
 compatibility with older version of this package this object may also be named
 as \code{Mc} ( Cholesky of the M  matrix) but the user should not identify this M with that in the article. Ideally all coding using Mc should be changed to GCholesky.
 
 \code{createLKrigObject} Based on the arguments passed into LKrig forms the 
 prototype LKrig object. This object is added to as one computes additional steps in the LKrig function. 
 	
-\code{LKrigMakewU} and \code{LKrigMakewX}  construct the weighted U and X matrices from what is passed. In the case of observations that are point locations wU is found the weights and using the fixedFunction and wX is found from the weights and the multiresolution basis functions. Note that X and wX are assumed to be in spam 
+\code{LKrigMakewU} and \code{LKrigMakewX}  construct the weighted U and X matrices from what is passed. In the case of observations that are point locations wU is found the weights and using the fixedFunction and wX is found from the weights and the multi-resolution basis functions. Note that X and wX are assumed to be in spam 
 sparse matrix format. 
 
 \code{LKrig.coef} and \code{LKrig.lnPlike} are two low level functions
@@ -161,7 +161,7 @@ spatial model. The default is a polynomial of degree (m-1).
 \value{
 \describe{
 \item{LKrig.coef}{a list with components d.coef the coefficients of
-the spatial dirft and for covariates (Z) and c.coef the basis function
+the spatial drift and for covariates (Z) and c.coef the basis function
 coefficients. The logical vector ind.drift from the LKrig object
 indicates with components of d.coef are associated with the polynomial
 spatial drift and which are other fixed spatial covariates.}
@@ -188,7 +188,7 @@ of the number of polynomial terms  and the number of columns of Z if given.}
 }
 }
 \references{
-Nychka, D., Bandyopadhyay, S., Hammerling, D., Lindgren, F., & Sain, S. (2015). A multiresolution gaussian process model for the analysis of large spatial datasets.{Journal of Computational and Graphical Statistics}, 24(2), 579-599.
+Nychka, D., Bandyopadhyay, S., Hammerling, D., Lindgren, F., & Sain, S. (2015). A multi-resolution Gaussian process model for the analysis of large spatial datasets.{Journal of Computational and Graphical Statistics}, 24(2), 579-599.
 }
 \author{
 Doug Nychka

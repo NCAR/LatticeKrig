@@ -24,7 +24,7 @@
 	a rectangular spatial domain, one needs to specify a few functions
 	that set reasonable default choices, create the lattice, define the Markov
 	random field and
-	define the basis functions. One coudl also include some specific functions
+	define the basis functions. One could also include some specific functions
 	that are particularly
 	efficient for some of the computations for that geometry. This help section
 	gives an overview of
@@ -34,7 +34,7 @@
 		At the outset if you are an example person (and an impatient one) take a look at the functions
 		created for the 1-d LatticeKrig model (\code{LKInterval}).
 		(In the source for the package this is the file ModelLKInterval.R in the
-		R subdirectory.) The specfic functions are:
+		R subdirectory.) The specific functions are:
 		\describe{
      	\item{LKrigSetupLattice.LKInterval}{Creates a 1-d lattice.}
 		\item{LKrigSAR.LKInterval}{Creates a sparse 1-d spatial autoregressive matrix.}
@@ -108,11 +108,11 @@ two functions. It possible that this function could be avoided by doing all the
 setup whenever the SAR and  the centers functions are used but we suspect this would result in more complicated code and be less modular. 
 The 1-d implementation in the source file ModelInterval.R is a  good example to get an idea of the whole process.  
 
-\strong{LKrigSAR.MyNewIdea}(LKinfo, Level) Returns a sparse spatial autoregressive matrix at a specific level of the multiresolution and in \code{spind} sparse matrix format. See \code{help( LKrigSAR)}. Note that the lattice information from the previous function is in the component \code{latticeInfo} and so this function needs to 
+\strong{LKrigSAR.MyNewIdea}(LKinfo, Level) Returns a sparse spatial autoregressive matrix at a specific level of the multi-resolution and in \code{spind} sparse matrix format. See \code{help( LKrigSAR)}. Note that the lattice information from the previous function is in the component \code{latticeInfo} and so this function needs to 
 access any lattice information in this way from the LKinfo object. e.g. 
 \code{ LKinfo\$latticeInfo\$m } are the total number of basis functions.
 				
-\strong{LKrigLatticeCenters.MyNewIdea}(LKinfo, Level)  Returns the spatial locations of the lattice points at a specific level of the  multiresolution. This can either be as a matrix with columns indexing
+\strong{LKrigLatticeCenters.MyNewIdea}(LKinfo, Level)  Returns the spatial locations of the lattice points at a specific level of the  multi-resolution. This can either be as a matrix with columns indexing
 dimension and rows indexing points or another class of object. These locations (or object) are subsequently passed to the second argument of the distance function \code{LKrigDistance} to create the basis functions.
 
 For initially creating a new geometry one can just rely on this 

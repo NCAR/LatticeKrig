@@ -70,7 +70,7 @@ projectionSphere<- function(x1, x2){
 
 
 # generates multiresolution  grid to level K
-IcosohedronGrid = function(K) {
+IcosahedronGrid = function(K) {
   #require(abind)
   ##Golden Ratio
   phi = (1 + sqrt(5)) / 2
@@ -166,7 +166,7 @@ IcosohedronGrid = function(K) {
 }
 
 # generates multiresolution  grid to level K
-IcosohedronFaces = function(K) {
+IcosahedronFaces = function(K) {
   #require(abind)
   ##Golden Ratio
   phi = (1 + sqrt(5)) / 2

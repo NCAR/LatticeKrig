@@ -44,8 +44,10 @@ LKDistGrid<- function( x1, gridList, delta, max.points = NULL,
         	nPad<- ifelse( periodic, ceiling( deltaScaled), 0)
             nGridFULL<- nGrid + 2 * nPad
             xScaled <- 	scale( xScaled , center = -nPad, scale=FALSE)   
-    	}        
-    out <- .Fortran("LKdistgrid", x1 = as.double(xScaled),
+         }
+    # subroutine lkdistgrid( x1, n1, nGrid, nDim, delta, irow, jcol, ra, Nmax, iflag)
+    #    
+    out <- .Fortran("lkdistgrid", x1 = as.double(xScaled),
                                   n1 = as.integer(n1), 
                                nGrid = as.integer( nGridFULL),
                                 nDim = as.integer(nDim), 
@@ -55,7 +57,7 @@ LKDistGrid<- function( x1, gridList, delta, max.points = NULL,
                                   ra = as.double(rep(-1, Nmax)),
                                 Nmax = as.integer(Nmax),
                                iflag = as.integer(1),
-                               index = as.integer( rep(-1,Nmax*info$dim)),
+#                               index = as.integer( rep(-1,Nmax*info$dim)),
                              PACKAGE = "LatticeKrig")
 # out$Nmax are now the actual number of nonzero distances found. 
 # unless there was an error (iflag!=0)                            
@@ -79,10 +81,7 @@ LKDistGrid<- function( x1, gridList, delta, max.points = NULL,
   	             ind = cbind( out$irow[1:N], jcol[1:N] ) ,
                   ra = out$ra[1:N] * mean(info$dx),
                   da = c(n1,prod(nGrid))
-                )            
-#                  ,jcolFULL=out$jcol[1:N],
-#                  nGridFULL=nGridFULL
-# )               
+                )                           
       return(out)
     }
  

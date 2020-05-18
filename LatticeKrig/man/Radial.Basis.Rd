@@ -70,7 +70,7 @@ of each x1 location. For centers on a regular grid this is often easy
 to estimate.}
 
 \item{BasisFunction}{  A function that will take a
-nonnegative argument and be zero outside [0,1]. This is applied to distance(s) to generate the basis functions.  
+non-negative argument and be zero outside [0,1]. This is applied to distance(s) to generate the basis functions.  
 For tensor basis functions,
 the  function is applied to the distance components for each dimension.  }
 

@@ -39,15 +39,19 @@ LKDistComponents<- function(  x1, x2, delta, max.points = NULL,
     else {
         Nmax <- max.points
     }
-# note delta used here instead of delta^2  
-   out <- .Fortran("LKdistComp", x1 = as.double(x1), n1 = as.integer(n1), 
-                             x2 = as.double(x2), n2 = as.integer(n2),
-                            dim = as.integer(dimension), 
-                          delta = as.double(delta),
-                            ind = as.integer(rep(0, Nmax * 2)),
-                             rd = as.double(rep(-1, Nmax*dimension)),
-                           Nmax = as.integer(Nmax),
-                          iflag = as.integer(1),
+ # note delta used here instead of delta^2
+ #  subroutine lkdistComp( x1, n1, x2, n2, dim, delta,ind, rd, Nmax, iflag)
+    out <- .Fortran("lkdistcomp",
+                    x1 = as.double(x1),
+                    n1 = as.integer(n1), 
+                    x2 = as.double(x2),
+                    n2 = as.integer(n2),
+                   dim = as.integer(dimension), 
+                 delta = as.double(delta),
+                   ind = as.integer(rep(0, Nmax * 2)),
+                    rd = as.double(rep(-1, Nmax*dimension)),
+                  Nmax = as.integer(Nmax),
+                 iflag = as.integer(1),
                                 PACKAGE = "LatticeKrig")
 # NOTE rd is returned as a matrix 
     # negative iflag means one has run out of space

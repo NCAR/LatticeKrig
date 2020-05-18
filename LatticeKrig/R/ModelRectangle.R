@@ -375,9 +375,9 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     #  4 nearest neighbors and 4 additional second order
     # neighbors
     # labels for these connections are
-    #   'NE'    'top'    'NW'
+    #   'NW'    'top'    'NE'
     #    'L'  'center'    'R'
-    #   'SE'    'bot'    'SW'
+    #   'SW'    'bot'    'SE'
     #
     #  indices for these elements are given by
     #  matrix(1:9, 3,3)
@@ -476,10 +476,10 @@ LKrigSAR.LKRectangle <- function( object, Level, ...){
     # indices for center, top, bottom, left, right or ... N, S, E, W
     # NOTE that these are just shifts of the original matrix
     Bj <- c(i.c,
-            LKrig.shift.matrix(i.c, 0, -1),
-            LKrig.shift.matrix(i.c, 0,  1),
-            LKrig.shift.matrix(i.c, 1,  0),
-            LKrig.shift.matrix(i.c, -1, 0)
+            LKrig.shift.matrix(i.c, 0, -1), # top 
+            LKrig.shift.matrix(i.c, 0,  1), #bottom
+            LKrig.shift.matrix(i.c, 1,  0), #left 
+            LKrig.shift.matrix(i.c, -1, 0)  #right
             )
     # indices for NW, SW, SE, SW
     if (!first.order) {

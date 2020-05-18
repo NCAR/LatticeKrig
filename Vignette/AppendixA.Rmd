@@ -1,0 +1,66 @@
+\newcommand{\bld}{\mathbf}
+
+# Appendix A: A summary of the LatticeKrig computations.
+
+
+
+Suppose we have a vector $\bld{y}$ of observations, where each observation $y_i$ is taken at location $\bld s_i$ and a covariate vector $\bld Z_i$ containing the coordinates of the locations and possibly other related information. Assuming that the observations are a linear combination of the covariates with a Gaussian process of mean 0, we have
+\[ y_i = \bld X_i^T \bld d + g(\bld s_i) + \epsilon_i\]
+where $\epsilon \sim MN(\bld 0, \sigma^2 I)$ and $g(\bld s)$ is a Gaussian Process with mean zero and covariance function $k(\bld s, \bld s')$, and 
+ $X$ is a matrix formed from covariates and fixed functions.
+ 
+ In addition $g$ follows a basis function expansion: 
+ 
+ \[g(\bld s) = \sum_{k=1}^M \phi_k(\bld s) \]
+ 
+ 
+ 
+ 
+
+
+In LatticeKrig, we assume that $g(\bld s) = \Phi \bld{c} + \epsilon$, where $\Phi$ is a matrix of radial basis functions (so $\phi_{ij}$ is the $j^{th}$ basis function evaluated at the $i^{th}$ point), and $\bld c$ is the vector of coefficents that scale each basis function. Thus, our total model is $\bld y = Z \bld d + \Phi \bld c + \bld e$. We can't predict measurement error, so instead we focus on predicting $\bld f = Z \bld d + \Phi \bld c$ at new locations. The matrix of covariates $Z$ and the matrix of basis functions $\Phi$ are both determined from the points we choose to predict at: the unknowns we need to estimate are $\bld c$ and $\bld d$. We estimate $\bld d$ by using the generalized least squares estimate: $\bld d = (Z^T \Sigma^{-1} Z)^{-1} Z^T \Sigma^{-1}$. Estimating $\bld c$ is more involved. First, we partition $Z$ and $\bld y$ into two parts: the parts corresponding to the known data, $Z_1$ and $\bld y_1$, and the parts corresponding to the data we want to predict, $Z_2$ and $\bld y_2$. Since we assume that $y$ follows a Gaussian process, we can write
+\[
+\begin{pmatrix} \bld y_1 \\ \bld y_2 \end{pmatrix} \sim N\left( \begin{pmatrix} \mu_1 \\ \mu_2 \end{pmatrix}, \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\ \Sigma_{21} & \Sigma_{22} \end{bmatrix} \right).
+\]
+It is known from multivariate probability theory that
+\[
+E[\bld y_2 | \bld y_1] = \mu_2 + \Sigma_{21} \Sigma_{11}^{-1} (\bld y_1 - \mu_1).
+\]
+Where $\mu_1$ and $\mu_2$ are the means of $\bld y_1$ and $\bld y_2$, respectively. Since $\epsilon = \Phi \bld c + \bld e$ has mean 0, the mean must come from the $Z \bld d$ term: that is, $\mu_1 = Z_1 \bld d$ and $\mu_2 = Z_2 \bld d$. Since $E[\bld y_2 | \bld y_1]$ is the best estimator of the values of $\bld y_2$, we want to find a value of $\bld c$ that makes our model reproduce this estimator, so we set $E[\bld y_2 | \bld y_1] = Z_2 \bld d + \Phi_2 \bld c$, where $\Phi_2$ is the matrix of all basis functions evaluated at the points where we're trying to predict y. This gives us the equation
+\[
+Z_2 \bld d + \Phi_2 \bld c = Z_2 \bld d + \Sigma_{21} \Sigma_{11}^{-1} (\bld y_1 - \mu_1).
+\]
+Now, consider what happens if we make the covariance function and basis function match. Each entry in $\Sigma_{21}$ is the covariance function of the distance between the $j^{th}$ data point and the $i^{th}$ prediction point, which would be equal to the basis function of the distance between the $j^{th}$ data point and the $i^{th}$ prediction point, which is each entry in $\Phi_2$. This means we can substitute $\Phi_2 = \Sigma_{21}$ into our equation, giving us:
+\begin{align*}
+Z_2 \bld d + \Phi_2 \bld c &= Z_2 \bld d + \Sigma_{21} \Sigma_{11}^{-1} (\bld y_1 - \mu_1) \\
+\Phi_2 \bld c &= \Sigma_{21} \Sigma_{11}^{-1} (\bld y_1 - \mu_1) \\
+\Phi_2 \bld c &= \Phi_2 \Sigma_{11}^{-1} (\bld y_1 - \mu_1) \\
+\bld c &= \Sigma_{11}^{-1} (\bld y_1 - \mu_1)
+\end{align*}
+This gives the best coefficient vector if each basis function is centered at a data point. Since our basis functions are instead centered on a lattice, we need $\hat{\bld c} = P \Phi^T \bld c$, where $P$ is the covariance matrix for the centers of the basis functions and $\Phi$ is the basis function matrix. Thus, our final estimate for $\bld c$ is $\hat{\bld c} = P \Phi^T \Sigma_{11}^{-1}(\bld y - Z \bld d)$. 
+
+## Sparse Matrix Algorithms
+
+As mentioned earlier, the LatticeKrig package is able to handle large data sets because the covariance function equals 0 for large input. Recall that we make the simplifying assumption that the covariance function is the same as the radial basis function. In LatticeKrig, this function is a Wendland function: 
+\[ \phi(d) = \begin{cases}
+\frac{1}{3}(1 - d)^6 (35d^2 + 18d + 3) \quad 0 \le d \le 1 \\
+0 \quad 1 < d
+\end{cases}
+\]
+More specifically, a given radial basis function will be 0 at a distance of at least the gap in the lattice multiplied by the parameter \ttt{overlap} (which is 2.5 by default). This description is rather opaque, so here is a visualization for the 1-dimensional case.
+```{r AppendixCovarianceFunctionPlot}
+phi <- function(d) {
+  return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
+}
+overlap <- 2.5
+basisCenters <- 0:10
+gridPoints <- seq(0, 10, length=1000)
+distances <- rdist(gridPoints, basisCenters)
+values <- phi(distances / overlap)
+matplot(x = gridPoints, values, type="l", xlab="Location",
+        ylab = "Basis function value", main="1-D Basis Functions")
+lines(values[,7], x=gridPoints, type="l", col="black", lwd=3)
+```
+We can see that the basis functions all overlap significantly, which is necessary to get a smooth fit. We can see from the highlighted basis function, centered around 6, that the radius of each basis function is 2.5, so the highlighted function is 0 outside of the interval (3.5, 8.5). The graphs appear to reach 0 at a radius of 2 because they go to 0 smoothly, so they don't get far enough from 0 to see the difference near the borders. The basis functions behave similarly in higher dimensions; they are all radially symmetric about their centers.
+
+Since the basis functions and covariance functions are nonzero only on a compact interval, the covariance between many pairs of points will be 0, and equivalently the basis functions will be 0 at many of the points they are evaluated at. This means that the matrices $P$, $\Phi$, and  $\Sigma_{11}^{-1}$ will all be sparse, which makes the computations much faster. For a further improvement, we can use the Cholesky decomposition of these matrices, which is both triangular and sparse, to speed up calculations even more.

@@ -4,9 +4,35 @@ In this vignette, we will explore the functions in the LatticeKrig package and s
 
 ## What is kriging?
 
-Kriging (named for South African statistician Danie Krige) is a method for making predictions from a spatial data set. By spatial data, we mean the data contains the observed variable and its location, the variable depends on the location, and pairs of observations taken close together have similar values. For example, the current temperature in cities would be spatial data. As such, kriging can be applied to a variety of important data sets, from geological data to atmospheric data.
+  By spatial data, we mean the data contains the observed variable and
+its location, the variable depends on the location, and  observations that are closer  are  more
+similar values than those farther apart.
 
-The standard spatial model for Kriging relates the observation to a sum of three components: a polynomial function of the locations (and covariates, if provided), a spatial process, and measurement error.
+Two  quotes by Waldo Tobler sum this up nicely:
+\begin{quote}
+\textit{Everything is related to everything else,
+           but near things are more related than distant things} 
+  
+\textit{The phenomenon external to an area of interest affects what goes on inside}.
+\end{quote}  
+In the methods of this package, we quantify this relatedness  of "near things"",  statistically using correlation.
+
+Kriging (named for South African statistician Danie Krige) is a method for making predictions from a
+spatial data set first developed for mineral exploration.
+As such, kriging can be applied to a variety of important
+data sets, from geological data to atmospheric data. Moreover, the method 
+generalizes to the coordinates of a surface that need not be geographic or 2D/3D physical locations.
+The classic method uses a model for the covariance (correlation) of the observations as a function 
+of their distance of separation.
+The Kriging predictions are weighted sums of the observations, where the weights depend on the
+covariances and are different at every location. 
+
+The standard spatial model for Kriging relates the observation to a sum of three components:
+a \textit{fixed part} typcially a polynomial function of the locations (and covariates,
+if provided),
+a \textit{spatial process}, and \textit{measurement error}. This is a more practical model for data
+analysis but involves more complicated formulae for the Kriging weights. The LatticeKrig (LK) model
+like most spatial methods, decomposes the data into these three components.
 
 ## The LatticeKrig model
 
@@ -19,7 +45,17 @@ We show the derivations of the equations for $\mathbf c$ and $\mathbf d$ in Appe
 The package is named LatticeKrig because of the placement of the basis functions: they are equally spaced in all dimensions on a lattice. We can also consider multiple different lattice sizes simultaneously to better capture different levels of resolution; by default, each additional level has half as much space between the basis functions in each dimension.
 The following plot shows the basis functions for each of the three default levels.
 
+But before we start with code here are the R, fields package, and LatticeKrig package versions
+used throughout this vignette. Use these to check your versions if you get errors and we will try to make this vignette compatible with latter versions.   
+
+```{r versions, echo=TRUE}
+R.Version()$version.string
+packageVersion( "fields")
+packageVersion( "LatticeKrig")
+```
+
 ```{r levelsPlot, echo=FALSE}
+
 phi <- function(d) {
   return(1/3 * (1-d)^6 * (35*d^2 + 18*d + 3) * (d < 1))
 }

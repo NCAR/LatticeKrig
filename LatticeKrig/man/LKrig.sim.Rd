@@ -22,7 +22,7 @@
 \alias{LKrig.sim.conditional}
 \alias{simConditionalDraw}
 \title{
-Functions for simulating a multiresolution process following the
+Functions for simulating a multi resolution process following the
 Lattice Krig covariance model.
 
 }
@@ -52,7 +52,7 @@ coefficients from the Markov Random field.}
 
 
 \item{LKinfo}{A list with components that give the information
-describing a multiresolution basis with a Markov random field used for
+describing a multi-resolution basis with a Markov random field used for
 the covariance of the basis coefficients. This list is created in
 \code{LKrig} and is returned as part of the output object or in a more
 hands on manner directly using \code{LKrigSetup} (See section on

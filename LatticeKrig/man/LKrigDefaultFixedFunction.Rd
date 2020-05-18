@@ -38,7 +38,7 @@ collapseFixedEffect = FALSE)
 
 \arguments{
 
-\item{collapseFixedEffect}{If FALSE the fixed part of the model is found seperately for each replicated data set. If TRUE the estimate is polled across replicates.}
+\item{collapseFixedEffect}{If FALSE the fixed part of the model is found separately for each replicated data set. If TRUE the estimate is polled across replicates.}
  
 \item{drop.Z}{If TRUE only spatial drift is evaluated the contribution for covariates
 is omitted.}

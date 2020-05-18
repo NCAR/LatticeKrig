@@ -113,7 +113,7 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
 ##Build and subset geodesic grid up to level startingLevel+nlevel-1; 
 ## returns each level in a list but in 
 # 3-d coordinates (a.k.a. direction cosines)
-  MultiGrid<- IcosohedronGrid(Rmax) ##Get full list of geodesic grids stopping at level Rmax
+  MultiGrid<- IcosahedronGrid(Rmax) ##Get full list of geodesic grids stopping at level Rmax
   grid.all.levels<- list()
   grid3d.all.levels<- list()
   mLevel<- rep(NA,nlevel)

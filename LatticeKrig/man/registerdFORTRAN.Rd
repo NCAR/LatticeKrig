@@ -4,6 +4,7 @@
 \alias{lkdistcomp}
 \alias{lkdistgrid}
 \alias{lkdistgridcomp}
+\alias{lkdiag}
 \docType{data}
 \title{
 Internal FORTRAN routines for working with grids and finding distances. 
@@ -11,13 +12,13 @@ Internal FORTRAN routines for working with grids and finding distances.
 \description{
 These are objects of class  \code{FortranRoutine} and also 
 \code{\link{NativeSymbolInfo}}
-They provide information for compiledfunctions called with \code{.Call},
+They provide information for compiled functions called with \code{.Call},
 or \code{.Fortran}.
 Ordinarily one would not need to consult these and they are used to make
 the search among dynamically loaded libraries ( in particular the fields library
 ) have less ambiguity and
 also be faster. These are created when the package/library is loaded 
-are have their definitions from the compliation of  \code{init.c} in the
+are have their definitions from the compilation of  \code{init.c} in the
 package source (src) directory. 
 }
 \format{
@@ -44,6 +45,8 @@ Registered routines are
  points. Results are returned in the row, column,  value sparse matrix format.called from \code{LKDistGrid}}
  \item{lkdistgridcomp}{Same as lkdistgrid but the component distances are found for
  each coordinate.\code{LKDistGridComponents}}
+  \item{lkdiag}{Fills in diagonal and off diagonal elements
+  in sparse matrix format.}
  }
  See \code{package_native_routine_registration_skeleton} for the 
 utility used to create these data objects.
@@ -53,7 +56,7 @@ utility used to create these data objects.
 \references{
 For background on registering C, C++ and Fortran functions see 5.4 of
 Writing R Extensions. 
-See \url{http://r.789695.n4.nabble.com/Registration-of-native-routines-td4728874.html} for additional dicsussion of code registration. 
+See \url{http://r.789695.n4.nabble.com/Registration-of-native-routines-td4728874.html} for additional discussion of code registration. 
 }
 \examples{
 print(lkdistgridcomp)

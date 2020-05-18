@@ -32,7 +32,7 @@ maximum distance.
 	compute the distances among two sets of locations but being limited to 
 	distances less than a maximum threshold (see delta below ). These functions are useful for 
 	generating a sparse matrix on distances and evaluating a compactly supported function (such as the Wendland). The location - location method supports the distance metrics:
-	Euclidean, spherical, componentwise and Manhattan.
+	Euclidean, spherical, component-wise and Manhattan.
 	 \code{LKDistComponent} and  \code{LKDistComponentGrid} return the coordinate-wise distances and are
 	  useful for evaluating a tensor product basis functions. 
 }

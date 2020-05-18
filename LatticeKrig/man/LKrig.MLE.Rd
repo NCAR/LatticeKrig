@@ -64,7 +64,7 @@ Awght2Omega (Awght, LKinfo)
 }
 \arguments{
 \item{Awght}{Value of Awght parameter to convert to omega form}
-\item{capture.env}{The enviornment to save to the likelihood evaluation to the 
+\item{capture.env}{The environment to save to the likelihood evaluation to the 
 object \code{capture.evaluations}. }
 
 
@@ -120,7 +120,7 @@ of levels, grid sizes) that do not change.  Note that par.grid assumes
 of the par.grid arguments.  }
 \item{factr}{Controls convergence for the BFGS-L method.
 ( passed to optim).}
-\item{pgtol}{Mysterious tolerance for gradient converenge in L-BFGS. This
+\item{pgtol}{Mysterious tolerance for gradient convergence in L-BFGS. This
 seems to influence the number of iterations the most.}
  
 \item{tol}{Tolerance on log likelihood use to determine convergence.}
@@ -209,7 +209,7 @@ over different parameters combinations simple.
 \strong{omega2Awght, Awght2omega } Converts between the Awght parameter (the diagonal elements
 of the SAR matrix) and the omega parameter that provides an unconstrained range for optimization. 
 The link is \code{Awght <- LKinfo$floorAwght + exp(omega) * (xDimension)}. Note that LKinfo
-supplied the lower bound on the Awght becasue this is geometry/problem specific. For the 2-d rectangle
+supplied the lower bound on the Awght because this is geometry/problem specific. For the 2-d rectangle
 this is 4. 
 
 }
@@ -267,7 +267,7 @@ Also included is the component ind that is  the row and column indices for the m
 \strong{LKrig.make.par.grid} Returns a list with components, alpha,
 a.wght. Each component is a list where each component of the list is a
 separate set of parameters. This more general format is useful for the
-nonstationary case when the parameters alpha might be a list of nlevel
+non-stationary case when the parameters alpha might be a list of nlevel
 matrices.
 
 }
@@ -357,7 +357,7 @@ matrices.
 #       example run fast
   set.seed(124)
   par.grid<- list()
-# create grid of alphas to sum to 1 use a mixture model parametrization
+# create grid of alphas to sum to 1 use a mixture model parameterization
 #  alpha1 = (1/(1 + exp(gamma1)) ,
 # alpha2 = exp( gamma1) / ( 1 + exp( gamma1))
 # 
@@ -398,7 +398,7 @@ data(NorthAmericanRainfall)
   Ndes<- 40 
   nlevel<-2 
   par.grid<- list()
-## create grid of alphas to sum to 1 use a mixture model parametrization:
+## create grid of alphas to sum to 1 use a mixture model parameterization:
 #    alpha1 = (1/(1 + exp(gamma1)) ,
 #   alpha2 = exp( gamma1) / ( 1 + exp( gamma1))
   set.seed(123)

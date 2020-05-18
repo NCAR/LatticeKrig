@@ -49,7 +49,7 @@ c    NOTE: This routine assumes that the coordinates have been scaled to
 c           to a unit grid spacing. So delta also is in the units where 
 c           grid points have a unit spacing. 
 c     
-      subroutine LKdistgrid( x1, n1, nGrid, nDim, delta,
+      subroutine lkdistgrid( x1, n1, nGrid, nDim, delta,
      *     irow, jcol, ra, Nmax, iflag)
       integer n1, nDim, Nmax
       double precision x1(n1,nDim)
@@ -153,7 +153,7 @@ c all is well ...
       iflag=0
       end
 
-      subroutine LKdistgridcomp( x1, n1, nGrid, nDim, delta,
+      subroutine lkdistgridcomp( x1, n1, nGrid, nDim, delta,
      *     irow, jcol, ra, Nmax, iflag)
       integer n1, nDim, Nmax
       double precision x1(n1,nDim)
@@ -261,7 +261,7 @@ c all is well ...
       end
       
 c234567
-      subroutine LKdistgrid2( x1, nx1, mx, my, delta2, ind,
+      subroutine lkdistgrid2( x1, nx1, mx, my, delta2, ind,
      + rd, Nmax, iflag)
       double precision x1(nx1,2)
       integer nx1

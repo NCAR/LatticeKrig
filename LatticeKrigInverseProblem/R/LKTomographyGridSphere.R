@@ -18,16 +18,17 @@ LKTomographyGridSphere <- function(lines, points, ranges, rangeReps) {
   nEntries <- output$nEntries
   ind <- as.integer(matrix(0, nrow=2, ncol=nEntries))
   entries <- as.double(rep(0, nEntries))
-  completions <- entries
+  completions <- as.double(matrix(0, nrow=2, ncol=nEntries))
   
   output <- .Fortran("LKTomGridSphere", points=points, nPoints = nPoints,
                       lines=lines, nLines = nLines, ranges=ranges, rangeReps=rangeReps,
                       nRanges=nRanges, ind=ind, entries=entries, completions=completions,
                       nEntries=nEntries, PACKAGE = "LatticeKrigInverseProblem")
   
-  com <- matrix(outputB$completions, nrow = 2)
-  ind <- t(matrix(outputB$ind, nrow = 2))
+  com <- matrix(output$completions, nrow = 2)
+  ind <- t(matrix(output$ind, nrow = 2))
   ra <- LKBasisFunctionIntegralSphere(output$entries, com, ranges, rangeReps, ind[,2])
+  
   ord <- order(ind[,1], ind[,2])
   ind <- ind[ord,]
   ra <- ra[ord]

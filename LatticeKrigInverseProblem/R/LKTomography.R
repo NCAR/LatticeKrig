@@ -6,7 +6,7 @@ LKTomography <- function(lines, obs, LKinfo) {
   if (class(LKinfo)[2] == "LKSphere") {
     tomMatrix <- LKTomographyGridSphere(lines, points, ranges, rangeReps)
   } else {
-    tomMatrix <- LKTomographyGrid(lines, points, ranges, rangeReps)
+    tomMatrix <- LKTomographyGrid(lines, points, ranges, rangeReps, LKinfo$alpha)
   }
   N <- length(obs)
   kFit <- LKrig(x=t(points), y=obs, X=spind2spam(tomMatrix), LKinfo=LKinfo, lambda=0.05)

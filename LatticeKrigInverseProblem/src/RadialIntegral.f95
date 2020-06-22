@@ -7,7 +7,7 @@ end module AcosIntTime
 module RadialIntegralFunctions
     implicit none
     private
-    public :: CrossProd, SignedAngle, TriangleIntegral, WendlandEvalR
+    public :: CrossProd, SignedAngle, SegmentIntegral, DivergenceIntegral, IntRWendlandEval
 
     contains
 
@@ -22,128 +22,89 @@ module RadialIntegralFunctions
 
     !computes the signed angle from L1 to a point, with the origin as the vertex of the angle
     !the returned angle is positive if the segment from L1 to L2 goes counterclockwise
-        function SignedAngle(L1, L2) result(angle)
-            double precision, intent(in) :: L1(2), L2(2)
-            double precision :: angle
-            angle = asin(crossProd(L1, L2) / sqrt(sum(L1**2) * sum(L2**2)))
-            if (sum(L1 * L2) < 0) then
-                angle = sign(1.d0, angle) * (3.14159265358979323846d0 - abs(angle))
-            endif
-        end function SignedAngle
+    function SignedAngle(L1, L2) result(angle)
+        double precision, intent(in) :: L1(2), L2(2)
+        double precision :: angle
+        angle = asin(crossProd(L1, L2) / sqrt(sum(L1**2) * sum(L2**2)))
+        if (sum(L1 * L2) < 0) then
+            angle = sign(1.d0, angle) * (3.14159265358979323d0 - abs(angle))
+        endif
+    end function SignedAngle
 
 
-    !computes the signed angle from L1 to each element of points, with the origin as the vertex of the angle
-    !the returned angle is positive if it goes counterclockwise
-    function SignedAngleVector(L1, points, nPoints) result(angles)
-        integer, intent(in) :: nPoints
-        integer :: angleIdx
-        double precision, intent(in) :: L1(2), points(2,nPoints)
-        double precision :: angles(nPoints)
-        do angleIdx = 1,nPoints
-            angles(angleIdx) = SignedAngle(L1, points(:,angleIdx))
-        enddo
-    end function SignedAngleVector
-
-
-    !integrates the C4 Wendland function centered at the origin with radius 1 over the triangle with vertices at
-    !the origin, E1, and E2
-    function TriangleIntegral(E1, E2) result(integralValue)
+    !sets up to integrate the C4 Wendland function centered at the origin with radius 1 over the triangle with vertices at
+    !the origin, E1, and E2 by using the divergence theorem
+    function SegmentIntegral(E1, E2) result(integralValue)
         double precision, intent(in) :: E1(2), E2(2)
-        double precision :: L(2), perpDist, closerDist, longerDist, maxDist, longerPoint(2), longerAngle, totalSignedAngle
+        double precision :: L(2), splitPoint(2), closerDist, longerDist, angleSign
         double precision :: integralValue
-        !5-point gaussian quadrature
-        double precision, parameter :: quadPoints(5) = (/0.046910077030668d0, 0.230765344947158d0, 0.5d0, &
-                0.769234655052841d0, 0.953089922969332d0/)
-        double precision, parameter :: quadWeights(5) = (/0.118463442528095d0, 0.239314335249683d0, &
-                0.284444444444444d0, 0.239314335249683d0, 0.118463442528095d0/)
+        double precision, parameter :: fullIntegral = 1d0/18
 
         L = E2 - E1
-        perpDist = abs(CrossProd(E1, L)) / sqrt(sum(L**2))
+        angleSign = CrossProd(E1, E2)
         closerDist = sqrt(min(sum(E1**2), sum(E2**2)))
         longerDist = sqrt(max(sum(E1**2), sum(E2**2)))
-        maxDist = min(1d0, longerDist)
-        if (closerDist < perpDist) then
-            closerDist = perpDist
-        endif
+        !this should only happen if the two points E1 and E2 are on top of each other
         if (longerDist <= closerDist) then
             integralValue = 0d0
             return
         endif
-        if(sum(E1**2) > sum(E2**2)) then
-            longerPoint = E1
+        !if the line segment goes out of the basis function's support, split the segment into the parts inside and outside
+        !the support
+        !this assumes the shorterDist is <= 1, which needs to be guaranteed by the function calling this
+        if (longerDist > 1d0) then
+            splitPoint = PointOnSegmentAtRadius(E1, E2, 1d0)
+            !use divergence theorem to integrate inside the basis function; use geometry to integrate outside
+            !the functions DivergenceIntegral and signedAngle are antisymmetric, so we have to make sure we use
+            !E1, splitPoint, and E2 in that order
+            if(sum(E1**2) > sum(E2**2)) then
+                integralValue = DivergenceIntegral(splitPoint, E2) + fullIntegral * signedAngle(E1, splitPoint)
+            else
+                integralValue = DivergenceIntegral(E1, splitPoint) + fullIntegral * signedAngle(splitPoint, E2)
+            endif
         else
-            longerPoint = E2
+            integralValue = DivergenceIntegral(E1, E2)
         endif
-        longerAngle = acos(perpDist / longerDist)
-        totalSignedAngle = SignedAngle(E1, E2)
-        !integrate to the closer endpoint
-        integralValue = totalSignedAngle * closerDist * sum(quadWeights * WendlandEvalR(quadPoints * closerDist, 5))
-        !integrate for the radii between the two endpoints
-        integralValue = integralValue + sign(perpDist*acosIntegral(closerDist/perpDist, maxDist/perpDist, perpDist,&
-                longerAngle), totalSignedAngle)
-    end function TriangleIntegral
+    end function SegmentIntegral
 
-
-    !split the integral into several different intervals: integrate from 1 to 2 using a transformation,
-    !then integrate from 2 to 10, 10 to 100, and 100 to infinity directly. All integrals use 11-point
-    !Gaussian quadrature
-    function acosIntegral(xMin, xMax, perpDist, longerAngle) result(integralValue)
-        double precision, intent(in) :: xMin, xMax, perpDist, longerAngle
-        double precision :: intervalMin, intervalMax, tMin, tMax, tPoints(11), xPoints(11)
+    !computes the integral over the line segment from E1 to E2 of the function we get from the divergence theorem,
+    !f(r) = 1/r * integral from 0 to r of t phi(t) dt, dotted with the unit normal vector pointing to the right of the
+    !segment (outward if the polygon is specified CCW)
+    function DivergenceIntegral(E1, E2) result(integralValue)
+        integer :: pointIdx
+        double precision, intent(in) :: E1(2), E2(2)
+        double precision :: L(2), LPerp(2), integralPoints(2,15), integralDists(15)
         double precision :: integralValue
-        !11-point Gaussian quadrature
-        double precision, parameter :: quadPoints(11) = (/ 0.010885670926972d0, 0.056468700115952d0, 0.134923997212975d0,&
-                0.240451935396594d0, 0.365228422023827d0, 0.500000000000000d0, 0.634771577976172d0, 0.759548064603406d0,&
-                0.865076002787025d0, 0.943531299884048d0, 0.989114329073028d0 /)
-        double precision, parameter :: quadWeights(11) = (/ 0.027834283558087d0, 0.062790184732452d0, 0.093145105463867d0,&
-                0.116596882295995d0, 0.131402272255123d0, 0.136462543388950d0, 0.131402272255123d0, 0.116596882295995d0,&
-                0.093145105463867d0, 0.062790184732452d0, 0.027834283558087d0 /)
+        !G7, K15 Gauss-Kronrod quadrature
+        double precision, parameter :: quadPoints(15) = (/ 0.004272314439594d0, 0.025446043828621d0, 0.067567788320115d0,&
+                0.129234407200303d0, 0.206956382266154d0, 0.297077424311301d0, 0.396107522496051d0, 0.500000000000000d0,&
+                0.603892477503949d0, 0.702922575688699d0, 0.793043617733846d0, 0.870765592799697d0, 0.932432211679885d0,&
+                0.974553956171379d0, 0.995727685560406d0 /)
+        double precision, parameter :: quadWeightsKron(15) = (/ 0.011467661005265d0, 0.031546046314989d0, 0.052395005161125d0,&
+                0.070326629857763d0, 0.084502363319634d0, 0.095175289032393d0, 0.102216470037649d0, 0.104741070542364d0,&
+                0.102216470037649d0, 0.095175289032393d0, 0.084502363319634d0, 0.070326629857763d0, 0.052395005161125d0,&
+                0.031546046314989d0, 0.011467661005265d0 /)
+        double precision, parameter :: quadWeightsGauss(15) = (/ 0d0, 0.064742483084435d0, 0d0, 0.139852695744638d0, 0d0,&
+                0.190915025252559d0, 0d0, 0.208979591836735d0, 0d0, 0.190915025252559d0, 0d0, 0.139852695744638d0, 0d0,&
+                0.064742483084435d0, 0d0 /)
 
-        integralValue = 0d0
-        !integrate over the intersection of the intervals [1, 2] and [xMin, xMax]
-        if (xMin <= 2) then
-            intervalMax = min(2d0, xMax)
-            tMin = acos(1/xMin)
-            tMax = acos(1/intervalMax)
-            tPoints = tMin + (tMax - tMin) * quadPoints
-            xPoints = 1/cos(tPoints)
-            integralValue = (tMax - tMin) * &
-                    sum(quadWeights * WendlandEvalR(perpDist*xPoints, 11) * (longerAngle - tPoints) * sin(tPoints) * xPoints**2)
-            if (xMax <= 2) then !the integral fits entirely in the interval [1, 2] so we're done
-                return
-            endif
-        endif
-        !integrate over the intersection of the intervals [2, 10] and [xMin, xMax]
-        if (xMin <= 10) then
-            intervalMin = max( 2d0, xMin)
-            intervalMax = min(10d0, xMax)
-            xPoints = intervalMin + (intervalMax - intervalMin) * quadPoints
-            integralValue = integralValue + (intervalMax - intervalMin) * &
-                    sum(quadWeights * WendlandEvalR(perpDist*xPoints, 11) * (longerAngle - acos(1/xPoints)))
-            if (xMax <= 10) then
-                return
-            endif
-        endif
-        !integrate over the intersection of the intervals [10, 100] and [xMin, xMax]
-        if (xMin <= 100) then
-            intervalMin = max( 10d0, xMin)
-            intervalMax = min(100d0, xMax)
-            xPoints = intervalMin + (intervalMax - intervalMin) * quadPoints
-            integralValue = integralValue + (intervalMax - intervalMin) * &
-                    sum(quadWeights * WendlandEvalR(perpDist*xPoints, 11) * (longerAngle - acos(1/xPoints)))
-            if (xMax <= 100) then
-                return
-            endif
-        endif
+        L = E2 - E1
+        LPerp(1) = L(2)
+        LPerp(2) = -L(1)
+        do pointIdx = 1, 15
+            integralPoints(:,pointIdx) = E1 + L*quadPoints(pointIdx)
+            integralDists(pointIdx) = sqrt(sum(integralPoints(:,pointIdx)**2))
+        enddo
+        !to save time (and since the integrand is analytic so the computed result is very accurate), we don't do
+        !adaptive quadrature or error estimation
+        integralValue = sum(quadWeightsKron * &
+                IntRWendlandEval(integralDists, 15) * matmul(LPerp, integralPoints) / integralDists)
+    end function DivergenceIntegral
 
-        !integrate over the intersection of the intervals [100, +Inf] and [xMin, xMax]
-        intervalMin = 100d0
-        intervalMax = xMax
-        xPoints = intervalMin + (intervalMax - intervalMin) * quadPoints
-        integralValue = integralValue + (intervalMax - intervalMin) * &
-                sum(quadWeights * WendlandEvalR(perpDist*xPoints, 11) * (longerAngle - acos(1/xPoints)))
-    end function acosIntegral
 
+    !finds a point on the line through E1 and E2 that's on the circle with the given radius centered at the origin
+    !if no such point exists, a floating point error will occur; if two such points exist, the one closer to the midpoint
+    !of E1 and E2 is returned
     function PointOnSegmentAtRadius(E1, E2, radius) result (P)
         double precision, intent(in) :: E1(2), E2(2), radius
         double precision :: L(2), tMid, t, P(2)
@@ -157,16 +118,21 @@ module RadialIntegralFunctions
     end function PointOnSegmentAtRadius
 
 
-    !evaluate r times the C4 Wendland function at every point in points, which is a vector of length nEntries
-    function WendlandEvalR(points, nEntries) result(values)
+    !evaluates 1/R times the integral from 0 to R of t phi(t) dt for each R in x
+    function IntRWendlandEval(x, nEntries) result(values)
         integer, intent(in) :: nEntries
-        double precision, intent(in) :: points(nEntries)
+        double precision, intent(in) :: x(nEntries)
         double precision :: values(nEntries)
 
-        values = 1d0/3 * (35d0*points**2 + 18d0*points + 3d0) * points * (1d0-points)**6
+        values = 1d0/18 * x * (9 - 42*x**2 + 210*x**4 - 384*x**5 + 315*x**6 - 128*x**7 + 21*x**8)
+        !check to make sure we didn't call the function for a distance greater than 1; it's more efficient to prevent
+        !that elsewhere in the code than to check for it and fix it here
+        !do entryIdx = 1, nEntries
+        !    if(points(entryIdx) > 1d0) values(entryIdx) = 1d0/18 / points(entryIdx)
+        !enddo
         !replace wendland with 1 for debugging
-        !values = points
-    end function WendlandEvalR
+        !values = 0.5d0 * x
+    end function IntRWendlandEval
 end module RadialIntegralFunctions
 
 
@@ -221,23 +187,18 @@ subroutine RadialIntegral(vertices, nVerts, points, nPoints, ranges, rangeReps, 
                 t = min(1d0, t)
                 closestDist2 = sum((L1 + L*t - P)**2)
                 if (closestDist2 > range2) then
-                    integralValue = integralValue + SignedAngle(L1-P, L2-P) * fullIntegral * range2
+                    integralValue = integralValue + SignedAngle(L1-P, L2-P) * fullIntegral
                 else
-                    if (0 < t .and. t < 1) then
-                        !break into two triangles by adding a vertex on the part of the line segment closest to the point
-                        LP = L1 + t*L
-                        integralValue = integralValue + TriangleIntegral((L1-P)/range, (LP-P)/range) * range2 &
-                                                      + TriangleIntegral((LP-P)/range, (L2-P)/range) * range2
-                    else
-                        integralValue = integralValue + TriangleIntegral((L1-P)/range, (L2-P)/range) * range2
-                    endif
+                    LP = L1 + t*L
+                    integralValue = integralValue + SegmentIntegral((L1-P)/range, (LP-P)/range)&
+                                                  + SegmentIntegral((LP-P)/range, (L2-P)/range)
                 endif
             enddo
             !this is a bit sloppy; the more correct way would be to flip the sign of integralvalue iff the polygon is
-            !defined clockwise, which we could test by finding a point inside the polygon and adding up totalSignedAngle
-            !for every edge around that point; if it's -2*pi the polygon is defined CW, if it's 2*pi the polygon is CCW
+            !defined clockwise, which we could test by adding the signed exterior angles for every vertex:
+            !if it's -2*pi the polygon is defined CW, if it's 2*pi the polygon is CCW
             !however, as long as the basis function is nonnegative (like the Wendland is) then this works just as well
-            entries(pointIdx) = abs(integralValue)
+            entries(pointIdx) = abs(integralValue) * range2
         enddo
         !$omp end do
         !$omp end parallel

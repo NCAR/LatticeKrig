@@ -25,9 +25,9 @@ LKTomographyGridSphere <- function(lines, points, ranges, rangeReps) {
                       nRanges=nRanges, ind=ind, entries=entries, completions=completions,
                       nEntries=nEntries, PACKAGE = "LatticeKrigInverseProblem")
   
-  com <- matrix(output$completions, nrow = 2)
+  #com <- matrix(output$completions, nrow = 2)
   ind <- t(matrix(output$ind, nrow = 2))
-  ra <- LKBasisFunctionIntegralSphere(output$entries, com, ranges, rangeReps, ind[,2])
+  #ra <- LKBasisFunctionIntegralSphere(output$entries, com, ranges, rangeReps, ind[,2])
   
   ord <- order(ind[,1], ind[,2])
   ind <- ind[ord,]

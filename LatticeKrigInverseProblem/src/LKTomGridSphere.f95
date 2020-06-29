@@ -1,3 +1,38 @@
+module SphereGridFunctions
+    implicit none
+    private
+    public :: Integrate, WendlandEval
+    contains
+
+    !evaluate r times the C4 Wendland function at every point in points, which is a vector of length nEntries
+    function WendlandEval(points, nEntries) result(values)
+        integer, intent(in) :: nEntries
+        double precision, intent(in) :: points(nEntries)
+        double precision :: values(nEntries)
+
+        values = 1d0/3 * (35d0*points**2 + 18d0*points + 3d0) * (1d0-points)**6
+        !replace wendland with 1 for debugging
+        !values(:) = 1
+    end function WendlandEval
+
+    !does numerical integration of a Wendland function along a line over the surface of a sphere
+    function Integrate(compStart, compStop, dist, range) result(integralValue)
+        double precision, intent(in) :: compStart, compStop, dist, range
+        double precision :: integralDists(11), integralValue
+        double precision, parameter :: quadPoints(11) = (/ 0.010885670926972d0, 0.056468700115952d0, 0.134923997212975d0,&
+                0.240451935396594d0, 0.365228422023827d0, 0.500000000000000d0, 0.634771577976172d0, 0.759548064603406d0,&
+                0.865076002787025d0, 0.943531299884048d0, 0.989114329073028d0 /)
+        double precision, parameter :: quadWeights(11) = (/ 0.027834283558087d0, 0.062790184732452d0, 0.093145105463867d0,&
+                0.116596882295995d0, 0.131402272255123d0, 0.136462543388950d0, 0.131402272255123d0, 0.116596882295995d0,&
+                0.093145105463867d0, 0.062790184732452d0, 0.027834283558087d0 /)
+
+        integralDists = acos(cos(dist) * cos(compStart + (compStop-compStart)*quadPoints)) / range
+        integralValue = (compStop-compStart) * sum(quadWeights * WendlandEval(integralDists, 11))
+    end function integrate
+end module SphereGridFunctions
+
+
+
 ! this subroutine fills in the entries of the line/point distance matrix where the lines are interpreted as segments
 ! of a great circle over the surface of the unit sphere centered at the origin. The matrix is in a sparse format; entries are
 ! only populated when the closest distance between line/point pairs is less than the point's range.
@@ -6,6 +41,7 @@
 
 subroutine LKTomGridSphere(points, nPoints, lines, nLines, ranges, &
         rangeReps, nRanges, ind, entries, completions, nEntries)
+    use SphereGridFunctions
     implicit none
     integer, parameter :: dim = 3
     integer, intent(in) :: nPoints, nLines, nRanges, rangeReps(nRanges), nEntries
@@ -14,7 +50,7 @@ subroutine LKTomGridSphere(points, nPoints, lines, nLines, ranges, &
 
     double precision, intent(in) :: points(dim, nPoints), lines(2*dim, nLines), ranges(nRanges)
     double precision :: pointVec(dim), range, v1(dim), v2(dim), v1Perp(dim), v2Perp(dim), normal(dim)
-    double precision :: dotProd, projRange, dist, compStart, compStop
+    double precision :: dotProd, projRange, dist, compStart, compStop, integralDists(5)
     double precision, intent(out) :: entries(nEntries), completions(2, nEntries)
 
     !for each line
@@ -83,25 +119,33 @@ subroutine LKTomGridSphere(points, nPoints, lines, nLines, ranges, &
                     ind(1, localOutputIdx) = lineIdx
                     ind(2, localOutputIdx) = pointIdx
                     entries(localOutputIdx) = dist / range
-                    compStart = 0;
-                    compStop = 1;
+                    compStart = -acos(cos(range) / cos(dist))
+                    compStop = -compStart;
                     if (acos(sum(v1 * pointVec)) < range) then
                         if (sum(v1Perp * pointVec) > 0) then
-                            completions(1, localOutputIdx) = 0.5 * (1 - acos(sum(v1*pointVec) / cos(dist)) / &
+                            completions(1, localOutputIdx) = 0.5d0 * (1 - acos(sum(v1*pointVec) / cos(dist)) / &
                                     acos(cos(range) / cos(dist)))
                         else
-                            completions(1, localOutputIdx) = 0.5 * (1 + acos(sum(v1*pointVec) / cos(dist)) / &
+                            completions(1, localOutputIdx) = 0.5d0 * (1 + acos(sum(v1*pointVec) / cos(dist)) / &
                                     acos(cos(range) / cos(dist)))
                         endif
+                        compStart = sign(acos(sum(v1*pointVec) / cos(dist)), -sum(v1Perp*pointVec))
                     endif
                     if (acos(sum(v2 * pointVec)) < range) then
                         if (sum(v2Perp * pointVec) > 0) then
-                            completions(2, localOutputIdx) = 0.5 * (1 + acos(sum(v2*pointVec) / cos(dist)) / &
+                            completions(2, localOutputIdx) = 0.5d0 * (1 + acos(sum(v2*pointVec) / cos(dist)) / &
                                     acos(cos(range) / cos(dist)))
                         else
-                            completions(2, localOutputIdx) = 0.5 * (1 - acos(sum(v2*pointVec) / cos(dist)) / &
+                            completions(2, localOutputIdx) = 0.5d0 * (1 - acos(sum(v2*pointVec) / cos(dist)) / &
                                     acos(cos(range) / cos(dist)))
                         endif
+                        compStop = sign(acos(sum(v2*pointVec) / cos(dist)), sum(v2Perp*pointVec))
+                    endif
+
+                    if (compStart < 0 .and. compStop > 0) then
+                        entries(localOutputIdx) = Integrate(compStart, 0d0, dist, range) + Integrate(0d0, compStop, dist, range)
+                    else
+                        entries(localOutputIdx) = Integrate(compStart, compStop, dist, range)
                     endif
                     cycle
                 endif
@@ -115,6 +159,8 @@ subroutine LKTomGridSphere(points, nPoints, lines, nLines, ranges, &
                     ind(1, localOutputIdx) = lineIdx
                     ind(2, localOutputIdx) = pointIdx
                     entries(localOutputIdx) = dist / range
+                    compStart = -acos(cos(range) / cos(dist))
+                    !entries(localOutputIdx) = 2d0*Integrate(compStart, 0, dist)
                 endif
             enddo
         enddo

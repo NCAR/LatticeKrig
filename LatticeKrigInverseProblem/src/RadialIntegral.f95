@@ -1,9 +1,3 @@
-module AcosIntTime
-    implicit none
-    real :: t
-end module AcosIntTime
-
-
 module RadialIntegralFunctions
     implicit none
     private
@@ -11,11 +5,11 @@ module RadialIntegralFunctions
 
     contains
 
-
     !computes the cross product of two 2D vectors, returning the result as a scalar
     function CrossProd(v1, v2) result(s)
         double precision, intent(in) :: v1(2), v2(2)
         double precision :: s
+
         s = v1(1) * v2(2) - v1(2) * v2(1)
     end function CrossProd
 
@@ -25,6 +19,7 @@ module RadialIntegralFunctions
     function SignedAngle(L1, L2) result(angle)
         double precision, intent(in) :: L1(2), L2(2)
         double precision :: angle
+
         angle = asin(crossProd(L1, L2) / sqrt(sum(L1**2) * sum(L2**2)))
         if (sum(L1 * L2) < 0) then
             angle = sign(1.d0, angle) * (3.14159265358979323d0 - abs(angle))
@@ -33,18 +28,18 @@ module RadialIntegralFunctions
 
 
     !sets up to integrate the C4 Wendland function centered at the origin with radius 1 over the triangle with vertices at
-    !the origin, E1, and E2 by using the divergence theorem
-    function SegmentIntegral(E1, E2) result(integralValue)
-        double precision, intent(in) :: E1(2), E2(2)
+    !the origin, L1, and L2 by using the divergence theorem
+    function SegmentIntegral(L1, L2) result(integralValue)
+        double precision, intent(in) :: L1(2), L2(2)
         double precision :: L(2), splitPoint(2), closerDist, longerDist, angleSign
         double precision :: integralValue
         double precision, parameter :: fullIntegral = 1d0/18
 
-        L = E2 - E1
-        angleSign = CrossProd(E1, E2)
-        closerDist = sqrt(min(sum(E1**2), sum(E2**2)))
-        longerDist = sqrt(max(sum(E1**2), sum(E2**2)))
-        !this should only happen if the two points E1 and E2 are on top of each other
+        L = L2 - L1
+        angleSign = CrossProd(L1, L2)
+        closerDist = sqrt(min(sum(L1**2), sum(L2**2)))
+        longerDist = sqrt(max(sum(L1**2), sum(L2**2)))
+        !this should only happen if the two points L1 and L2 are on top of each other
         if (longerDist <= closerDist) then
             integralValue = 0d0
             return
@@ -53,26 +48,26 @@ module RadialIntegralFunctions
         !the support
         !this assumes the shorterDist is <= 1, which needs to be guaranteed by the function calling this
         if (longerDist > 1d0) then
-            splitPoint = PointOnSegmentAtRadius(E1, E2, 1d0)
+            splitPoint = PointOnSegmentAtRadius(L1, L2, 1d0)
             !use divergence theorem to integrate inside the basis function; use geometry to integrate outside
             !the functions DivergenceIntegral and signedAngle are antisymmetric, so we have to make sure we use
-            !E1, splitPoint, and E2 in that order
-            if(sum(E1**2) > sum(E2**2)) then
-                integralValue = DivergenceIntegral(splitPoint, E2) + fullIntegral * signedAngle(E1, splitPoint)
+            !L1, splitPoint, and L2 in that order
+            if(sum(L1**2) > sum(L2**2)) then
+                integralValue = DivergenceIntegral(splitPoint, L2) + fullIntegral * signedAngle(L1, splitPoint)
             else
-                integralValue = DivergenceIntegral(E1, splitPoint) + fullIntegral * signedAngle(splitPoint, E2)
+                integralValue = DivergenceIntegral(L1, splitPoint) + fullIntegral * signedAngle(splitPoint, L2)
             endif
         else
-            integralValue = DivergenceIntegral(E1, E2)
+            integralValue = DivergenceIntegral(L1, L2)
         endif
     end function SegmentIntegral
 
-    !computes the integral over the line segment from E1 to E2 of the function we get from the divergence theorem,
+    !computes the integral over the line segment from L1 to L2 of the function we get from the divergence theorem,
     !f(r) = 1/r * integral from 0 to r of t phi(t) dt, dotted with the unit normal vector pointing to the right of the
     !segment (outward if the polygon is specified CCW)
-    function DivergenceIntegral(E1, E2) result(integralValue)
+    function DivergenceIntegral(L1, L2) result(integralValue)
         integer :: pointIdx
-        double precision, intent(in) :: E1(2), E2(2)
+        double precision, intent(in) :: L1(2), L2(2)
         double precision :: L(2), LPerp(2), integralPoints(2,15), integralDists(15)
         double precision :: integralValue
         !G7, K15 Gauss-Kronrod quadrature
@@ -88,11 +83,11 @@ module RadialIntegralFunctions
                 0.190915025252559d0, 0d0, 0.208979591836735d0, 0d0, 0.190915025252559d0, 0d0, 0.139852695744638d0, 0d0,&
                 0.064742483084435d0, 0d0 /)
 
-        L = E2 - E1
+        L = L2 - L1
         LPerp(1) = L(2)
         LPerp(2) = -L(1)
         do pointIdx = 1, 15
-            integralPoints(:,pointIdx) = E1 + L*quadPoints(pointIdx)
+            integralPoints(:,pointIdx) = L1 + L*quadPoints(pointIdx)
             integralDists(pointIdx) = sqrt(sum(integralPoints(:,pointIdx)**2))
         enddo
         !to save time (and since the integrand is analytic so the computed result is very accurate), we don't do
@@ -102,19 +97,19 @@ module RadialIntegralFunctions
     end function DivergenceIntegral
 
 
-    !finds a point on the line through E1 and E2 that's on the circle with the given radius centered at the origin
+    !finds a point on the line through L1 and L2 that's on the circle with the given radius centered at the origin
     !if no such point exists, a floating point error will occur; if two such points exist, the one closer to the midpoint
-    !of E1 and E2 is returned
-    function PointOnSegmentAtRadius(E1, E2, radius) result (P)
-        double precision, intent(in) :: E1(2), E2(2), radius
+    !of L1 and L2 is returned
+    function PointOnSegmentAtRadius(L1, L2, radius) result (P)
+        double precision, intent(in) :: L1(2), L2(2), radius
         double precision :: L(2), tMid, t, P(2)
 
         !this function involves solving a quadratic equation; we are only interested in the solution between 0 and 1, and
         !the function will only be called in situatitions where exactly 1 solution in this interval is guaranteed to exist
-        L = E2 - E1
-        tMid = -sum(E1*L) / sum(L**2)
-        t = tMid - sign(sqrt(radius**2 * sum(L**2) - (L(1) * E1(2) - L(2) * E1(1))**2), tMid - 0.5d0) / sum(L**2)
-        P = E1 + L*t
+        L = L2 - L1
+        tMid = -sum(L1*L) / sum(L**2)
+        t = tMid - sign(sqrt(radius**2 * sum(L**2) - (L(1) * L1(2) - L(2) * L1(1))**2), tMid - 0.5d0) / sum(L**2)
+        P = L1 + L*t
     end function PointOnSegmentAtRadius
 
 
@@ -125,12 +120,13 @@ module RadialIntegralFunctions
         double precision :: values(nEntries)
 
         values = 1d0/18 * x * (9 - 42*x**2 + 210*x**4 - 384*x**5 + 315*x**6 - 128*x**7 + 21*x**8)
-        !check to make sure we didn't call the function for a distance greater than 1; it's more efficient to prevent
-        !that elsewhere in the code than to check for it and fix it here
+        !check to make sure we didn't call the function for a distance greater than 1
+        !it's more efficient to prevent that elsewhere in the code than to do it here, so this is commented out
         !do entryIdx = 1, nEntries
         !    if(points(entryIdx) > 1d0) values(entryIdx) = 1d0/18 / points(entryIdx)
         !enddo
-        !replace wendland with 1 for debugging
+
+        !replace wendland with constant function for debugging
         !values = 0.5d0 * x
     end function IntRWendlandEval
 end module RadialIntegralFunctions

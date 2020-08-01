@@ -309,7 +309,7 @@ module SpherePolyFunctions
         double precision :: values(nPoints)
         values = 1.d0/3 * (35*points**2 + 18*points + 3) * (1-points)**6
         !replace Wendland with 1 for debugging
-        values(:) = 1
+        !values(:) = 1
     end function WendlandEval
 end module SpherePolyFunctions
 

@@ -50,10 +50,11 @@ triWeight(d)
 \arguments{
 
 \item{x1}{A  matrix of locations to evaluate the basis
-functions. Each row of \code{x1} is a location.}
+functions. Each row of \code{x1} is a location. For spherical distances these
+locations are assumed to be in degrees. }
 
 \item{centers}{A  matrix specifying the basis function
-centers.}
+centers. For spherical distances these locations are assumed to be in degrees.}
 
 \item{d}{A vector of distances.}
 
@@ -62,8 +63,12 @@ centers.}
 \item{max.points}{Maximum number of nonzero entries expected for the
 returned matrix.}
 
-\item{distance.type}{The distance metric. See 
-\code{LKrigDistance} for details.}
+\item{distance.type}{A text string indicate type distance to use
+  	between spatial locations when evaluating the basis
+  	functions. Default is "Euclidean". Other choices when
+  	locations are in degrees ( e.g. longitude and latitude) are "Chordal"
+  	and "GreatCircle" with the default units being miles. See Details below
+  	how to change the radius that is used.}
 
 \item{mean.neighbor}{Average number of centers that are within delta
 of each x1 location. For centers on a regular grid this is often easy
@@ -87,15 +92,33 @@ Wendland function is for 2 dimensions and smoothness order 2. See
 \code{WendlandFunction} for the polynomial form. This code has a very
 similar function to the fields function \code{wendland.cov}.
 
-In pseudo R code for delta a scalar \code{Radial.basis} evaluates as
+In pseudo R code for delta a scalar \code{Radial.basis} with the Wendland "shape" evaluates as
 
 \preformatted{
   BigD<- rdist( x1,centers)
   WendlandFunction(BigD/basis.delta)
 }
+and is comparable to 
+
+\code{Radial.basis(x1, centers,basis.delta)}
 
 The actual code uses a FORTRAN subroutine to search over distances
 less than delta and also returns the matrix in sparse format.
+
+	Part of the flexibility  in these function is to use different distance functions
+	(metrics). See \link{LKDistance} for the S4 method to find distance and 
+	\link{LKDist} for the lower level functions that actually do the work.  
+	To change the radius used for the spherical distances one add a \code{Radius}
+	attribute to the text string. For example to use kilometers for great circle 
+	distance ( R approximately 6371)
+  
+\preformatted{
+   dtype <- "GreatCircle" 
+   attr( dtype, which="Radius") <- 6371 
+   } 
+\code{dtype} is still a text string but has the extra bit of information attached to it. Now use \code{distance.type = dtype} for the distance type argument. 
+
+
 
 The function \code{Tensor.basis} has similar function as the radial 
 option. The main difference is that a slightly different distance function is 
@@ -108,26 +131,25 @@ for delta a scalar  and for just two dimensions  Tensor.basis  evaluates as
   WendlandFunction(BigD1/basis.delta) *WendlandFunction(BigD1/basis.delta)
 }
 
-  
-The function \code{LKrig.cyl} transforms coordinates on a cylinder,
-e.g. lon/lat when taken as a Mercator projection, and returns the 3-d
-coordinates. It is these 3-d coordinates that are used to find distances
-to define the radial basis functions. For points that are close this
-"chordal" type distance will be close to the geodesic distance on a
-cylinder but not identical.
+The user is also encourage to consider using the higher level function 
+\link{LKrig.basis} paired with an LKinfo object to define the centers. But besure to use \code{normalize = FALSE} to avoid strange interactions of the SAR model, irrelevant in this case, with the basis function form.
 
 }
 \value{
 
-For \code{Wendland.basis} a matrix in sparse format with number of
-rows equal to nrow(x1) and columns equal to nrow(center).
+For \code{Radial.basis} and \code{Tensor.basis}
+a matrix in sparse format with number of
+rows equal to nrow(x1) and columns equal to nrow(center) and value are the
+basis functions evaluated at these combinations
+For \code{WendlandFunction} and \code{triweight} a vector with the values
+for this function. 
 
 }
 \author{
 Doug Nychka
 }
 \seealso{
-LKrig.basis
+\link{LKrig.basis}, \link{LKDist}
 }
 \examples{
 set.seed(12)
@@ -149,7 +171,7 @@ center<- as.matrix(center)
   data(ozone2)  
   x<-ozone2$lon.lat
   y<- ozone2$y[16,]
-# Find location that are not 'NA'.
+# Find locations that are not 'NA'.
 # (LKrig is not set up to handle missing observations.)
   good <-  !is.na( y)
   x<- x[good,]
@@ -158,6 +180,32 @@ center<- as.matrix(center)
     
   obj1<- LKrig(x,y,NC=30,nlevel=1, alpha=1, 
     lambda=.01, a.wght=5, BasisFunction="triWeight", overlap=1.8)
+    
+# It is usually better to create the LKinfo object first and then call LKrig
+LKinfo <- LKrigSetup( x,NC=30,nlevel=1, alpha=1, 
+            lambda=.01, a.wght=5, BasisFunction="triWeight", overlap=1.8 )
+obj1B<- LKrig(x,y, LKinfo=LKinfo)  
+#######################################################
+###  a radial basis on the sphere
+#######################################################
+# icosohedral grid at the second generation 
+allLevels<- IcosahedronGrid(2)
+# extract second level
+centers3d<- allLevels[[2]]
+centers<- toSphere(centers3d)
+# take a look
+plot( centers, xlim=c(-180,180), ylim=c( -90, 90), pch=16)
+lonlat<- make.surface.grid( list( x= seq( -180,180,,80), y= seq( -90,90,,40)))
+delta<- 5000 # default distance is in miles 
+# evaluate all basis functions on the grid
+bigX<- Radial.basis( lonlat, centers, basis.delta= delta, distance.type="GreatCircle")
+# look at the 12th basis function 
+b12<- bigX[,12]
+image( as.surface( lonlat, b12), col=c( "white",tim.colors(256)), add=TRUE,
+xlim="longitude", ylim="latitude")
+points( centers,  pch=16, col="magenta", cex=2)
+
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

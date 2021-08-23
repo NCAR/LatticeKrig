@@ -1,0 +1,323 @@
+Only in ../LatticeKrig/R: .Rhistory
+diff LatticeKrig/R/Awght2Omega.R ../LatticeKrig/R/Awght2Omega.R
+13,14c13,15
+<   if( Awght <= LKinfo$floorAwght){
+<     stop(paste("Awght is less than or equal to " , LKinfo$floorAwght) )
+---
+>   if( any(Awght <= LKinfo$floorAwght) ){
+>     stop(paste("Awght is less than or equal to (lower limit) " ,
+>                LKinfo$floorAwght) )
+Only in ../LatticeKrig/R: LKDefaultVarNames.R
+diff LatticeKrig/R/LKDist.R ../LatticeKrig/R/LKDist.R
+43a44
+>    	 
+44a46,48
+>      if( deltaGC > R*pi){
+>        deltaGC <- R*pi
+>      }
+diff LatticeKrig/R/LKrig.R ../LatticeKrig/R/LKrig.R
+35a36
+>              getVarNames = TRUE,
+55c56,81
+< 	}		
+---
+> 	}
+> #  
+> # the variable names are used to generate column labels if 
+> # those are missing. 
+> # the getVarNames switch is important -- if
+> # LKrig is called via the do.call function then strange things
+> # happen with the substitute function and I understand is an unresolved 
+> # aspect of Rli
+> #
+>   if( getVarNames){
+>     xName<- as.character( substitute( x) )
+>     ZName<- as.character( substitute( Z) )
+>     UName<- as.character( substitute( U) )
+>     xName<- tail( xName, 1)
+>     ZName<- tail( ZName, 1)
+>     UName<- tail( UName, 1)
+>     
+> # just take last component
+>     
+>   }
+>   else{
+>     xName<- "xVar"
+>     ZName<- "ZVar"
+>     UName<- "UVar"
+>   }  
+> #
+61c87,88
+< # the next call
+---
+> # the next call    
+> 
+63c90,95
+<                                     X, U,  LKinfo, verbose=verbose)
+---
+>                                 X, U,  LKinfo,
+>                                 xName = xName, 
+>                                 ZName = ZName,
+>                                 UName = UName, 
+>                               verbose = verbose)
+>     
+79c111
+<  	}
+---
+>  	 }
+165a198
+> 	
+167a201,205
+> # fill in names of the fixed coefficients 
+> # fill in names of fixed model coefficients
+> 	
+> 	rownames(out1$d.coef)<- colnames( wU )
+> #
+168a207,210
+> 	if( verbose){
+> 	  cat("fixed model coefficients", fill=TRUE)
+> 	  cat( object$d.coef, fill=TRUE)
+> 	}
+diff LatticeKrig/R/LKrig.coef.R ../LatticeKrig/R/LKrig.coef.R
+27a28
+>     
+30a32
+>         
+31a34
+>         
+33c36
+< #   A is  (T^t M^{-1} T)
+---
+> #   A is  (U^t M^{-1} U)
+37,40c40,47
+< # b is   (T^t M^{-1} y)
+< # Save the intermediate matrix   (T^t M^{-1} T) ^{-1}
+< # this the GLS covariance matrix of estimated coefficients
+< # should be small for this to be efficient code --  e.g the default is 3X3
+---
+> # b is   (U^t M^{-1} y)
+> # Save the intermediate matrix   (U^t M^{-1} U) ^{-1}
+> # this proportional to the GLS covariance matrix of estimated coefficients
+> # should be small for this to be efficient code 
+>         hold<- svd( A)
+>         if( max(hold$d)/min(hold$d) > 1e10){
+>             stop("large condition number (> 1e10)  in fixed part (X) of model")
+>         }
+42c49
+< # GLS estimates
+---
+> # GLS  and also the spatial process estimates for fixed linear part of the model
+44c51
+< # combine the different fixed effects estimates across replicates.        
+---
+> # combine the different fixed effects estimates across replicates.  
+62,63c69,71
+< # This is the formula from the LKrig article to 
+< # to evaluate  M^{-1}. The W from this formula is absorbed into weighting of
+---
+> # Next  is the (very strange) formula from the LKrig article to 
+> # to evaluate  r^T M^{-1} r  where r = y - U d.coef i.e. r are the residuals from fixed part of the model
+> # The W from this formula is absorbed into weighting of
+68,69c76,81
+< #     
+<     quad.form<-  (1/lambda) * c( colSums(as.matrix(residualFixed^2))  - 
+---
+> #   
+> #  Why not just compute  r^T M^{-1} r directly?  Direct computation requires the 
+> #  dense and large covariance matrix of the process and so is prohibitive.
+> #  This indirect form is the results of the magic from the Sherman-Morrison-Woodbury matrix identity.
+>     
+>    quad.form<-  (1/lambda) * c( colSums(as.matrix(residualFixed^2))  - 
+70a83
+>     
+72c85
+<     if( verbose){
+---
+>    if( verbose){
+diff LatticeKrig/R/LKrigFindLambda.R ../LatticeKrig/R/LKrigFindLambda.R
+22c22
+< LKrigFindLambda <- function(x, y, ...,  LKinfo,
+---
+> LKrigFindLambda <- function(x, y, Z=NULL, U=NULL, ...,  LKinfo,
+28c28,33
+< # parts of the LKrig call that will be fixed.  (except updates to LKinfo)                           	
+---
+> #  
+> # NOTE: in using do.call for LKrig below  variable names should not be 
+> # tuurned on.  This means default names will be filled in for the
+> # table of fixed effect coefficients
+> # 
+> # parts of the LKrig call that will be fixed.  (except updates to LKinfo)  
+30c35,39
+<                    list( LKinfo=LKinfo, NtrA=ifelse( lambda.profile, 0, 20) ))
+---
+>                    list( LKinfo = LKinfo,
+>                            NtrA = ifelse( lambda.profile, 0, 20),
+>                     getVarNames = FALSE )
+>                    )
+>  
+34d42
+<    
+48c56,58
+< 
+---
+>     if( verbose){
+>     cat("First call to LKrig", fill=TRUE)
+>     }
+74d83
+< #    cat("temp.fn: lambda ", exp(x), fill=TRUE)
+82c91
+<                                   lambda = lambdaTemp 
+---
+>                                   lambda = lambdaTemp
+98c107
+< # the try wrapper captures case when optim fails.   
+---
+> # the try wrapper captures cases when optim fails.   
+117c126,127
+<                                                lambda = lambda.MLE)
+---
+>                                                lambda = lambda.MLE
+>                                          )
+diff LatticeKrig/R/LKrigFindLambdaAwght.R ../LatticeKrig/R/LKrigFindLambdaAwght.R
+25c25,28
+<                  list( LKinfo=LKinfo, NtrA = 0  ))
+---
+>                  list( LKinfo = LKinfo,
+>                          NtrA = 0, 
+>                   getVarNames = FALSE)
+>                  )
+115c118,119
+<                                         a.wght = a.wght.MLE)
+---
+>                                         a.wght = a.wght.MLE
+>                                        )
+Only in ../LatticeKrig/R: ModelLKRectangle.R
+diff LatticeKrig/R/ModelLKSphere.R ../LatticeKrig/R/ModelLKSphere.R
+38c38
+< #  
+---
+> # set to Great Circle 
+40,46c40,46
+< # Note default for lattice centers is on a unit sphere
+< # To change the radius in LKrigSetup pass the
+< # distance.type argument as "GreatCircle"
+< # but change its Radius attribute from 1.0.
+<       dType<- "GreatCircle"
+<       attr(dType, "Radius" ) <- 1.0
+<       object$distance.type <- dType
+---
+>       object$distance.type <-"GreatCircle"
+>       attr( object$distance.type, "Radius" )<- 1.0
+>   }
+>   
+> # If the radius attribute is missing set to  1.0
+>   if( is.null( attr( object$distance.type, "Radius" )) ){
+>       attr( object$distance.type, "Radius" )<- 1.0
+47a48
+>   
+63a65,79
+>   # delta cutoffs for support of the basis functions found empirically ...
+>   # Nearest neighobors are within delta great circle distance (and second order
+>   # neighbors are excluded) 
+>  
+>   if( is.null( object$delta)){
+>           object$delta <- 1.408
+>   }
+>   
+>   #print( object$delta)
+>   
+>   if(length( object$delta) > 1 ){
+>     stop("delta must be just one value")
+>   }
+>           
+>   
+109,110c125,130
+< # neighbors are excluded)  
+<   delta<- 1.408/ 2^( 0:(Rmax-1) )
+---
+> # neighbors are excluded) 
+>   #       maybe allow this to be passed as 
+>   #       object$setupArgs$deltaBaseValue
+>   # deltaBaseValue  <- object$delta
+>   deltaBaseValue  <- 1.408
+>   delta<- deltaBaseValue* 2^( -(0:(Rmax-1)) )
+diff LatticeKrig/R/createLKrigObject.R ../LatticeKrig/R/createLKrigObject.R
+18c18,19
+< function ( x, y, weights=NULL, Z,  X, U, LKinfo, verbose=FALSE)                                  
+---
+> function ( x, y, weights=NULL, Z,  X, U, LKinfo,
+>            xName="xVar", ZName="ZVar", UName="UVar", verbose=FALSE)                                  
+27,29c28,30
+<     	print( dim(x))
+<     	print( dim( y))
+<     	print( dim(Z))
+---
+>       cat("createLKrigObject:",fill=TRUE)
+>     	cat( "dim(x)", dim(x), fill=TRUE)
+>     	
+41c42,43
+< 		nZ<- 0}		
+---
+> 		nZ<- 0
+> 		}		
+50c52,66
+< 	# logical to indicate that X has been passed
+---
+> 	
+> # fill in default column names if missing
+> 	if( !is.null(x)){
+> 	  colnames(x)<- LKDefaultVarNames(x,xName)
+> 	}
+> 	if( !is.null(Z)){
+> 	  colnames(Z)<- LKDefaultVarNames(Z,ZName)
+> 	}
+> 	if( !is.null(U)){
+> 	  colnames(U)<- LKDefaultVarNames(U,UName)
+> 	}
+> 	
+> # logical to indicate that X has been passed
+> # this would ordinarily be created with the basis functions
+> 	
+51a68,71
+> #	
+> # fill in columns names of fixed part matrices or create names
+> 	
+> 	
+diff LatticeKrig/R/print.LatticeKrig.R ../LatticeKrig/R/print.LatticeKrig.R
+71a72,73
+>   objSummary<- summary.LKrig(x)	
+> ########### beginning of printing 	
+93a96,101
+> 	  cat(" ", fill=TRUE)
+> 	  cat("Summary of estimated fixed model coefficients",fill = TRUE )
+> 	  print(objSummary$coefficients)
+> 	  cat( " Standard errors are  based on generalized LS", fill = TRUE)
+> 	  cat( " and for covariance parameters fixed at the estimated values",
+> 	       fill = TRUE)
+94a103
+> 	cat(" ", fill=TRUE)
+diff LatticeKrig/R/summary.LKrig.R ../LatticeKrig/R/summary.LKrig.R
+93a94,115
+>   ##### table of fixed model coefficients along the style of 
+>   ###### lm
+>   d.coef<-object$d.coef 
+>   nP<- nrow(d.coef )
+>   nReps<- ncol(d.coef)
+>   if( nReps==1){
+>   coefficients <- matrix(NA, ncol=4, nrow=nP )
+>   colnames( coefficients)<-  
+>               c("Estimate", "Std. Error", "t value", "Pr(>|t|)"  )
+>   rownames( coefficients)<- rownames( object$d.coef)
+>   
+>   coefficients[,1]<- d.coef
+>   SE<- sqrt(object$rho.MLE* diag( object$Omega))
+>   coefficients[,2]<- SE
+>   coefficients[,3]<- d.coef/SE
+>   df<-  object$n  - nP
+>   coefficients[,4]<- 2 * pt( abs(d.coef/SE), df, lower.tail=FALSE )
+>   }
+>   else{
+>     coefficients<- NA
+>   }
+>   obj$coefficients<- coefficients

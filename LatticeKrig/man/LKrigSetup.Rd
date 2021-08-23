@@ -116,14 +116,8 @@ for testing and timing sparse verses standard algorithms. }
   	between spatial locations when evaluating the basis
   	functions. Default is "Euclidean". Other choices when
   	locations are in degrees longitude and latitude are "Chordal"
-  	and "GreatCircle".  The default radius is in miles (3963.34)
-  	but can be reset using the "Radius" attribute to the text
-  	string.
-
-  	e.g.  \code{ dtype<- "Chordal"; attr( dtype, which="Radius")
-  		  <- 6371 }
-
-  	will set radius to kilometers. }
+  	and "GreatCircle" with the default units being miles. See Details below
+  	how to change the radius that is used.}
   	
 \item{fixedFunction}{A text string that is the name of the function
 	used to find the fixed part of the spatial model based on the
@@ -153,9 +147,10 @@ for testing and timing sparse verses standard algorithms. }
   \item{LKGeometry}{ A text string that gives the names of the model
   	geometry.  The default is "LKrectangle" assuming the 
   	spatial domain is a rectangle.  Other common choices are
-  	"LKInterval" (1 d problem ) and "LKBox" (3 d problem) }
+  	"LKInterval" (1 d problem ) and "LKBox" (for a 3d problem).
+  	See \link{LKGeometry} for more detials. }
 
-\item{LKinfo}{A list that has class "LKinfo".}
+  \item{LKinfo}{A list that has class "LKinfo".}
 
   \item{mean.neighbor}{ The average number of nonzero points when each
         basis function is evaluated at a set of points points in the spatial
@@ -254,6 +249,19 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
 	\link{LKrigSAR}) and the lattice centers (see
 	\link{LKrigLatticeCenters}). The component basisInfo used to generate
 	the radial basis function (see LKrig.basis)
+	
+	Also part of this flexibility is to use different distance functions
+	(metrics). See \link{LKDistance} for the S4 method to find distance and 
+	\link{LKDist} for the lower level functions that actually do the work. 
+	To change the radius use for the spherical distances one add a Radius
+	attribute to the text string. 
+  For example to use kilometers  for great circle distane ( R approximately 6371)
+  
+\preformatted{
+   dtype <- "GreatCircle" 
+   attr( dtype, which="Radius") <- 6371 
+   } 
+Now use \code{distance.type = dtype}for the distance type argument. 
 
 	The function LKrigEasyDefaults is used in the top level 
 	function LattticeKrig to make the logic of different default choices 
@@ -266,6 +274,7 @@ rbind( c( 0,0), c(1,1)) will set the domain to be the unit square.  }
 	particular components without having to recreate the entire
 	object. This function is used in the MLE search when just
 	values of alpha or a.wght are being varied.
+	
 }
 
 \value{

@@ -3,7 +3,7 @@ useDynLib(LatticeKrig,.registration=TRUE)
 exportPattern("^[^\\.]")
 importFrom("graphics", "lines", "polygon")
 importFrom("methods", "new")
-importFrom("stats", "optimize", "predict", "rnorm", "var", "optim","sd")
+importFrom("stats", "optimize", "predict", "rnorm", "var", "optim","sd","pt")
 import("spam")
 import("fields")
   

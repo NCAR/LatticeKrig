@@ -91,6 +91,28 @@ summary.LKrig <- function(object, digits = 4, stripAwght=TRUE, ...) {
   }
   obj$LKinfo<- LKinfo
   obj$MLE<- x$MLE
+  ##### table of fixed model coefficients along the style of 
+  ###### lm
+  d.coef<-object$d.coef 
+  nP<- nrow(d.coef )
+  nReps<- ncol(d.coef)
+  if( nReps==1){
+  coefficients <- matrix(NA, ncol=4, nrow=nP )
+  colnames( coefficients)<-  
+              c("Estimate", "Std. Error", "t value", "Pr(>|t|)"  )
+  rownames( coefficients)<- rownames( object$d.coef)
+  
+  coefficients[,1]<- d.coef
+  SE<- sqrt(object$rho.MLE* diag( object$Omega))
+  coefficients[,2]<- SE
+  coefficients[,3]<- d.coef/SE
+  df<-  object$n  - nP
+  coefficients[,4]<- 2 * pt( abs(d.coef/SE), df, lower.tail=FALSE )
+  }
+  else{
+    coefficients<- NA
+  }
+  obj$coefficients<- coefficients
   return(obj)
 }
 

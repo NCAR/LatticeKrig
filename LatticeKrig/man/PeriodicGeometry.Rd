@@ -103,7 +103,7 @@
 		The basis functions have their 
 		default as using great circle distance to determine the values between the center and
 		other
-		points. Because the distances between centers are not equal some adjustment is made to the
+		points. See \link{Radial.basis} for an example of the basis functions. Because the distances between centers are not equal some adjustment is made to the
 		\code{delta} parameter for the basis function support. Currently the number of basis functions in
 		each level are  
 		\tabular{lrrrrrrrr}{
@@ -198,6 +198,18 @@ data(CO2)
                        a.wght=1.1, alpha=c(1,.25),
                        LKGeometry="LKSphere") 
   obj0B<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo0)
+ surface( obj0B, col=terrain.colors(256))
+ world( add=TRUE, col="magenta")
+  
+# use chordal distance 
+LKinfo1<- LKrigSetup( CO2$lon.lat, startingLevel=2 ,nlevel=2,
+                       a.wght=1.1, alpha=c(1,.25),
+                       LKGeometry="LKSphere", distance.type="Chordal") 
+                       
+ obj0C<-  LatticeKrig( CO2$lon.lat,CO2$y,LKinfo=LKinfo1)
+ surface( obj0C, col=terrain.colors(256))
+ world( add=TRUE, col="magenta")
+
 # a more serious model this uses about 3300 basis functions
 LKinfo0<- LKrigSetup( CO2$lon.lat, startingLevel=3, ,nlevel=3,
                        a.wght=1.1, alpha=c(1, .5, .25),

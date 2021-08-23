@@ -17,6 +17,7 @@
 % # Modified DH Dec 2013
 
 \name{LKrig}
+\alias{createLKrigObject}
 \alias{LKrig}
 \alias{choleskyMemory}
 \alias{predict.LKrig}
@@ -44,7 +45,7 @@ function can be used to solve a linear inverse type problem (see X and U below).
                  NA, NtrA = 20, use.cholesky = NULL, return.cholesky =
                  TRUE, X = NULL, U = NULL, wX = NULL, wU = NULL,
                  return.wXandwU = TRUE,
-                 ..., verbose = FALSE)
+                 ..., getVarNames = TRUE, verbose = FALSE)
 
 \method{predict}{LKrig}(object, xnew = object$x, Znew = NULL, drop.Z = FALSE,
                  just.fixed = FALSE, return.levels = FALSE,
@@ -62,6 +63,10 @@ function can be used to solve a linear inverse type problem (see X and U below).
 \method{print}{LKrig}( x, digits=4, ...)
 
 \method{summary}{LKrig}( object, digits=4, stripAwght = TRUE,...)
+
+createLKrigObject(x, y, weights = NULL, Z, X, U, LKinfo,
+                 xName = "xVar", ZName = "ZVar", UName = "UVar",
+                 verbose = FALSE)
 
 }
 \arguments{
@@ -93,6 +98,7 @@ spatial drift polynomial part of the fixed model. The contribution
 from the other, Z, covariates in the fixed component will be omitted.}
  
 \item{extrap}{If TRUE will extrapolate predictions beyond convex hull of locations.}
+\item{getVarNames}{If TRUE the name of the pasted object for x, Z or U will be used in the column names for the fixed model coefficients. This should be set to FALSE when  \code{LKrig} is called from the \code{do.call } function because the name of the original matrices are not preserved.}
 
 \item{grid.list}{ A list with components x and y specifying the grid ( see \code{help( grid.list)} ). }
 
@@ -127,6 +133,7 @@ determining effective degrees of freedom. }
 returned as columns in a matrix. }
 
 \item{return.wXandwU}{If TRUE the matrices wX and xU are included in the LKrig object.}
+
 \item{stripAwght}{ If TRUE the attributes for the a.wght returned by the summary
 are wiped out. Why do this? In some cases the a.wght list has some attributes
 attached to
@@ -137,18 +144,22 @@ functions. These attributes make the a.wght itself hard to print out and if the
 summaries for many fits are accumulated these attributes greatly inflate the size
 of the results. }
 
-\item{U}{For linear inverse problems the matrix that maps coefficients of the fixed part of model to the predicted
-	values of observations.}
+  \item{U}{For linear inverse problems the matrix that maps coefficients of the
+   fixed part of model to the predicted values of observations.}
 
-	
+  \item{UName}{Name to use for the U variable.}
+
   \item{verbose}{If \code{TRUE} print out intermediate results and
   messages.}
 
   \item{use.cholesky}{Use the symbolic part of the Cholesky
   decomposition passed in this argument.}
   
-  \item{X}{For linear inverse problems the matrix that maps coefficients of the basis to the   
-  	 predicted values of observations. X must be in spam format. }
+  \item{X}{For linear inverse problems the matrix that maps coefficients of the basis
+  to the predicted values of observations. X must be in spam format. }
+  	 
+  \item{xName}{Name to use for the x variable.This is needed so it can be 
+               passed from the top level \code{LKrig} function. }
   
   \item{wU}{The matrix U multiplied by the weights.}
  
@@ -158,7 +169,7 @@ of the results. }
 
   \item{xy}{Order of evaluating surface coordinates. This would be used if for example
  a lon-lat surface needed to be transposed as a "lat-lon" object. Usually not needed.}
-
+  \item{ZName}{Name to use for the Z variable.}
   \item{Znew}{Values of covariates, distinct from the spatial drift
   for predictions of data locations.}
 
@@ -667,6 +678,9 @@ mKrig, Krig, fastTps, Wendland, LKrig.coef, Lkrig.lnPlike,
 # just to show a basic level call
   obj1<- LKrig( x,y, a.wght=5, nlevel=3, nu=1.0, NC=10, lambda=.1)
   print(obj1)
+  
+# estimates of fixed model parameters with their SEs
+  summary( obj1)$coefficients
 #  
 # this is the same as:
 #  LKinfoEX<- LKrigSetup( x, a.wght=5, nlevel=3, nu=1.0, NC=4)

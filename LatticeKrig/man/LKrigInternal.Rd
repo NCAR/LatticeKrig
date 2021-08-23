@@ -27,7 +27,7 @@
 \alias{LKrigUnrollZGrid}
 \alias{LKrigMakewU}
 \alias{LKrigMakewX}
-\alias{createLKrigObject}
+\alias{LKDefaultVarNames}
 
 \title{
 Internal functions for LatticeKrig package. 
@@ -37,7 +37,6 @@ Some internal functions for \code{\link{LKrig}} that estimate  the
 coefficients of the basis functions and compute the likelihood.
 }
 \usage{
-createLKrigObject(x, y, weights = NULL, Z, X, U, LKinfo, verbose = FALSE)
 LKrigMakewU(object, verbose = FALSE)
 LKrigMakewX(object, verbose = FALSE)
 LKrig.coef( GCholesky, wX, wU, wy, lambda,
@@ -46,10 +45,11 @@ LKrig.lnPlike( GCholesky, Q, quad.form, nObs, nReps, weights, LKinfo)
 LKrig.lnPlikeOLD(Mc, Q, wy, residuals, weights, LKinfo)
 LKrig.traceA(GCholesky, wX, wU, lambda, weights, NtrA, iseed = NA)
 LKrigUnrollZGrid( grid.list, ZGrid=NULL)
+LKDefaultVarNames(A, tag)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-
+  \item{A}{A matrix to add column names if not present.}
   \item{collapseFixedEffect}{If FALSE estimate fixed effects
             separately for each replicated data set. }
   \item{grid.list}{The grid for evaluating surface}
@@ -82,10 +82,11 @@ LKrigUnrollZGrid( grid.list, ZGrid=NULL)
 
    \item{residuals}{Residuals from fitting spatial process.}
    
+   \item{tag}{Text string to use as the column name. This will be followed  1, 2, ... for the names. E.g. X1 X2 X3. Default value will be the 
+   name of A. }
 \item{U}{The matrix that maps the d.coef coefficients of the fixed component
   	(typically a low order polynomial) part of the observation model.}
-  	
- 	
+
 \item{verbose}{If TRUE intermediate debugging information is printed.}
    
 \item{weights}{A vector that is proportional to the reciprocal
@@ -103,12 +104,6 @@ LKrigUnrollZGrid( grid.list, ZGrid=NULL)
   \item{wy}{Weighted observations.}
   
   
-  \item{X}{The matrix that maps the c.coef coefficients into the nonparametric component
-  	(spatial process) part of the observation model.}
-
- \item{x}{Matrix of spatial locations passed to LKrig.}
- \item{y}{Vector or matrix of observations passed to LKrig.}
- \item{Z}{A matrix of covariates.}
 
   \item{ZGrid}{A list or array with the covariates on the same grid as that specified by 
 the  grid.list argument. }
@@ -122,8 +117,7 @@ in these functions is the cholesky decomposition of this matrix. For
 compatibility with older version of this package this object may also be named
 as \code{Mc} ( Cholesky of the M  matrix) but the user should not identify this M with that in the article. Ideally all coding using Mc should be changed to GCholesky.
 
-\code{createLKrigObject} Based on the arguments passed into LKrig forms the 
-prototype LKrig object. This object is added to as one computes additional steps in the LKrig function. 
+\code{createLKrigObject} Based on the arguments passed into LKrig forms the prototype LKrig object. This object is added to as one computes additional steps in the LKrig function. The Names argument in the call is awkward device to pass the names of the original x, Z and U objects when substitued these names are used as the default prefixs for column names of these matrices. 
 	
 \code{LKrigMakewU} and \code{LKrigMakewX}  construct the weighted U and X matrices from what is passed. In the case of observations that are point locations wU is found the weights and using the fixedFunction and wX is found from the weights and the multi-resolution basis functions. Note that X and wX are assumed to be in spam 
 sparse matrix format. 
@@ -157,6 +151,8 @@ cylinder.
 
 \code{LKrigDefaultFixedFunction} Is called to construct the fixed part of the 
 spatial model. The default is a polynomial of degree (m-1).
+
+\code{LKDefaultVarNames} A handyfunction to create  some simple column names to a matrix if they are missing. This is used so that the tables of parameter estimates will have labels. 
 }
 \value{
 \describe{
@@ -185,6 +181,7 @@ and a.wght}
 
 \item{LKrigDefaultFixedFunction}{A matrix with dimension nrow(x) and columns
 of the number of polynomial terms  and the number of columns of Z if given.}
+\item{LKDefaultVarNames}{The original column names ( e.g. the result of \code{colnames(A)} ) or some simple choices filled in. }
 }
 }
 \references{

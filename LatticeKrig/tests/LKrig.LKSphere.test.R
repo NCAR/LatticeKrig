@@ -1,6 +1,6 @@
 suppressMessages( library( LatticeKrig))
 
-#options( echo =FALSE)
+options( echo =FALSE)
 
 
 Rmax<-7

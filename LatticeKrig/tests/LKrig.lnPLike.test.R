@@ -48,7 +48,7 @@ options( echo=FALSE)
 # quick up front test of likelihood computation
 # This is only valid if mKrig is computating the likelihood correctly ;-).  
 
-  test.for.zero( obj$lnProfileLike.FULL,obj0$lnProfileLike.FULL, 
+  test.for.zero( obj$lnProfileLike.FULL, obj0$summary["lnProfileLike.FULL"], 
                  tag="lnProfileFULL from LKrig and identical compuation
                  using mKrig")
   
@@ -67,8 +67,8 @@ options( echo=FALSE)
   test.for.zero( lnDet( B3) - lnDet(Q) - sum( log( weights))  + (N-N2)*log(lambda),
                          lnDet( M1), tag="Direct formula")
   test.for.zero( obj$lnDetCov,  obj0$lnDetCov, tag= "lnDetCov for mKrig and LatticeKrig")
-  test.for.zero( obj$quad.form,  obj0$quad.form, tag= "quadratic forms for rho MLE")
-  test.for.zero( obj0$lnProfileLike, obj$lnProfileLike,
+  test.for.zero( obj$rho.MLE,  obj0$summary["sigma2"], tag= "quadratic forms for rho MLE")
+  test.for.zero( obj$lnProfileLike, obj0$summary["lnProfileLike.FULL"],
                                 tag="Profile Likelihood concentrated on lambda" )
   
   # with replicated fields -- first pass including if LKrigSetup works and no fixed part.
@@ -84,17 +84,18 @@ options( echo=FALSE)
   # The equivalent Kriging using mKrig and the LatticeKrig covariance function
   obj0R<- mKrig( x,yRep, weights= weights, lambda=LKinfo$lambda, m=0,
                  cov.function="LKrig.cov",
-                 cov.args=list(LKinfo=LKinfo), collapseFixedEffect = FALSE,
+                 cov.args=list(LKinfo=LKinfo),
+                 collapseFixedEffect = FALSE,
                  NtrA=5, iseed=122)
   # quick up front test of likelihood computation
   # This is only valid if mKrig is computating the likelihood correctly ;-).  
-  test.for.zero( objR$rho.MLE,obj0R$rho.MLE, 
+  test.for.zero( objR$rho.MLE, obj0R$replicateInfo$sigma2.MLE, 
                  tag="individual rho estimates from LKrig and identical compuation
                  using mKrig")
-  test.for.zero( objR$rho.MLE.FULL,obj0R$rho.MLE.FULL, 
+  test.for.zero( objR$rho.MLE.FULL,obj0R$summary["sigma2"], 
                  tag=" full rho estimate from LKrig and identical compuation
                  using mKrig")
-  test.for.zero( objR$lnProfileLike,obj0R$lnProfileLike, 
+  test.for.zero( objR$lnProfileLike,obj0R$replicateInfo$lnProfileLike, 
                  tag=" individual lnProfile from LKrig and identical computation
                  using mKrig")
   
@@ -109,10 +110,10 @@ options( echo=FALSE)
                 cov.function="LKrig.cov",
                 cov.args=list(LKinfo=LKinfo),
                 NtrA=20, iseed=122, collapseFixedEffect = FALSE)
-  test.for.zero(  obj0$rho.MLE, obj$rho.MLE,
+  test.for.zero(  obj0$repInfo$sigma2.MLE, obj$rho.MLE,
            tag="MLEs for rho with replicate fields" )
 
-  test.for.zero(  obj0$lnProfileLike, obj$lnProfileLike,
+  test.for.zero(  obj0$repInfo$lnProfileLike, obj$lnProfileLike,
                 tag="Profile Likelihood concentrated on lambda with replicate fields" )
 
 

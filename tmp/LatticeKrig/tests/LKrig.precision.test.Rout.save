@@ -1,0 +1,51 @@
+
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> # LatticeKrig
+> # Copyright 2004-2011, Institute for Mathematics Applied Geosciences
+> # University Corporation for Atmospheric Research
+> # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+> 
+> suppressMessages(library( LatticeKrig))
+> options( echo=FALSE)
+Testing:  initial test on number of basis functions
+PASSED test at tolerance  1e-08
+Testing:  MRF index
+PASSED test at tolerance  1e-08
+Testing:  MRF value
+PASSED test at tolerance  1e-08
+Testing:  MRF weight placement
+PASSED test at tolerance  1e-08
+Testing:  normalization to unit variance at each level
+PASSED test at tolerance  5e-07
+Testing:  normalization based on logic in LKrig.cov
+PASSED test at tolerance  5e-07
+Testing:  full covariance from matrix expressions
+PASSED test at tolerance  1e-08
+Testing:  full covariance from matrix expressions w/o normalization
+PASSED test at tolerance  1e-08
+Testing:  comp normalized cov and LKrig.cov
+PASSED test at tolerance  1e-08
+Testing:  adding  7 buffer points
+PASSED test at tolerance  1e-08
+Testing:  correct nesting of buffer=0  grid
+PASSED test at tolerance  1e-08
+Done testing LKrig.precision
+> proc.time()
+   user  system elapsed 
+  6.542   0.129   6.712 

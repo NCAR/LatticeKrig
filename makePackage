@@ -22,8 +22,14 @@ grep Warning LatticeKrig.Rcheck/fields-Ex*.Rout
 # Now check \dontrun examples
 cd LatticeKrig.Rcheck 
 sed -e "s/##D/ /" LatticeKrig-ex.R > temp.R
-sed -e "s/library('LatticeKrig')/library('LatticeKrig', lib.loc='.')/" temp.R > all-ex.R 
+sed -e "s/## Not run:/ timestamp() ## Dont Run /" temp.R > temp1.R
+sed -e "s/library('LatticeKrig')/library('LatticeKrig', lib.loc='.')/" temp1.R > all-ex.R 
 R CMD BATCH --save  all-ex.R   all-ex.Rout
+
+#Use this to look for timing of sections
+ 
+egrep -F 'Name:|##------ Sat'  *.Rout
+
 
 
 #################
@@ -45,7 +51,7 @@ cp  LatticeKrig.Rcheck/tests/LKrig.LKCylinder.test.Rout  LatticeKrig/tests/LKrig
 cp  LatticeKrig.Rcheck/tests/LKrig.test.inverse.Rout     LatticeKrig/tests/LKrig.test.inverse.Rout.save
 cp  LatticeKrig.Rcheck/tests/LKrigMarginalVariance.test.Rout LatticeKrig/tests/LKrigMarginalVariance.test.Rout.save
 cp  LatticeKrig.Rcheck/tests/LKrig.testFindAwght.Rout    LatticeKrig/tests/LKrig.testFindAwght.Rout.save
-#cp  LatticeKrig.Rcheck/tests/LKSpheretest.Rout           LatticeKrig/tests/LKSpheretest.Rout.save
+cp  LatticeKrig.Rcheck/tests/LKrig.fixedPart.test.Rout    LatticeKrig/tests/LKrig.fixedPart.test.Rout.save
 ########## final build for version
 #
 R CMD build --force LatticeKrig

@@ -1,0 +1,3 @@
+EquatorData: equatorLocations equatorValues equatorGrid equatorGridValues
+PolarData: polarLocations polarValues polarGrid polarGridValues
+KrigingExampleData

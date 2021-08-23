@@ -15,7 +15,8 @@
 # GNU General Public License for more details.
 
 createLKrigObject<- 
-function ( x, y, weights=NULL, Z,  X, U, LKinfo, verbose=FALSE)                                  
+function ( x, y, weights=NULL, Z,  X, U, LKinfo,
+           xName="xVar", ZName="ZVar", UName="UVar", verbose=FALSE)                                  
 {
 # make sure locations are a matrix and get the number of rows
 	x <- as.matrix(x)
@@ -24,9 +25,9 @@ function ( x, y, weights=NULL, Z,  X, U, LKinfo, verbose=FALSE)
 		weights<- rep(1, nrow(y))
 		}
     if( verbose){
-    	print( dim(x))
-    	print( dim( y))
-    	print( dim(Z))
+      cat("createLKrigObject:",fill=TRUE)
+    	cat( "dim(x)", dim(x), fill=TRUE)
+    	
     }		
 	n <- nrow(x)
 	if (any(duplicated(cat.matrix(x)))) 
@@ -38,7 +39,8 @@ function ( x, y, weights=NULL, Z,  X, U, LKinfo, verbose=FALSE)
 		nZ<- ncol(Z)
 	}
 	else{
-		nZ<- 0}		
+		nZ<- 0
+		}		
 	# check for missing values
 	if (!is.null(y)) {
 		if (any(is.na(y))) 
@@ -47,8 +49,26 @@ function ( x, y, weights=NULL, Z,  X, U, LKinfo, verbose=FALSE)
 	if (any(is.na(x))) {
 			stop("Missing values in x not allowed ")
 	}
-	# logical to indicate that X has been passed
+	
+# fill in default column names if missing
+	if( !is.null(x)){
+	  colnames(x)<- LKDefaultVarNames(x,xName)
+	}
+	if( !is.null(Z)){
+	  colnames(Z)<- LKDefaultVarNames(Z,ZName)
+	}
+	if( !is.null(U)){
+	  colnames(U)<- LKDefaultVarNames(U,UName)
+	}
+	
+# logical to indicate that X has been passed
+# this would ordinarily be created with the basis functions
+	
 	inverseModel <- !is.null(X)
+#	
+# fill in columns names of fixed part matrices or create names
+	
+	
 	#cat("createLKrigObject: inverseModel", inverseModel, fill=TRUE)
 	if( is.na(LKinfo$lambda)| is.null( LKinfo$lambda)){
 		stop("Must specify lambda in call to LKrig or in LKinfo")}

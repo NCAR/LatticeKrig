@@ -69,6 +69,8 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 	
 	sum <- cbind(c1, c2)
 	dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
+  objSummary<- summary.LKrig(x)	
+########### beginning of printing 	
 	cat("Call:\n")
 	dput(x$call)
 	if( x$inverseModel){
@@ -91,7 +93,14 @@ print.LatticeKrig <- function(x, digits = 4, ...) {
 			cat("with the argument list:", fill = TRUE)
 			print(x$LKinfo$fixedFunctionArgs)
 		}
+	  cat(" ", fill=TRUE)
+	  cat("Summary of estimated fixed model coefficients",fill = TRUE )
+	  print(objSummary$coefficients)
+	  cat( " Standard errors are  based on generalized LS", fill = TRUE)
+	  cat( " and for covariance parameters fixed at the estimated values",
+	       fill = TRUE)
 	}
+	cat(" ", fill=TRUE)
 	cat("Basis function : ", LKinfo$basisInfo$BasisType, 
 			fill = TRUE)
 	cat("Basis function used: ", LKinfo$basisInfo$BasisFunction, 

@@ -26,7 +26,7 @@
 \alias{omega2Awght}
 \alias{Awght2Omega}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Simple function to search over covariance parameters for Lattice Krig.}
+\title{Functions to search over covariance parameters in the LatticeKrig model.}
 \description{
 Given a list of different covariance parameters for the Lattice Krig
 covariance model this function computes the likelihood or a profiled
@@ -37,7 +37,7 @@ package to efficiently search through the LatticeKrig covariance
 parameter space.
 }
 \usage{
-LKrigFindLambda(x, y, ..., LKinfo,
+LKrigFindLambda(x, y, Z=NULL, U=NULL, ..., LKinfo,
                             use.cholesky=NULL,                          
                             lambda.profile=TRUE,
                             lowerBoundLogLambda=-16,tol = 0.005,
@@ -135,10 +135,14 @@ MLE.}
 \item{use.cholesky}{If not NULL then this object is used as the
 symbolic cholesky decomposition of the covariance matrix for computing
 the likelihood.}
+\item{U}{U matrix if an inverse problem model.}
 \item{x}{ The spatial locations.  }
 \item{y}{ The observations.  }
+\item{Z}{Matrix of additional covariates for fixe part of the model.}
 \item{\dots}{Any arguments to be passed to LKrig. E.g. \code{x},
-       \code{y}, \code{Z} a covariate or \code{weights}.}  }
+       \code{y}, \code{Z} a covariate or \code{weights}.}  
+       
+       }
 \details{
 
 \strong{LKrigFindLambda:} Uses a simple one dimensional optimizer 

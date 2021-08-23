@@ -1,4 +1,4 @@
-% # LatticeKrig  is a package for analysis of spatial data written for
+  % # LatticeKrig  is a package for analysis of spatial data written for
 % # the R software environment .
 % # Copyright (C) 2016
 % # University Corporation for Atmospheric Research (UCAR)
@@ -313,7 +313,8 @@ Doug Nychka
 }
 
 \seealso{
-LKrig, mKrig, Krig, fastTps, Wendland, LKrigSAR
+\link{LKrig}, \link{mKrig}, \link{Krig}, \link{fastTps}, \link{Wendland}, 
+\link{LKrigSAR}, \link{Radial.basis}
 }
 \examples{
 # Load ozone data set

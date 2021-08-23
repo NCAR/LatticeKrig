@@ -35,16 +35,17 @@
 setDefaultsLKinfo.LKSphere <- function(object, ...) {
   object$floorAwght<- 1.0 
 # Definitely do not want Euclidean by default!
-#  
+# set to Great Circle 
   if( object$distance.type == "Euclidean"){
-# Note default for lattice centers is on a unit sphere
-# To change the radius in LKrigSetup pass the
-# distance.type argument as "GreatCircle"
-# but change its Radius attribute from 1.0.
-      dType<- "GreatCircle"
-      attr(dType, "Radius" ) <- 1.0
-      object$distance.type <- dType
+      object$distance.type <-"GreatCircle"
+      attr( object$distance.type, "Radius" )<- 1.0
   }
+  
+# If the radius attribute is missing set to  1.0
+  if( is.null( attr( object$distance.type, "Radius" )) ){
+      attr( object$distance.type, "Radius" )<- 1.0
+  }
+  
 # A lazy default: set alpha to 1.0 if only one level.
   if (object$nlevel == 1 & is.na(object$alpha[1])) {
     object$alpha <- list(1.0)
@@ -61,6 +62,21 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
   if (is.na(object$a.wght)) {
     object$a.wght <- 1.1
   }
+  # delta cutoffs for support of the basis functions found empirically ...
+  # Nearest neighobors are within delta great circle distance (and second order
+  # neighbors are excluded) 
+ 
+  if( is.null( object$delta)){
+          object$delta <- 1.408
+  }
+  
+  #print( object$delta)
+  
+  if(length( object$delta) > 1 ){
+    stop("delta must be just one value")
+  }
+          
+  
   return(object)
   }
 
@@ -106,8 +122,12 @@ setDefaultsLKinfo.LKSphere <- function(object, ...) {
   }
 # delta cutoffs found empirically ...
 # Nearest neighobors are within delta great circle distance (and second order
-# neighbors are excluded)  
-  delta<- 1.408/ 2^( 0:(Rmax-1) )
+# neighbors are excluded) 
+  #       maybe allow this to be passed as 
+  #       object$setupArgs$deltaBaseValue
+  # deltaBaseValue  <- object$delta
+  deltaBaseValue  <- 1.408
+  delta<- deltaBaseValue* 2^( -(0:(Rmax-1)) )
   delta.save<- delta[R]
   
 ##Build and subset geodesic grid up to level startingLevel+nlevel-1; 

@@ -22,7 +22,10 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
           )
   }
   LKrigArgs <- c(list(x = x, y = y), list( ...),
-                 list( LKinfo=LKinfo, NtrA = 0  ))
+                 list( LKinfo = LKinfo,
+                         NtrA = 0, 
+                  getVarNames = FALSE)
+                 )
   
   if( verbose){
     cat( "LKrigFindLambdaAwght: Set of LKrigArgs before first call:", names(LKrigArgs ), fill=TRUE)
@@ -112,7 +115,8 @@ LKrigFindLambdaAwght <- function(x, y, ...,  LKinfo,
     LKrigObject <- do.call("LKrig", c(LKrigArgs,
                                       list(
                                         lambda = lambda.MLE,
-                                        a.wght = a.wght.MLE)
+                                        a.wght = a.wght.MLE
+                                       )
                                      )
     )
   

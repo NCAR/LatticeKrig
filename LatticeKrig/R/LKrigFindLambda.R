@@ -19,19 +19,27 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2
 
-LKrigFindLambda <- function(x, y, ...,  LKinfo,
+LKrigFindLambda <- function(x, y, Z=NULL, U=NULL, ...,  LKinfo,
                             use.cholesky=NULL, 
                  lambda.profile=TRUE,
             lowerBoundLogLambda=-16,
                             tol=.005,
                         verbose=FALSE) {
-# parts of the LKrig call that will be fixed.  (except updates to LKinfo)                           	
+#  
+# NOTE: in using do.call for LKrig below  variable names should not be 
+# tuurned on.  This means default names will be filled in for the
+# table of fixed effect coefficients
+# 
+# parts of the LKrig call that will be fixed.  (except updates to LKinfo)  
     LKrigArgs <- c(list(x = x, y = y), list( ...),
-                   list( LKinfo=LKinfo, NtrA=ifelse( lambda.profile, 0, 20) ))
+                   list( LKinfo = LKinfo,
+                           NtrA = ifelse( lambda.profile, 0, 20),
+                    getVarNames = FALSE )
+                   )
+ 
     if( verbose){
     	cat( "LKrigFindLambda: Complete set of LKrigArgs:", names(LKrigArgs ), fill=TRUE)
     }               
-   
     capture.evaluations <- matrix(NA, ncol = 4, nrow = 1, 
                 dimnames = list(NULL, c("lambda", "rho.MLE",
                                          "sigma.MLE", "lnProfileLike.FULL")))
@@ -45,7 +53,9 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
 # first fit to get cholesky symbolic decomposition  and wX and wU matrices
 # Note that if use.cholesky != NULL then the symbolic decomposition information is
 # used from the passed object.
-
+    if( verbose){
+    cat("First call to LKrig", fill=TRUE)
+    }
     LKrigObject <- do.call("LKrig", c(
                              LKrigArgs,
                              list( 
@@ -71,7 +81,6 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
 #   
 # objective function    
     temp.fn <- function(x) {
-#    cat("temp.fn: lambda ", exp(x), fill=TRUE)
          lambdaTemp<- exp(x)                       
          hold <- do.call("LKrig",          
                      c(LKrigArgs, list(
@@ -79,7 +88,7 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
                                       wX = wX.save,
                                       wU = wU.save,
                                  verbose = FALSE,
-                                  lambda = lambdaTemp 
+                                  lambda = lambdaTemp
                                   )
                        )
                        )[c( "rho.MLE.FULL", "sigma.MLE.FULL", 
@@ -95,7 +104,7 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
                              return(lnProfileLike.FULL)
             }
 #    
-# the try wrapper captures case when optim fails.   
+# the try wrapper captures cases when optim fails.   
             capture.env <- environment()
             look<- try(optimize( temp.fn, interval = llambda.start+c(-8,5),
                                    maximum= TRUE, tol=tol))
@@ -114,7 +123,8 @@ LKrigFindLambda <- function(x, y, ...,  LKinfo,
                                     list(use.cholesky = Mc.save,
                                                    wX = wX.save,
                                                    wU = wU.save,
-                                               lambda = lambda.MLE)
+                                               lambda = lambda.MLE
+                                         )
                                               )
                                    )
    }

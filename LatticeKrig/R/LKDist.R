@@ -41,7 +41,11 @@ LKDist<- function(  x1, x2, delta, max.points = NULL,
    	 x2<- directionCosines(x2)*R
    	 if( distance.type=="GreatCircle" ){
 # inflate  delta cutoff to reflect chordal distance 
+   	 
      deltaGC<- delta
+     if( deltaGC > R*pi){
+       deltaGC <- R*pi
+     }
      delta<- 2*R*sin(  deltaGC/ (2*R)) 
      }
    }

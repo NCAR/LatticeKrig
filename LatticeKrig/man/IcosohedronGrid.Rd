@@ -2,6 +2,7 @@
 \alias{IcosahedronGrid}
 \alias{IcosahedronFaces}
 
+
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Icosahedral multi-resolution grids
 %%  ~~function to do ... ~~
@@ -58,9 +59,9 @@ Level<- 3
 \strong{IcosahedronGrid} A list with \code{K} components each component is a three column matrix
 giving the direction cosines for each grid point. 
 
-\strong{IcosahedronFaces} A list with components
+\strong{IcosahedronFaces} A list with components:
 \describe{
-\item{MutiGrid}{The same list returned by IcosahedronGrid. }
+\item{MultiGrid}{The same list returned by IcosahedronGrid. }
 \item{Faces}{A list with \code{K-1} components. Each components are the faces at a given level
 represented as a three dimensional array (3X3XN with N the number of faces and a given level). The
 array indices are vertices of triangle, coordinates and faces within a resolution level.   e.g. to
@@ -85,11 +86,8 @@ vertices.
 
 }
 
-
-\strong{toSphere} A two column matrix of the longitudes and latitudes when the points are projected onto a unit sphere. 
-
 }
-
+\seealso{ \link{toSphere}, \link{directionCosines}, \link{projectionSphere} }
 \author{
 Doug Nychka and Zachary Thomas
 %%  ~~who you are~~

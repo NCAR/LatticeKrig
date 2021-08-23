@@ -12,7 +12,7 @@ subroutine LKTomGridCount(dim, points, nPoints, lines, nLines, ranges, rangeReps
     integer, intent(out) :: nEntries
 
     double precision, intent(in) :: points(dim, nPoints), lines(2*dim, nLines), ranges(nRanges)
-    double precision :: lineLengthSquared, dist, lineVec(dim), projectionResid(dim, dim), pointVec(dim), range
+    double precision :: lineLengthSquared, dist2, lineVec(dim), pointVec(dim), range, range2, projDist, lineLength
 
     rangeStarts(1) = 0
     do rangeIdx = 1, (nRanges-1)
@@ -20,25 +20,20 @@ subroutine LKTomGridCount(dim, points, nPoints, lines, nLines, ranges, rangeReps
     enddo
 
     outputIdx = 0
-    !$omp parallel private(lineVec, lineLengthSquared, projectionResid, pointVec, dist, range)
+    !$omp parallel private(lineVec, lineLength, pointVec, projDist, dist2, range, range2)
     !$omp do reduction(+:outputIdx)
     do lineIdx = 1, nLines
         lineVec = lines(:dim, lineIdx) - lines(dim+1:, lineIdx)
-        lineLengthSquared = sum(lineVec * lineVec)
-        projectionResid(:,:) = -1/lineLengthSquared
-        do dimIdx = 1, dim
-            projectionResid(dimIdx,:) = projectionResid(dimIdx,:) * lineVec(dimIdx)
-            projectionResid(:,dimIdx) = projectionResid(:,dimIdx) * lineVec(dimIdx)
-            projectionResid(dimIdx, dimIdx) = projectionResid(dimIdx, dimIdx) + 1
-        enddo
-
+        lineLength = sqrt(sum(lineVec * lineVec))
+        lineVec = lineVec / lineLength
         do rangeIdx = 1, nRanges
-            range = ranges(rangeIdx)*ranges(rangeIdx)
+            range = ranges(rangeIdx)
+            range2 = range*range
             do pointIdx = (rangeStarts(rangeIdx)+1), (rangeStarts(rangeIdx) + rangeReps(rangeIdx))
                 pointVec = points(:, pointIdx) - lines(:dim, lineIdx)
-                pointVec = matmul(projectionResid, pointVec)
-                dist = sum(pointVec * pointVec)
-                if (dist < range) then
+                projDist = sum(lineVec * pointVec)
+                dist2 = sum(pointVec * pointVec) - projDist * projDist
+                if (dist2 < range2) then
                     outputIdx = outputIdx + 1
                 endif
             enddo

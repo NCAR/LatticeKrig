@@ -1,1 +1,2 @@
 CubicLineIntegralGrid: lineIntegralGrid
+SphereSplines: completionGrid, sphereRangeGrid, sphereDistGrid

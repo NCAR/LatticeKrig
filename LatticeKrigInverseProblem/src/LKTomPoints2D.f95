@@ -21,8 +21,8 @@ subroutine LKTomPoints2D(coordinates, levelSizes, nLevels, points, nPoints)
     do levelIdx = 1, nLevels
         dim1Start = starts(1, levelIdx)
         dim2Start = starts(2, levelIdx)
-        do dim1Idx = 1, levelSizes(1, levelIdx)
-            do dim2Idx = 1, levelSizes(2, levelIdx)
+        do dim2Idx = 1, levelSizes(2, levelIdx)
+            do dim1Idx = 1, levelSizes(1, levelIdx)
                 points(1, outputIdx) = coordinates(dim1Start + dim1Idx)
                 points(2, outputIdx) = coordinates(dim2Start + dim2Idx)
                 outputIdx = outputIdx + 1
